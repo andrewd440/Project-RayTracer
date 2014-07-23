@@ -32,6 +32,9 @@
     <ClInclude Include="include\LocalGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Intersection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\Vector3.inl">

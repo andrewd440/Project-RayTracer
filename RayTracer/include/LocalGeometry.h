@@ -1,6 +1,9 @@
 #pragma once
 #include "Vector3.h"
 
+/**
+* Struct of describing geometry properties of an object at a point.
+*/
 struct LocalGeometry
 {
 	/**
