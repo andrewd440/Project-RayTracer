@@ -1,7 +1,7 @@
 #pragma once
 #include "LocalGeometry.h"
 
-struct Shape;
+class Shape;
 
 /**
 * Struct for describing the properties of an intersection 
@@ -24,7 +24,7 @@ struct Intersection
 	* @param intersectedObject - object of the intersection
 	* @param geometryAtIntersection - the geometry of the point of intersection
 	*/
-	Intersection(Primative& intersectedObject, LocalGeometry geometryAtIntersection)
+	Intersection(Shape& intersectedObject, LocalGeometry geometryAtIntersection)
 		: object(&intersectedObject)
 		, localGeometry(geometryAtIntersection)
 	{

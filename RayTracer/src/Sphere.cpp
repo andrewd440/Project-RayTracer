@@ -1,5 +1,7 @@
 #include "Sphere.h"
 #include "Intersection.h"
+#include "LocalGeometry.h"
+#include "Vector3.inl"
 
 Sphere::Sphere(Vector3f center, float radius)
 	: mCenter(center)
@@ -87,12 +89,13 @@ void Sphere::setRadius(const float& radius)
 
 void Sphere::constructIntersection(Vector3f point, Intersection& intersectionOut)
 {
-	LocalGeometry geometry;
+	LocalGeometry& geometry = intersectionOut.localGeometry;
 	geometry.point = point;
 
-	Vector3f normal = (point - mCenter);
+	Vector3f normal = point - mCenter;
 	normal.normalize();
 	geometry.surfaceNormal = normal;
 
+	
 	intersectionOut.object = this;
 }

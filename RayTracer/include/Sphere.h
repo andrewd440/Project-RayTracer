@@ -1,5 +1,6 @@
 #pragma once
 #include "Shape.h"
+#include "Vector3.h"
 
 /**
 * Class for representing a sphere in 3D space.
