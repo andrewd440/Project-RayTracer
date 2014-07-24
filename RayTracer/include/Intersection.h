@@ -1,7 +1,7 @@
 #pragma once
 #include "LocalGeometry.h"
 
-struct Primative;
+struct Shape;
 
 /**
 * Struct for describing the properties of an intersection 
@@ -30,7 +30,7 @@ struct Intersection
 	{
 	}
 		
-	Primative* object; /* The primative of the intersection */
+	Shape* object; /* The primative of the intersection */
 	LocalGeometry localGeometry; /* The geometry at the point of intersection */
 };
 

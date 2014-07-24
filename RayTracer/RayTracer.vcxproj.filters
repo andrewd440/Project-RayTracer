@@ -21,6 +21,9 @@
     <ClCompile Include="src\RayTracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Vector3.h">
@@ -35,7 +38,10 @@
     <ClInclude Include="include\Intersection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape.h">
+    <ClInclude Include="include\Sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

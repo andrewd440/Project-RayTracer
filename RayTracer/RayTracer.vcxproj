@@ -85,13 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\RayTracer.cpp" />
+    <ClCompile Include="src\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Intersection.h" />
     <ClInclude Include="include\LocalGeometry.h" />
     <ClInclude Include="include\Ray.h" />
+    <ClInclude Include="include\Shape.h" />
+    <ClInclude Include="include\Sphere.h" />
     <ClInclude Include="include\Vector3.h" />
-    <ClInclude Include="Shape.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\Vector3.inl" />
