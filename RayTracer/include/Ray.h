@@ -14,9 +14,9 @@ struct Ray
 	* @param directionVector - a normalized direction for the ray
 	*/
 	inline Ray(Vector3f originPoint, Vector3f directionVector)
+		: origin(originPoint)
+		, direction(directionVector)
 	{
-		origin = originPoint;
-		direction = directionVector;
 	}
 
 	/**
