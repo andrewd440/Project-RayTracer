@@ -84,10 +84,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Camera.cpp" />
     <ClCompile Include="src\RayTracer.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Intersection.h" />
     <ClInclude Include="include\LocalGeometry.h" />
     <ClInclude Include="include\Ray.h" />
