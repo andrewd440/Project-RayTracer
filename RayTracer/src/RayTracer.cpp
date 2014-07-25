@@ -10,10 +10,10 @@
 
 int main()
 {
-	Vector3f normal(1, 0, 1);
+	Vector3f normal(0, 0, 1);
 	normal.normalize();
-	Ray ray(Vector3f(0, 0, 0), normal);
-	Sphere circle(Vector3f(0, 0, 4), 1);
+	Ray ray(Vector3f(0, 0, 5), normal);
+	Sphere circle(Vector3f(0, 0, 4), 2);
 	Intersection intersection;
 	float t = 0;
 	circle.isIntersectingRay(ray, t, intersection);
