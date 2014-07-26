@@ -85,12 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RayTracer.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\Color.h" />
+    <ClInclude Include="include\Image.h" />
     <ClInclude Include="include\Intersection.h" />
     <ClInclude Include="include\LocalGeometry.h" />
     <ClInclude Include="include\Ray.h" />
