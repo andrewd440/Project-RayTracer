@@ -1,18 +1,15 @@
-// RayTracer.cpp : Defines the entry point for the console application.
-//
-
-#include "Ray.h"
-#include "Sphere.h"
+#include "RayTracer.h"
 #include "Intersection.h"
-#include "Camera.h"
 #include "Vector3.inl"
-#include <iostream>
 
-using namespace std;
-
-int main()
+RayTracer::RayTracer()
+	: sphere(Vector3f(0,0,10), 5)
 {
-	
+}
 
-	return 0;
+bool RayTracer::trace(const Ray& ray)
+{
+	float t;
+	Intersection intersection;
+	return sphere.isIntersectingRay(ray, t, intersection);
 }

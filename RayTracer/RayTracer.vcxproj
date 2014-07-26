@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RayTracer.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
   </ItemGroup>
@@ -93,6 +94,7 @@
     <ClInclude Include="include\Intersection.h" />
     <ClInclude Include="include\LocalGeometry.h" />
     <ClInclude Include="include\Ray.h" />
+    <ClInclude Include="include\RayTracer.h" />
     <ClInclude Include="include\Shape.h" />
     <ClInclude Include="include\Sphere.h" />
     <ClInclude Include="include\Vector2.h" />

@@ -52,6 +52,9 @@ public:
 	*/
 	void setDistanceFromScreen(float distance);
 
+public:
+	static const Vector2i SCREEN_RESOLUTION;
+
 private:
 	float mDistanceFromScreen; /* Distance between viewpoint and screen */
 	Vector2i mScreenSize; /* Size, in pixels, of the screen */

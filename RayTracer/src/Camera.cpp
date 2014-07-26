@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+const Vector2i Camera::SCREEN_RESOLUTION(1000, 700);
+
 Camera::Camera(Vector3f cameraPosition, Vector3f cameraDirection, float distanceFromScreen, Vector2i screenSize)
 	: mPosition(cameraPosition)
 	, mDirection(cameraDirection)
@@ -15,8 +17,8 @@ Ray Camera::generateRay(float x, float y) const
 	const float halfHeight = mScreenSize.y / 2.f;
 
 	// Calculate coordinates of pixel on screen plane (u, v, d)
-	const float u = (mPosition.x - halfWidth) + (mScreenSize.x * (x + 0.5f)) / mScreenSize.x;
-	const float v = (mPosition.y - halfHeight) + (mScreenSize.y * (y + 0.5f)) / mScreenSize.y;
+	const float u = (mPosition.x - halfWidth) + (mScreenSize.x * (x + 0.5f)) / SCREEN_RESOLUTION.x;
+	const float v = (mPosition.y - halfHeight) + (mScreenSize.y * (y + 0.5f)) / SCREEN_RESOLUTION.y;
 
 	// Compute direction of ray
 	Vector3f rayDirection(u, -v, mDistanceFromScreen);
