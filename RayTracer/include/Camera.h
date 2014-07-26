@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Vector2.h"
 #include "Ray.h"
 
 /**
@@ -17,7 +18,7 @@ public:
 	* @param distanceFromScreen - the distance of the camera from the screen
 	* @param screenSize - size of the screen (in pixels)
 	*/
-	Camera(Vector3f cameraPosition, Vector3f cameraDirection, float distanceFromScreen, Vector3i screenSize);
+	Camera(Vector3f cameraPosition, Vector3f cameraDirection, float distanceFromScreen, Vector2i screenSize);
 
 	/**
 	* Generates a ray from the viewpoint through a screen pixel.
@@ -31,21 +32,30 @@ public:
 	* Retrieve the size (in pixels) of the screen.
 	* @return Size of screen
 	*/
-	Vector3i getScreenSize() const;
+	Vector2i getScreenSize() const;
 
 	/**
-	* 
-	*
+	* Sets the size of the screen.
+	* @param screenSize - size of the screen
 	*/
-	void setScreenSize(Vector3i screenSize);
+	void setScreenSize(Vector2i screenSize);
 
+	/**
+	* Retrieves the distance of the viewpoint from the screen
+	* @returns The distance between the camera and screen
+	*/
 	float getDistanceFromScreen() const;
-	void setDistanceFromScreen(Vector3i distance);
+
+	/**
+	* Sets the distance between the viewpoint and the screen.
+	* @param distance - distance between camera and screen
+	*/
+	void setDistanceFromScreen(float distance);
 
 private:
-	float mDistanceFromScreen;
-	Vector3i mScreenSize;
-	Vector3f mDirection;
-	Vector3f mPositon;
+	float mDistanceFromScreen; /* Distance between viewpoint and screen */
+	Vector2i mScreenSize; /* Size, in pixels, of the screen */
+	Vector3f mDirection; /* Normalized direction of the camera */
+	Vector3f mPosition; /* World position of the camera */
 };
 

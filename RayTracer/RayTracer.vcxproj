@@ -84,7 +84,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\Camera.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\RayTracer.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
   </ItemGroup>
@@ -95,6 +95,7 @@
     <ClInclude Include="include\Ray.h" />
     <ClInclude Include="include\Shape.h" />
     <ClInclude Include="include\Sphere.h" />
+    <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\Vector3.h" />
   </ItemGroup>
   <ItemGroup>
