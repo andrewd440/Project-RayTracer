@@ -47,9 +47,9 @@ Vector3f Sphere::getCenter() const
 	return mCenter;
 }
 
-void Sphere::setCenter(const Vector3f& center)
+void Sphere::setCenter(const Vector3f& CenterPoint)
 {
-	mCenter = center;
+	mCenter = CenterPoint;
 }
 
 float Sphere::getRadius() const
@@ -62,14 +62,14 @@ void Sphere::setRadius(const float& radius)
 	mRadius = radius;
 }
 
-void Sphere::constructIntersection(Vector3f point, Intersection& intersectionOut)
+void Sphere::constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut)
 {
-	LocalGeometry& geometry = intersectionOut.localGeometry;
-	geometry.point = point;
+	LocalGeometry& geometry = IntersectionOut.localGeometry;
+	geometry.point = IntersectionPoint;
 
-	Vector3f normal = point - mCenter;
+	Vector3f normal = IntersectionPoint - mCenter;
 	normal.normalize();
 	geometry.surfaceNormal = normal;
 	
-	intersectionOut.object = this;
+	IntersectionOut.object = this;
 }

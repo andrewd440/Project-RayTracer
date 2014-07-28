@@ -10,12 +10,12 @@ struct Ray
 	/**
 	* Constructs a ray from an origin point that points in a 
 	* given direction.
-	* @param originiPoint - the origin of the ray
-	* @param directionVector - a normalized direction for the ray
+	* @param OriginiPoint - The origin of the ray
+	* @param DirectionVector - A normalized direction for the ray
 	*/
-	inline Ray(Vector3f originPoint, Vector3f directionVector)
-		: origin(originPoint)
-		, direction(directionVector)
+	inline Ray(Vector3f OriginPoint, Vector3f DirectionVector)
+		: origin(OriginPoint)
+		, direction(DirectionVector)
 	{
 	}
 

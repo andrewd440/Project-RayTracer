@@ -21,12 +21,12 @@ struct Intersection
 	/**
 	* Construct Intersection from the object of the intersection and the points' local
 	* geometry properties
-	* @param intersectedObject - object of the intersection
-	* @param geometryAtIntersection - the geometry of the point of intersection
+	* @param IntersectedObject - object of the intersection
+	* @param GeometryAtIntersection - the geometry of the point of intersection
 	*/
-	Intersection(Shape& intersectedObject, LocalGeometry geometryAtIntersection)
-		: object(&intersectedObject)
-		, localGeometry(geometryAtIntersection)
+	Intersection(Shape& IntersectedObject, LocalGeometry GeometryAtIntersection)
+		: object(&IntersectedObject)
+		, localGeometry(GeometryAtIntersection)
 	{
 	}
 		
