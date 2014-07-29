@@ -22,11 +22,11 @@ public:
 
 	/**
 	* Generates a ray from the viewpoint through a screen pixel.
-	* @param X - horizontal pixel position
-	* @param Y - vertical pixel position
+	* @param X - x coordinate of the pixel
+	* @param Y - y coordinate of the pixel
 	* @return The generated ray
 	*/
-	Ray generateRay(float X, float Y) const;
+	Ray generateRay(int X, int Y) const;
 
 	/**
 	* Retrieves the horizontal FOV of the camera.

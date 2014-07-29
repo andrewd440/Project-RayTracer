@@ -17,8 +17,8 @@ public:
 
 	/**
 	* Sets the color value of a pixel.
-	* @param X - Horizontal position of the pixel
-	* @param Y - Vertical position of the pixel
+	* @param X - x coordinate of the pixel
+	* @param Y - y coordinate of the pixel
 	* @param Color - The color of the pixel
 	*/
 	void setPixel(const int& X, const int& Y, const Color& Color);

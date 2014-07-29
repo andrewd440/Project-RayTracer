@@ -1,39 +1,52 @@
 #pragma once
 #include "Light.h"
-#include "Shape.h"
+#include "Sphere.h"
 #include "Camera.h"
-#include "RayTracer.h"
+#include "Image.h"
 
 #include <vector>
+#include <memory>
 
+/** 
+* Represents a scene that will be raytraced 
+* and rendered to an image. 
+*/
 class Scene
 {
 public:
+	typedef std::unique_ptr<Shape> ShapePtr;
+
+	/**
+	* Default constructor.
+	*/
 	Scene();
-	~Scene();
 
 	/**
-	* Retrieves the scene camera.
-	* @return The scene camera (unmodifiable)
+	* Builds the scene. 
+	* Add the camera, lights, and geometry to the scene.
 	*/
-	const Camera& getCamera() const;
+	void buildScene();
 
 	/**
-	* Retrieves all shapes in the scene.
-	* @return A const vector containing the shapes.
+	* Traces a ray into the scene and computes the resulting color
+	* from the source point.
+	* @param CameraRay - A ray generated from the viewpoint through a pixel
+	*						on the screen.
+	* @return The resulting color for the source pixel.
 	*/
-	const std::vector<Shape>& getShapes() const;
+	Color traceRay(const Ray& CameraRay);
 
 	/**
-	* Retrieves all lights in the scene.
-	* @return A const vector containing the lights.
+	* Renders the scene to an image.
 	*/
-	const std::vector<Light>& getLights() const;
+	void renderScene();
+
+
 
 private:
-	RayTracer mRayTracer; /*  */
+	Image mOutputImage; /* Output image for the rendered scene */
 	Camera mCamera; /* Camera for the scene */
-	std::vector<Shape> mShapes; /* All shapes in the scene */
-	std::vector<Light> mLights; /* All lights in the scene */
+	std::vector<std::unique_ptr<Shape>> mShapes; /* All shapes in the scene */
+	std::vector<std::unique_ptr<Light>> mLights; /* All lights in the scene */
 };
 

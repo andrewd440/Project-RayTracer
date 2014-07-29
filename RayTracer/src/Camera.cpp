@@ -5,13 +5,13 @@ Camera::Camera(Vector3f CameraPosition, Vector3f CameraDirection, float FOV, Vec
 	, mDirection(CameraDirection)
 	, mFieldOfView(FOV)
 	, mOutputResolution(OutputResolution)
-	, mDistanceFromScreenPlane(1 / std::tan(((FOV / 180) * 3.14159265) / 2))
+	, mDistanceFromScreenPlane((float)(1 / std::tan(((FOV / 180) * 3.14159265) / 2)))
 	, mAspectRatio((float)OutputResolution.y / OutputResolution.x)
 {
 
 }
 
-Ray Camera::generateRay(float X, float Y) const
+Ray Camera::generateRay(int X, int Y) const
 {
 	// Calculate coordinates of pixel on screen plane (u, v, d)
 	const float u = -1 + (2 * (X + 0.5f)) / mOutputResolution.x;
@@ -32,5 +32,5 @@ float Camera::getFOV() const
 void Camera::setFOV(float FOV)
 {
 	mFieldOfView = FOV;
-	mDistanceFromScreenPlane = 1 / std::tan((FOV / 180 * 3.14159265) / 2);
+	mDistanceFromScreenPlane = (float)(1 / std::tan((FOV / 180 * 3.14159265) / 2));
 }

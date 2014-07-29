@@ -12,7 +12,7 @@ public:
 	*/
 	Light();
 
-	virtual ~Light() {}
+	virtual ~Light();
 
 	/**
 	* Generate a ray from a given point to the light source.
