@@ -15,6 +15,7 @@ class Scene
 {
 public:
 	typedef std::unique_ptr<Shape> ShapePtr;
+	typedef std::unique_ptr<Light> LightPtr;
 
 	/**
 	* Default constructor.
@@ -46,7 +47,7 @@ public:
 private:
 	Image mOutputImage; /* Output image for the rendered scene */
 	Camera mCamera; /* Camera for the scene */
-	std::vector<std::unique_ptr<Shape>> mShapes; /* All shapes in the scene */
-	std::vector<std::unique_ptr<Light>> mLights; /* All lights in the scene */
+	std::vector<ShapePtr> mShapes; /* All shapes in the scene */
+	std::vector<LightPtr> mLights; /* All lights in the scene */
 };
 
