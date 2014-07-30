@@ -109,6 +109,14 @@ template <typename T>
 */
 Vector3<T> operator-(const Vector3<T>& lhs, const Vector3<T>& rhs);
 
+template <typename T>
+/**
+* Negates the vector components.
+* @param lhs - Left operand
+* @return The negated vector.
+*/
+Vector3<T> operator-(const Vector3<T>& lhs);
+
 template <typename T, typename U>
 /**
 * Performs vector-scalar multiplication of two vectors.

@@ -124,6 +124,14 @@ inline Vector3<T> operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
 
 ////////////////////////////////////////////////////////////////////////
 
+template <typename T>
+Vector3<T> operator-(const Vector3<T>& lhs)
+{
+	return Vector3<T>(-lhs.x, -lhs.y, -lhs.z);
+}
+
+////////////////////////////////////////////////////////////////////////
+
 template <typename T, typename U>
 inline Vector3<T> operator*(const Vector3<T>& vector, const U& scalar)
 {

@@ -20,7 +20,8 @@ public:
 	* If the intersection succeeds, the intersection properties are output through
 	* a given intersection reference.
 	* @param Ray - the ray to check for intersection
-	* @param tValueOut - the smallest t parameter will be output to this
+	* @param tValueOut - the smallest t parameter will be output to this if it is smaller than
+	*						the value already in tValueOut
 	* @param IntersectionOut - intersection attributes will be assigned to this reference if
 	*							if the interection returns true
 	* @return True if the ray intersects the shape.

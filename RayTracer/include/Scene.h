@@ -42,7 +42,14 @@ public:
 	*/
 	void renderScene();
 
-
+private:
+	/**
+	* Computes a specular reflection ray based on the Blinn Model for Specular Reflection.
+	* @param LightRay - The light ray
+	* @param ViewerRay - The ray originating from the viewer
+	* @return Normalized direction vector for the specular reflection 
+	*/
+	Vector3f computeBlinnSpecularReflection(const Ray& LightRay, const Ray& ViewerRay);
 
 private:
 	Image mOutputImage; /* Output image for the rendered scene */
