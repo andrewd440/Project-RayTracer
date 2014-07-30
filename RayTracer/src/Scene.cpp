@@ -4,7 +4,7 @@
 #include "LocalGeometry.h"
 #include "Vector3.inl"
 
-const Vector2i OUTPUT_RESOLUTION(1920, 1080);
+const Vector2i OUTPUT_RESOLUTION(800, 500);
 
 Scene::Scene()
 	: mCamera(Vector3f(0, 0, 0), Vector3f(0,0,1), 65, OUTPUT_RESOLUTION)

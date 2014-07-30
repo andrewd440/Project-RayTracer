@@ -1,5 +1,4 @@
-#include "..\include\DirectionalLight.h"
-
+#include "DirectionalLight.h"
 
 DirectionalLight::DirectionalLight()
 	: Light()
@@ -13,6 +12,11 @@ DirectionalLight::DirectionalLight(Color LightColor, Vector3f LightDirection)
 	, mLightDirection(LightDirection)
 {
 
+}
+
+Ray DirectionalLight::getLightRay(const Vector3f& SurfacePoint)
+{
+	return Ray(SurfacePoint, mLightDirection);
 }
 
 void DirectionalLight::setLightDirection(const Vector3f& LightDirection)
