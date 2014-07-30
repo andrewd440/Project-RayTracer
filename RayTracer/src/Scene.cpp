@@ -5,7 +5,9 @@
 #include "Vector3.inl"
 #include "DirectionalLight.h"
 
-const Vector2i OUTPUT_RESOLUTION(1600, 1000);
+#include <algorithm>
+
+const Vector2i OUTPUT_RESOLUTION(800, 500);
 const Color BACKGROUND_COLOR(0, 0, 0);
 
 Scene::Scene()
@@ -20,13 +22,19 @@ Scene::Scene()
 
 void Scene::buildScene()
 {
-	ShapePtr shape(new Sphere(Vector3f(0, 0, 20), 2));
+	Material redMaterial(Color::White, Color::Red, Color::White, 8);
+	ShapePtr shape(new Sphere(Vector3f(0, 0, 20), 2, redMaterial));
 	mShapes.push_back(std::move(shape));
 
-	Vector3f lightDirection(-3, -5, 5);
+	Vector3f lightDirection(-3, -3, 5);
 	lightDirection.normalize();
-	LightPtr light(new DirectionalLight(Color(255, 255, 255), lightDirection));
+	LightPtr light(new DirectionalLight(Color::White, lightDirection));
 	mLights.push_back(std::move(light));
+
+	//Vector3f lightDirection2(3, 5, 5);
+	//lightDirection.normalize();
+	//LightPtr light2(new DirectionalLight(Color::White, lightDirection2));
+	//mLights.push_back(std::move(light2));
 }
 
 Color Scene::traceRay(const Ray& CameraRay)
@@ -40,13 +48,33 @@ Color Scene::traceRay(const Ray& CameraRay)
 	
 	if (hasIntersection)
 	{
-		Vector3f h = computeBlinnSpecularReflection(mLights[0]->getLightDirectionFromPoint(closestIntersection.localGeometry.point), -CameraRay.direction);
-		float nDoth = dotProduct(closestIntersection.localGeometry.surfaceNormal, h);
-		nDoth = pow(nDoth, 16);
-		if (nDoth < 0) nDoth = 0;
-		float nDotL = dotProduct(closestIntersection.localGeometry.surfaceNormal, mLights[0]->getLightDirectionFromPoint(closestIntersection.localGeometry.point));
-		if (nDotL < 0) nDotL = 0;
-		return Color((255 * nDoth + 0 * nDotL) / 2.f, (255 * nDoth + 255 * nDotL) / 2.f, (255 * nDoth + 0 * nDotL) / 2.f);
+		Color outputColor;
+		const Material& surfaceMaterial(closestIntersection.object->getMaterial());
+		const Vector3f& surfacePoint(closestIntersection.localGeometry.point);
+		const Vector3f& surfaceNormal(closestIntersection.localGeometry.surfaceNormal);
+
+		for (const auto& light : mLights)
+		{
+			// Get direction of light and compute h reflection
+			const Vector3f& lightDirection(light->getLightDirectionFromPoint(surfacePoint));
+			const Vector3f& h = computeBlinnSpecularReflection(lightDirection, -CameraRay.direction);
+
+			// Get dot product of surface normal and h for specular lighting
+			float specularFactor = std::max(dotProduct(surfaceNormal, h), 0.f);
+
+			// Add glossiness expononent
+			specularFactor = pow(specularFactor, surfaceMaterial.glossiness);
+
+			// Get dot product of surface normal and light direction for diffuse lighting
+			float diffuseFactor = std::max(dotProduct(surfaceNormal, lightDirection), 0.f);
+
+			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor);
+			Color diffuseColor(light->getLightColor()  * surfaceMaterial.diffuseColor);
+
+			outputColor = outputColor + (diffuseColor * diffuseFactor) + (specularColor * specularFactor);
+		}
+
+		return outputColor;
 	}
 	else
 		return BACKGROUND_COLOR;

@@ -12,8 +12,9 @@ public:
 	* Constructs a sphere from a center point and radius
 	* @param Center - The center of the sphere
 	* @param Radius - Length of the radius
+	* @param LightMaterial - Lighting properties for the sphere
 	*/
-	Sphere(Vector3f Center, float Radius);
+	Sphere(Vector3f Center, float Radius, Material LightingMaterial);
 	
 	/**
 	* Checks if a ray intersects the sphere within the range of a t parameter.

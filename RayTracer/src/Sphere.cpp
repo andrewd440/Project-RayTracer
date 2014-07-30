@@ -3,8 +3,9 @@
 #include "LocalGeometry.h"
 #include "Vector3.inl"
 
-Sphere::Sphere(Vector3f center, float radius)
-	: mCenter(center)
+Sphere::Sphere(Vector3f center, float radius, Material LightingMaterial)
+	: Shape(LightingMaterial)
+	, mCenter(center)
 	, mRadius(radius)
 {
 
