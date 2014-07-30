@@ -12,6 +12,12 @@ public:
 	*/
 	Light();
 
+	/**
+	* Constructs a light with a given color.
+	* @param LightColor - The color of the light
+	*/
+	Light(Color LightColor);
+
 	virtual ~Light();
 
 	/**
