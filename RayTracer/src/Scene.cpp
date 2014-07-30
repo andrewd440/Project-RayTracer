@@ -40,11 +40,11 @@ Color Scene::traceRay(const Ray& CameraRay)
 	
 	if (hasIntersection)
 	{
-		Vector3f h = computeBlinnSpecularReflection(mLights[0]->getLightRay(closestIntersection.localGeometry.point), CameraRay);
+		Vector3f h = computeBlinnSpecularReflection(mLights[0]->getLightDirectionFromPoint(closestIntersection.localGeometry.point), -CameraRay.direction);
 		float nDoth = dotProduct(closestIntersection.localGeometry.surfaceNormal, h);
 		nDoth = pow(nDoth, 16);
 		if (nDoth < 0) nDoth = 0;
-		float nDotL = dotProduct(closestIntersection.localGeometry.surfaceNormal, mLights[0]->getLightRay(closestIntersection.localGeometry.point).direction);
+		float nDotL = dotProduct(closestIntersection.localGeometry.surfaceNormal, mLights[0]->getLightDirectionFromPoint(closestIntersection.localGeometry.point));
 		if (nDotL < 0) nDotL = 0;
 		return Color((255 * nDoth + 0 * nDotL) / 2.f, (255 * nDoth + 255 * nDotL) / 2.f, (255 * nDoth + 0 * nDotL) / 2.f);
 	}
@@ -68,9 +68,9 @@ void Scene::renderScene()
 	mOutputImage.writeImage();
 }
 
-Vector3f Scene::computeBlinnSpecularReflection(const Ray& LightRay, const Ray& ViewerRay)
+Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection)
 {
-	Vector3f reflection(LightRay.direction + -ViewerRay.direction);
+	Vector3f reflection(LightDirection + ViewerDirection);
 	reflection.normalize();
 	return reflection;
 }

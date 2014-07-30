@@ -1,5 +1,6 @@
 #pragma once
 #include "Ray.h"
+#include "Material.h"
 
 struct Intersection;
 
@@ -9,6 +10,7 @@ struct Intersection;
 class Shape
 {
 public:
+	Shape(const Material& LightingMaterial);
 
 	virtual ~Shape(){};
 
@@ -23,5 +25,20 @@ public:
 	* @return True if the ray intersects the shape.
 	*/
 	virtual bool isIntersectingRay(Ray Ray, float& tValueOut, Intersection& IntersectionOut) = 0;
+
+	/**
+	* Set the material properties for the shapes' surface.
+	* @param NewMaterial - The material for the shape
+	*/
+	void setMaterial(const Material& NewMaterial);
+
+	/**
+	* Retrieves the material for the shape.
+	* @return The material
+	*/
+	Material getMaterial() const;
+
+private:
+	Material mMaterial; /* Lighting material properties for the shape */
 };
 

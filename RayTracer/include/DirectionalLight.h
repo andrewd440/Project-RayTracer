@@ -18,11 +18,11 @@ public:
 	DirectionalLight(Color LightColor, Vector3f LightDirection);
 	
 	/**
-	* Generate a ray from a given point to the light source.
+	* Generate a direction from a given point to the light source.
 	* @param SurfacePoint - The destination point for the light
 	* @return A ray from the light source pointing to the given surface point.
 	*/
-	Ray getLightRay(const Vector3f& SurfacePoint);
+	Vector3f getLightDirectionFromPoint(const Vector3f& SurfacePoint);
 
 	/**
 	* Sets the direction of the light.
