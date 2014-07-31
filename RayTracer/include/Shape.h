@@ -27,6 +27,13 @@ public:
 	virtual bool isIntersectingRay(Ray Ray, float& tValueOut, Intersection& IntersectionOut) = 0;
 
 	/**
+	* Checks if a ray intersects the shape.
+	* @param Ray - the ray to check for intersection
+	* @return True if the ray intersects the shape.
+	*/
+	virtual bool isIntersectingRay(Ray Ray) = 0;
+
+	/**
 	* Set the material properties for the shapes' surface.
 	* @param NewMaterial - The material for the shape
 	*/

@@ -51,6 +51,15 @@ private:
 	*/
 	Vector3f computeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection);
 
+	/**
+	* Checks if a light ray is blocked by another object.
+	* @param ReferenceShape - The shape to check for shadows
+	* @param LightRay - A ray from the surface point on the shape to the light source
+	* @return True if the point is in a shadow
+	*
+	*/
+	bool isInShadow(Shape* ReferenceShape, const Ray& LightRay) const;
+
 private:
 	Image mOutputImage; /* Output image for the rendered scene */
 	Camera mCamera; /* Camera for the scene */

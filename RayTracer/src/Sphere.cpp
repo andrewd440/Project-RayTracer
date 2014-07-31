@@ -51,6 +51,29 @@ bool Sphere::isIntersectingRay(Ray ray, float& tValueOut, Intersection& intersec
 		
 }
 
+bool Sphere::isIntersectingRay(Ray ray)
+{
+	const Vector3f rayDirection = ray.direction;
+	const Vector3f rayOrigin = ray.origin;
+	const Vector3f m = rayOrigin - mCenter;
+
+	// Coefficients for quandratic equation
+	const float b = dotProduct(m, rayDirection);
+	const float c = dotProduct(m, m) - mRadius * mRadius;
+
+	// If the ray origin is outside the sphere and direction is pointing away from sphere
+	if (c > 0 && b > 0)
+		return false;
+
+	const float discriminate = (b * b) - c;
+
+	// If discriminate is less than zero, there is no real roots (no intersection)
+	if (discriminate < 0)
+		return false;
+
+	return true;
+}
+
 Vector3f Sphere::getCenter() const
 {
 	return mCenter;

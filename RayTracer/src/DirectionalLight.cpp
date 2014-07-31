@@ -1,4 +1,5 @@
 #include "DirectionalLight.h"
+#include "Vector3.inl"
 
 DirectionalLight::DirectionalLight()
 	: Light()

@@ -9,6 +9,7 @@
 
 const Vector2i OUTPUT_RESOLUTION(800, 500);
 const Color BACKGROUND_COLOR(0, 0, 0);
+const Color GLOBAL_AMBIENT_COLOR(100, 100, 100);
 
 Scene::Scene()
 	: mCamera(Vector3f(0, 0, 0), Vector3f(0,0,1), 65, OUTPUT_RESOLUTION)
@@ -22,18 +23,19 @@ Scene::Scene()
 
 void Scene::buildScene()
 {
-	Material redMaterial(Color(100,100,100), Color(210,40,50), Color::White, 64);
+	Material redMaterial(Color(100,100,100), Color(210,40,50), Color(25,25,25), 64);
 	ShapePtr shape(new Sphere(Vector3f(0, 0, 20), 4, redMaterial));
 	mShapes.push_back(std::move(shape));
 
+	ShapePtr shape2(new Sphere(Vector3f(3, 3, 13), 2, redMaterial));
+	mShapes.push_back(std::move(shape2));
+
 	Vector3f lightDirection(-3, -3, 5);
-	lightDirection.normalize();
 	LightPtr light(new DirectionalLight(Color::White, lightDirection));
 	mLights.push_back(std::move(light));
 
-	Vector3f lightDirection2(3, 5, 5);
-	lightDirection2.normalize();
-	LightPtr light2(new DirectionalLight(Color::Green, lightDirection2));
+	Vector3f lightDirection2(0, -1, 1);
+	LightPtr light2(new DirectionalLight(Color::White, lightDirection2));
 	mLights.push_back(std::move(light2));
 }
 
@@ -59,6 +61,10 @@ Color Scene::traceRay(const Ray& CameraRay)
 			const Vector3f& lightDirection(light->getLightDirectionFromPoint(surfacePoint));
 			const Vector3f& h = computeBlinnSpecularReflection(lightDirection, -CameraRay.direction);
 
+			// If an object is in the way of the light, skip lighting for that light
+			if (isInShadow(closestIntersection.object, Ray(surfacePoint, lightDirection)))
+				continue;
+
 			// Get dot product of surface normal and h for specular lighting
 			float specularFactor = std::max(dotProduct(surfaceNormal, h), 0.f);
 
@@ -71,15 +77,14 @@ Color Scene::traceRay(const Ray& CameraRay)
 			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor);
 			Color diffuseColor(light->getLightColor()  * surfaceMaterial.diffuseColor);
 
-			outputColor = outputColor + ((diffuseColor * diffuseFactor) + (specularColor * specularFactor) + (diffuseColor * Color(30,30,30))); //fix the ambient at the end
+			outputColor = outputColor + ((diffuseColor * diffuseFactor) + (specularColor * specularFactor));
 		}
 
-		return outputColor;
+		return outputColor + (GLOBAL_AMBIENT_COLOR * surfaceMaterial.ambientColor); //fix the ambient at the end
 	}
 	else
 		return BACKGROUND_COLOR;
 }
-
 
 void Scene::renderScene()
 {
@@ -101,4 +106,18 @@ Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& LightDirection, c
 	Vector3f reflection(LightDirection + ViewerDirection);
 	reflection.normalize();
 	return reflection;
+}
+
+bool Scene::isInShadow(Shape* ReferenceShape, const Ray& LightRay) const
+{
+	for (const auto& shape : mShapes)
+	{
+		// If the object is not the reference one and intersects the light
+		if (shape.get() != ReferenceShape && shape->isIntersectingRay(LightRay))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

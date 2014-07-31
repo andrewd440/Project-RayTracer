@@ -27,7 +27,14 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the shape.
 	*/
-	bool isIntersectingRay(Ray Ray, float& tValueOut, Intersection& IntersectionOut);
+	virtual bool isIntersectingRay(Ray Ray, float& tValueOut, Intersection& IntersectionOut);
+
+	/**
+	* Checks if a ray intersects the shape.
+	* @param Ray - the ray to check for intersection
+	* @return True if the ray intersects the shape.
+	*/
+	virtual bool isIntersectingRay(Ray Ray);
 
 	/**
 	* Retrieves the center point of the sphere.
