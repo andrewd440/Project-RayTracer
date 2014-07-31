@@ -33,20 +33,20 @@ void Scene::buildScene()
 
 	Vector3f lightDirection2(3, 5, 5);
 	lightDirection2.normalize();
-	LightPtr light2(new DirectionalLight(Color::Blue, lightDirection2));
+	LightPtr light2(new DirectionalLight(Color::Green, lightDirection2));
 	mLights.push_back(std::move(light2));
 }
 
 Color Scene::traceRay(const Ray& CameraRay)
 {
-	float maxTValue(1000);
+	float maxTValue(9999);
 	Intersection closestIntersection;
-	bool hasIntersection = false;
 
 	for (const auto& shape : mShapes)
-		hasIntersection |= shape->isIntersectingRay(CameraRay, maxTValue, closestIntersection);
+		shape->isIntersectingRay(CameraRay, maxTValue, closestIntersection);
 	
-	if (hasIntersection)
+	// If an object was intersected
+	if (closestIntersection.object)
 	{
 		Color outputColor;
 		const Material& surfaceMaterial(closestIntersection.object->getMaterial());
