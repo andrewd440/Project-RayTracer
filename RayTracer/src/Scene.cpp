@@ -22,8 +22,8 @@ Scene::Scene()
 
 void Scene::buildScene()
 {
-	Material redMaterial(Color::White, Color::Red, Color::White, 8);
-	ShapePtr shape(new Sphere(Vector3f(0, 0, 20), 2, redMaterial));
+	Material redMaterial(Color(100,100,100), Color(210,40,50), Color::White, 64);
+	ShapePtr shape(new Sphere(Vector3f(0, 0, 20), 4, redMaterial));
 	mShapes.push_back(std::move(shape));
 
 	Vector3f lightDirection(-3, -3, 5);
@@ -31,10 +31,10 @@ void Scene::buildScene()
 	LightPtr light(new DirectionalLight(Color::White, lightDirection));
 	mLights.push_back(std::move(light));
 
-	//Vector3f lightDirection2(3, 5, 5);
-	//lightDirection.normalize();
-	//LightPtr light2(new DirectionalLight(Color::White, lightDirection2));
-	//mLights.push_back(std::move(light2));
+	Vector3f lightDirection2(3, 5, 5);
+	lightDirection2.normalize();
+	LightPtr light2(new DirectionalLight(Color::Blue, lightDirection2));
+	mLights.push_back(std::move(light2));
 }
 
 Color Scene::traceRay(const Ray& CameraRay)
@@ -71,7 +71,7 @@ Color Scene::traceRay(const Ray& CameraRay)
 			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor);
 			Color diffuseColor(light->getLightColor()  * surfaceMaterial.diffuseColor);
 
-			outputColor = outputColor + (diffuseColor * diffuseFactor) + (specularColor * specularFactor);
+			outputColor = outputColor + ((diffuseColor * diffuseFactor) + (specularColor * specularFactor) + (diffuseColor * Color(30,30,30))); //fix the ambient at the end
 		}
 
 		return outputColor;
