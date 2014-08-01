@@ -15,10 +15,12 @@ DirectionalLight::DirectionalLight(Color LightColor, Vector3f LightDirection)
 	mLightDirection.normalize();
 }
 
-Vector3f DirectionalLight::getLightDirectionFromPoint(const Vector3f& SurfacePoint)
+
+Ray DirectionalLight::getRayToLight(const Vector3f& SurfacePoint)
 {
-	return -mLightDirection;
+	return Ray(SurfacePoint, -mLightDirection);
 }
+
 
 void DirectionalLight::setLightDirection(const Vector3f& LightDirection)
 {

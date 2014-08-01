@@ -1,6 +1,7 @@
 #pragma once
 #include "Color.h"
 #include "Vector3.h"
+#include "Ray.h"
 
 /* Base class of all scene lights */
 class Light
@@ -20,11 +21,11 @@ public:
 	virtual ~Light();
 
 	/**
-	* Generate a direction from a given point to the light source.
+	* Generate a ray from a given point to the light source.
 	* @param SurfacePoint - The destination point for the light
-	* @return A ray from the light source pointing to the given surface point.
+	* @return A ray from the surface point to the light position.
 	*/
-	virtual Vector3f getLightDirectionFromPoint(const Vector3f& SurfacePoint) = 0;
+	virtual Ray getRayToLight(const Vector3f& SurfacePoint) = 0;
 
 	/**
 	* Retrieves the RGB color of the light.

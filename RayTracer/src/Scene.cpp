@@ -82,11 +82,11 @@ Color Scene::traceRay(const Ray& CameraRay, int Depth)
 		for (const auto& light : mLights)
 		{
 			// Get direction of light and compute h reflection
-			const Vector3f& lightDirection(light->getLightDirectionFromPoint(surfacePoint));
-			const Vector3f& h = computeBlinnSpecularReflection(lightDirection, -CameraRay.direction);
+			const Ray& rayToLight(light->getRayToLight(surfacePoint));
+			const Vector3f& lightDirection(rayToLight.direction);
+			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -CameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
-			Ray rayToLight(surfacePoint, lightDirection);
 			if (isInShadow(closestIntersection.object, rayToLight))
 				continue;
 
