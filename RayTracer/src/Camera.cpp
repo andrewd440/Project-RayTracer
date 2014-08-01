@@ -1,5 +1,16 @@
 #include "Camera.h"
 
+Camera::Camera()
+	: mPosition()
+	, mDirection(0,0,1)
+	, mFieldOfView(0)
+	, mOutputResolution()
+	, mDistanceFromScreenPlane()
+	, mAspectRatio()
+{
+
+}
+
 Camera::Camera(Vector3f CameraPosition, Vector3f CameraDirection, float FOV, Vector2i OutputResolution)
 	: mPosition(CameraPosition)
 	, mDirection(CameraDirection)

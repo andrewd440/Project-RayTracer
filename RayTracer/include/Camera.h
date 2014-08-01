@@ -11,6 +11,13 @@ class Camera
 {
 public:
 	/**
+	* Default Constructor.
+	* Sets up a camera with default values. Forward direction at origin with 
+	* no FOV or output resolution.
+	*/
+	Camera();
+
+	/**
 	* Constructs a scene camera from it's world position, direction, distance from the screen, and 
 	* screen size.
 	* @param CameraPosition - world position of the camera
