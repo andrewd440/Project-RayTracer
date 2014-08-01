@@ -6,6 +6,7 @@ const Color Color::Red(255, 0, 0);
 const Color Color::Green(0, 255, 0);
 const Color Color::Blue(0, 0, 255);
 const Color Color::White(255, 255, 255);
+const Color Color::Black(0, 0, 0);
 
 Color::Color()
 	: r(0), g(0), b(0)
@@ -19,12 +20,36 @@ Color::Color(unsigned int R, unsigned int G, unsigned int B)
 
 }
 
-/**
-* Performs component-wise multiplication of colors
-* @param lhs - Left operand
-* @param rhs - Right operand
-* @return Resulting color
-*/
+
+Color& Color::operator+=(const Color& rhs)
+{
+	r = std::min(r + rhs.r, (unsigned)255);
+	g = std::min(g + rhs.g, (unsigned)255);
+	b = std::min(b + rhs.b, (unsigned)255);
+
+	return *this;
+}
+
+
+Color& Color::operator*=(const Color& rhs)
+{
+	r = std::min(r + rhs.r, (unsigned)255);
+	g = std::min(g + rhs.g, (unsigned)255);
+	b = std::min(b + rhs.b, (unsigned)255);
+
+	return *this;
+}
+
+Color& Color::operator*=(const float& scalar)
+{
+	r = std::min(unsigned(r * scalar), (unsigned)255);
+	g = std::min(unsigned(g * scalar), (unsigned)255);
+	b = std::min(unsigned(b * scalar), (unsigned)255);
+
+	return *this;
+}
+
+
 Color operator*(const Color& lhs, const Color& rhs)
 {
 	Color result;
@@ -34,12 +59,7 @@ Color operator*(const Color& lhs, const Color& rhs)
 	return result;
 }
 
-/**
-* Performs scalar multiplication of a color
-* @param lhs - Left operand
-* @param scalar - Right operand
-* @return Resulting color
-*/
+
 Color operator*(const Color& lhs, const float& scalar)
 {
 	Color result;
@@ -49,12 +69,6 @@ Color operator*(const Color& lhs, const float& scalar)
 	return result;
 }
 
-/**
-* Performs component-wise addition of colors
-* @param lhs - Left operand
-* @param rhs - Right operand
-* @return Resulting color
-*/
 Color operator+(const Color& lhs, const Color& rhs)
 {
 	Color result;

@@ -35,7 +35,7 @@ public:
 	*						on the screen.
 	* @return The resulting color for the source pixel.
 	*/
-	Color traceRay(const Ray& CameraRay);
+	Color traceRay(const Ray& CameraRay, int depth);
 
 	/**
 	* Renders the scene to an image.
@@ -59,6 +59,14 @@ private:
 	*
 	*/
 	bool isInShadow(Shape* ReferenceShape, const Ray& LightRay) const;
+
+	/**
+	* Computes a mirror reflection from a light direction and a reflection normal
+	* @param LightDirection - Direction of the light
+	* @param SurfaceNormal - Normal to be reflected across
+	* @return A direction vector for the mirror reflection
+	*/
+	Vector3f computeMirriorReflection(const Vector3f& LightDirection, const Vector3f& SurfaceNormal) const;
 
 private:
 	Image mOutputImage; /* Output image for the rendered scene */

@@ -6,8 +6,39 @@
 class Color
 {
 public:
+	/**
+	* Default constructor. Creates a black color.
+	*/
 	Color();
+
+	/**
+	* Constructs a color with given r, g, b values.
+	* @param R - Red component
+	* @param G - Green component
+	* @param B - Blue component
+	*/
 	Color(unsigned int R, unsigned int G, unsigned int B);
+
+	/**
+	* Performs component-wise addition of colors.
+	* @param rhs - Color to be added
+	* @return The resulting color
+	*/
+	Color& operator+=(const Color& rhs);
+
+	/**
+	* Performs component-wise multiplication of colors.
+	* @param rhs - Color to be multiplied
+	* @return The resulting color
+	*/
+	Color& operator*=(const Color& rhs);
+
+	/**
+	* Performs component-wise multiplication of with a scalar.
+	* @param scalar - Unit to multiply by
+	* @return The resulting color
+	*/
+	Color& operator*=(const float& scalar);
 
 	unsigned int r;
 	unsigned int g;
@@ -17,6 +48,7 @@ public:
 	static const Color Green;
 	static const Color Blue;
 	static const Color White;
+	static const Color Black;
 };
 
 /**

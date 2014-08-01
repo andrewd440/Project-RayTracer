@@ -33,15 +33,16 @@ bool Sphere::isIntersectingRay(Ray ray, float& tValueOut, Intersection& intersec
 
 	float smallestTValue = -b - sqrtf(discriminate);
 
+	// If t is negative, the ray started inside the sphere, reject the collision for now
+	// Avoid really small values of t to prevent shadow errors
+	if (smallestTValue < .01f)
+		return false;
+
 	// Only modify t parameter if this intersection's t value is smaller, so we always
 	// have the closest intersection
 	if (smallestTValue < tValueOut)
 	{
 		tValueOut = smallestTValue;
-
-		// If t is negative, the ray started inside sphere
-		if (tValueOut < 0)
-			tValueOut = 0;
 
 		// Construct intersection with t solution
 		constructIntersection(rayOrigin + tValueOut * rayDirection, intersectionOut);
