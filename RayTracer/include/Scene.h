@@ -73,14 +73,24 @@ private:
 	*/
 	Vector3f computeMirriorReflection(const Vector3f& LightDirection, const Vector3f& SurfaceNormal) const;
 
+	/**
+	* Reads in properties and creates a Material from an input stream 
+	* @param Input - A input stream formated in the order of:
+	*					Specular: - - -
+	*					Diffuse: - - -
+	*					Amient:  - - -
+	*					SpecualarExponent: -
+	*					Reflectivity: -
+	* @return A Material with the given properties.
+	*/
+	Material readMaterial(std::istream& Input);
+
 private:
 	Image mOutputImage; /* Output image for the rendered scene */
 	Camera mCamera; /* Camera for the scene */
 	std::vector<ShapePtr> mShapes; /* All shapes in the scene */
 	std::vector<LightPtr> mLights; /* All lights in the scene */
-
-	Vector2i mOutputResolution; /* Output resolution of the image */
 	Color mBackgroundColor; /* Background color for the scene */
-	Color mGlobalAmbient;
+	Color mGlobalAmbient; /* Color used for global ambient lighting */
 };
 

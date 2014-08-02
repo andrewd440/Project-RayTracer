@@ -1,3 +1,6 @@
+BackgroundColor: 0 0 0
+GlobalAmbientColor: 150 150 150
+
 Camera
 	Position: 1 0 0
 	Direction: 0 0 1
@@ -17,7 +20,7 @@ Sphere
 	Specular: 150 150 150
 	Diffuse: 255 0 0	
 	Ambient: 25 25 25
-	SpecualarExponent: 50
+	SpecularExponent: 50
 	Reflectivity: .9
 	
 Sphere
@@ -26,7 +29,7 @@ Sphere
 	Specular: 150 150 150
 	Diffuse: 0 255 0
 	Ambient: 25 25 25
-	SpecualarExponent: 50
+	SpecularExponent: 50
 	Reflectivity: .9
 
 Sphere
@@ -35,7 +38,7 @@ Sphere
 	Specular: 150 150 150
 	Diffuse: 0 0 255
 	Ambient: 25 25 25
-	SpecualarExponent: 50
+	SpecularExponent: 50
 	Reflectivity: .9
 	
 Sphere
@@ -44,7 +47,7 @@ Sphere
 	Specular: 150 150 150
 	Diffuse: 255 255 0
 	Ambient: 25 25 25
-	SpecualarExponent: 50
+	SpecularExponent: 50
 	Reflectivity: .9
 
 Sphere
@@ -53,7 +56,7 @@ Sphere
 	Specular: 150 150 150
 	Diffuse: 0 255 255
 	Ambient: 25 25 25
-	SpecualarExponent: 50
+	SpecularExponent: 50
 	Reflectivity: .9
 
 Sphere
@@ -62,7 +65,7 @@ Sphere
 	Specular: 255 255 255
 	Diffuse: 255 255 255
 	Ambient: 100 100 100 
-	SpecualarExponent: 64
+	SpecularExponent: 64
 	Reflectivity: 1
 
 Sphere
@@ -71,7 +74,7 @@ Sphere
 	Specular: 255 255 255
 	Diffuse: 255 255 255
 	Ambient: 100 100 100 
-	SpecualarExponent: 64
+	SpecularExponent: 64
 	Reflectivity: 1
 
 Sphere
@@ -80,7 +83,7 @@ Sphere
 	Specular: 255 255 255
 	Diffuse: 255 255 255
 	Ambient: 100 100 100 
-	SpecualarExponent: 64
+	SpecularExponent: 64
 	Reflectivity: 1
 
 Sphere
@@ -89,5 +92,5 @@ Sphere
 	Specular: 255 255 255
 	Diffuse: 255 255 255
 	Ambient: 100 100 100 
-	SpecualarExponent: 64
+	SpecularExponent: 64
 	Reflectivity: 1

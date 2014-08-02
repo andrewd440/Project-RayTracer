@@ -14,6 +14,16 @@ namespace
 	const Vector2i OUTPUT_RESOLUTION(1000, 700);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+void throwSceneConfigError(const std::string& objectType)
+{
+	std::cout << "...Error in scene config file for a " << objectType << std::endl;
+	throw std::runtime_error("Scene config error.");
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 Scene::Scene()
 	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
 	, mBackgroundColor(Color::Black)
@@ -34,17 +44,29 @@ void Scene::buildScene(std::istream& in)
 
 	while (in.good())
 	{
-		if (string == "Camera")
+		if (string == "BackgroundColor:")
+			in >> mBackgroundColor.r >> mBackgroundColor.g >> mBackgroundColor.b;
+		else if (string == "GlobalAmbientColor:")
+			in >> mGlobalAmbient.r >> mGlobalAmbient.g >> mGlobalAmbient.b;
+		else if(string == "Camera")
 		{
 			Vector3f position;
 			Vector3f direction;
 			float FOV;
 
 			in >> string;
+			if (string != "Position:")
+				throwSceneConfigError("Camera");
 			in >> position.x >> position.y >> position.z;
+
 			in >> string;
+			if (string != "Direction:")
+				throwSceneConfigError("Camera");
 			in >> direction.x >> direction.y >> direction.z;
+
 			in >> string;
+			if (string != "FOV:")
+				throwSceneConfigError("Camera");
 			in >> FOV;
 
 			mCamera.setPosition(position);
@@ -57,8 +79,13 @@ void Scene::buildScene(std::istream& in)
 			Vector3f direction;
 
 			in >> string;
+			if (string != "Color:")
+				throwSceneConfigError("DirectionalLight");
 			in >> color.r >> color.g >> color.b;
+
 			in >> string;
+			if (string != "Direction:")
+				throwSceneConfigError("DirectionalLight");
 			in >> direction.x >> direction.y >> direction.z;
 
 			mLights.push_back(LightPtr(new DirectionalLight(color, direction)));
@@ -67,25 +94,17 @@ void Scene::buildScene(std::istream& in)
 		{
 			Vector3f center;
 			float radius;
-			Color specular, diffuse, ambient;
-			float specualarExponent, reflectivity;
 
 			in >> string;
+			if (string != "Center:")
+				throwSceneConfigError("Sphere");
 			in >> center.x >> center.y >> center.z;
 			in >> string;
+			if (string != "Radius:")
+				throwSceneConfigError("Sphere");
 			in >> radius;
-			in >> string;
-			in >> specular.r >> specular.g >> specular.b;
-			in >> string;
-			in >> diffuse.r >> diffuse.g >> diffuse.b;
-			in >> string;
-			in >> ambient.r >> ambient.g >> ambient.b;
-			in >> string;
-			in >> specualarExponent;
-			in >> string;
-			in >> reflectivity;
-
-			Material material(specular, diffuse, ambient, specualarExponent, reflectivity);
+			
+			Material material(readMaterial(in));
 
 			mShapes.push_back(ShapePtr(new Sphere(center, radius, material)));
 		}
@@ -203,4 +222,41 @@ Vector3f Scene::computeMirriorReflection(const Vector3f& LightDirection, const V
 	Vector3f reflectionDirection(2 * lightDotNormal * SurfaceNormal - LightDirection);
 
 	return reflectionDirection;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+Material Scene::readMaterial(std::istream& input)
+{
+	Color specular, diffuse, ambient;
+	float specualarExponent, reflectivity;
+
+	std::string materialProperty;
+	
+	input >> materialProperty;
+	if (materialProperty != "Specular:")
+		throwSceneConfigError("Material");
+	input >> specular.r >> specular.g >> specular.b;
+
+	input >> materialProperty;
+	if (materialProperty != "Diffuse:")
+		throwSceneConfigError("Material");
+	input >> diffuse.r >> diffuse.g >> diffuse.b;
+
+	input >> materialProperty;
+	if (materialProperty != "Ambient:")
+		throwSceneConfigError("Material");
+	input >> ambient.r >> ambient.g >> ambient.b;
+
+	input >> materialProperty;
+	if (materialProperty != "SpecularExponent:")
+		throwSceneConfigError("Material");
+	input >> specualarExponent;
+
+	input >> materialProperty;
+	if (materialProperty != "Reflectivity:")
+		throwSceneConfigError("Material");
+	input >> reflectivity;
+
+	return Material(specular, diffuse, ambient, specualarExponent, reflectivity);
 }
