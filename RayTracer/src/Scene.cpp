@@ -164,7 +164,7 @@ void Scene::renderScene()
 		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
 		{
 			Ray ray = mCamera.generateRay(x, y);
-			Color pixelColor = traceRay(ray,4);
+			Color pixelColor = traceRay(ray,20);
 			mOutputImage.setPixel(x, y, pixelColor);
 		}
 	}
