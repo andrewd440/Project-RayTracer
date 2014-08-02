@@ -1,5 +1,5 @@
 BackgroundColor: 0 0 0
-GlobalAmbientColor: 150 150 150
+GlobalAmbientColor: 25 25 75
 
 Camera
 	Position: 1 0 0
@@ -8,89 +8,108 @@ Camera
 	
 DirectionalLight
 	Color: 255 255 255
-	Direction: -1 -1 -3
+	Direction: -1 -1 -2
 	
 DirectionalLight
 	Color: 255 255 255
-	Direction: 1 1 2
+	Direction: 1 -1 4
 
 Sphere
 	Center: 0 0 17
+	Radius: 2.5
+	Specular: 175 125 125
+	Diffuse: 255 0 0	
+	Ambient: 75 75 75
+	SpecularExponent: 64
+	Reflectivity: 1
+
+Sphere
+	Center: 4 2 8
+	Radius: 1.5
+	Specular: 75 75 150
+	Diffuse: 255 0 0	
+	Ambient: 75 75 75
+	SpecularExponent: 32
+	Reflectivity: .6
+	
+
+Sphere
+	Center: -5 5 25
 	Radius: 2
 	Specular: 150 150 150
 	Diffuse: 255 0 0	
-	Ambient: 25 25 25
-	SpecularExponent: 50
-	Reflectivity: .9
-	
-Sphere
-	Center: 0 4 17
-	Radius: 1.5
-	Specular: 150 150 150
-	Diffuse: 0 255 0
-	Ambient: 25 25 25
+	Ambient: 75 75 75
 	SpecularExponent: 50
 	Reflectivity: .9
 
 Sphere
-	Center: 0 -4 17
+	Center: 1 4 13
 	Radius: 1.5
 	Specular: 150 150 150
-	Diffuse: 0 0 255
-	Ambient: 25 25 25
+	Diffuse: 0 255 0
+	Ambient: 75 75 75
 	SpecularExponent: 50
 	Reflectivity: .9
+
+Sphere
+	Center: -1 -4 20
+	Radius: 1.5
+	Specular: 0 0 0
+	Diffuse: 0 0 255
+	Ambient: 75 75 75
+	SpecularExponent: 1
+	Reflectivity: 0
 	
 Sphere
 	Center: 4 0 17
 	Radius: 1.5
-	Specular: 150 150 150
+	Specular: 0 0 0
 	Diffuse: 255 255 0
-	Ambient: 25 25 25
-	SpecularExponent: 50
-	Reflectivity: .9
+	Ambient: 75 75 75
+	SpecularExponent: 1
+	Reflectivity: 0
 
 Sphere
-	Center: -4 0 17
+	Center: -4 -1 10
 	Radius: 1.5
-	Specular: 150 150 150
+	Specular: 100 100 100
 	Diffuse: 0 255 255
-	Ambient: 25 25 25
-	SpecularExponent: 50
-	Reflectivity: .9
+	Ambient: 75 75 75
+	SpecularExponent: 32
+	Reflectivity: .5
 
 Sphere
 	Center: -4 4 15
-	Radius: .5
+	Radius: 1.5
+	Specular: 0 0 0
+	Diffuse: 255 255 255
+	Ambient: 75 75 75
+	SpecularExponent: 1
+	Reflectivity: 0
+
+Sphere
+	Center: 3 6 15
+	Radius: 1.5
 	Specular: 255 255 255
 	Diffuse: 255 255 255
-	Ambient: 100 100 100 
+	Ambient: 75 75 75
 	SpecularExponent: 64
 	Reflectivity: 1
 
 Sphere
-	Center: 4 4 15
+	Center: -3 -3 10
 	Radius: .5
 	Specular: 255 255 255
-	Diffuse: 255 255 255
-	Ambient: 100 100 100 
-	SpecularExponent: 64
-	Reflectivity: 1
-
-Sphere
-	Center: -4 -4 15
-	Radius: .5
-	Specular: 255 255 255
-	Diffuse: 255 255 255
-	Ambient: 100 100 100 
+	Diffuse: 125 125 125
+	Ambient: 75 75 75
 	SpecularExponent: 64
 	Reflectivity: 1
 
 Sphere
 	Center: 4 -4 15
-	Radius: .5
+	Radius: 1.5
 	Specular: 255 255 255
 	Diffuse: 255 255 255
-	Ambient: 100 100 100 
+	Ambient: 75 75 75
 	SpecularExponent: 64
 	Reflectivity: 1
