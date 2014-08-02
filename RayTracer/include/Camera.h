@@ -11,13 +11,6 @@ class Camera
 {
 public:
 	/**
-	* Default Constructor.
-	* Sets up a camera with default values. Forward direction at origin with 
-	* no FOV or output resolution.
-	*/
-	Camera();
-
-	/**
 	* Constructs a scene camera from it's world position, direction, distance from the screen, and 
 	* screen size.
 	* @param CameraPosition - world position of the camera
@@ -46,6 +39,30 @@ public:
 	* @param FOV - The horizontal field of view in degrees
 	*/
 	void setFOV(float FOV);
+
+	/**
+	* Retrieves the direction of the camera.
+	* @returns The direction
+	*/
+	Vector3f getDirection() const;
+
+	/**
+	* Sets the direction of the camera.
+	* @param Direction - The direction
+	*/
+	void setDirection(Vector3f Direction);
+
+	/**
+	* Retrieves the world postion of the camera.
+	* @returns The world postion
+	*/
+	Vector3f getPosition() const;
+
+	/**
+	* Sets the world postion of the camera.
+	* @param Position - The world postion
+	*/
+	void setPosition(Vector3f Position);
 
 private:
 	float mFieldOfView; /* Horizontal FOV of the camera */

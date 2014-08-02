@@ -1,6 +1,6 @@
 #include "Image.h"
-#include <fstream>
 #include <sstream>
+#include <limits>
 
 Image::Image(const std::string& Filename, const Vector2i& OutputResolution)
 	: mPixelColors(OutputResolution.y)

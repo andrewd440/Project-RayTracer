@@ -1,16 +1,5 @@
 #include "Camera.h"
 
-Camera::Camera()
-	: mPosition()
-	, mDirection(0,0,1)
-	, mFieldOfView(0)
-	, mOutputResolution()
-	, mDistanceFromScreenPlane()
-	, mAspectRatio()
-{
-
-}
-
 Camera::Camera(Vector3f CameraPosition, Vector3f CameraDirection, float FOV, Vector2i OutputResolution)
 	: mPosition(CameraPosition)
 	, mDirection(CameraDirection)
@@ -44,4 +33,25 @@ void Camera::setFOV(float FOV)
 {
 	mFieldOfView = FOV;
 	mDistanceFromScreenPlane = (float)(1 / std::tan((FOV / 180 * 3.14159265) / 2));
+}
+
+Vector3f Camera::getDirection() const
+{
+	return mDirection;
+}
+
+void Camera::setDirection(Vector3f direction)
+{
+	mDirection = direction;
+	mDirection.normalize();
+}
+
+Vector3f Camera::getPosition() const
+{
+	return mPosition;
+}
+
+void Camera::setPosition(Vector3f position)
+{
+	mPosition = position;
 }

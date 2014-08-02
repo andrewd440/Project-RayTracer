@@ -5,55 +5,92 @@
 #include "Vector3.inl"
 #include "DirectionalLight.h"
 
+#include <iostream>
 #include <algorithm>
+#include <string>
 
 namespace
 {
 	const Vector2i OUTPUT_RESOLUTION(1000, 700);
-	const Color BACKGROUND_COLOR(Color::Black);
-	const Color GLOBAL_AMBIENT_COLOR(100, 100, 100);
 }
 
 Scene::Scene()
-	: mCamera(Vector3f(0, 0, 0), Vector3f(0,0,1), 65, OUTPUT_RESOLUTION)
-	, mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
+	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
+	, mBackgroundColor(Color::Black)
+	, mGlobalAmbient(100, 100, 100)
+	, mCamera(Vector3f(0, 0, 0), Vector3f(0, 0, 1), 65, OUTPUT_RESOLUTION)
 	, mShapes()
 	, mLights()
 {
-	buildScene();
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void Scene::buildScene()
+void Scene::buildScene(std::istream& in)
 {
-	Material redMaterial(Color(150, 150, 150), Color(255, 0, 0), Color(25, 25, 25), 50, .9f);
-	ShapePtr shape(new Sphere(Vector3f(0, 0, 17), 2.f, redMaterial));
-	mShapes.push_back(std::move(shape));
+	std::string string;
+	in >> string;
 
-	Material greenMaterial(Color(150, 150, 150), Color::Green, Color(25, 25, 25), 50, .9f);
-	ShapePtr shape2(new Sphere(Vector3f(0, 4, 17), 1.5f, greenMaterial));
-	mShapes.push_back(std::move(shape2));
+	while (in.good())
+	{
+		if (string == "Camera")
+		{
+			Vector3f position;
+			Vector3f direction;
+			float FOV;
 
-	Material blueMaterial(Color(150, 150, 150), Color::Blue, Color(25, 25, 25), 50, .9f);
-	ShapePtr shape3(new Sphere(Vector3f(0, -4, 17), 1.5f, blueMaterial));
-	mShapes.push_back(std::move(shape3));
+			in >> string;
+			in >> position.x >> position.y >> position.z;
+			in >> string;
+			in >> direction.x >> direction.y >> direction.z;
+			in >> string;
+			in >> FOV;
 
-	Material redBlueMaterial(Color(150, 150, 150), Color(255, 255, 0), Color(25, 25, 25), 50, .9f);
-	ShapePtr shape4(new Sphere(Vector3f(4, 0, 17), 1.5f, redBlueMaterial));
-	mShapes.push_back(std::move(shape4));
+			mCamera.setPosition(position);
+			mCamera.setDirection(direction);
+			mCamera.setFOV(FOV);
+		}
+		else if (string == "DirectionalLight")
+		{
+			Color color;
+			Vector3f direction;
 
-	Material whiteMaterial(Color(150, 150, 150), Color(255, 255, 255), Color(25, 25, 25), 50, .9f);
-	ShapePtr shape5(new Sphere(Vector3f(-4, 0, 17), 1.5f, whiteMaterial));
-	mShapes.push_back(std::move(shape5));
+			in >> string;
+			in >> color.r >> color.g >> color.b;
+			in >> string;
+			in >> direction.x >> direction.y >> direction.z;
 
-	Vector3f lightDirection(-1, -1, -3);
-	LightPtr light(new DirectionalLight(Color::White, lightDirection));
-	mLights.push_back(std::move(light));
+			mLights.push_back(LightPtr(new DirectionalLight(color, direction)));
+		}
+		else if (string == "Sphere")
+		{
+			Vector3f center;
+			float radius;
+			Color specular, diffuse, ambient;
+			float specualarExponent, reflectivity;
 
-	Vector3f lightDirection2(.5, .5, 1);
-	LightPtr light2(new DirectionalLight(Color::White, lightDirection2));
-	mLights.push_back(std::move(light2));
+			in >> string;
+			in >> center.x >> center.y >> center.z;
+			in >> string;
+			in >> radius;
+			in >> string;
+			in >> specular.r >> specular.g >> specular.b;
+			in >> string;
+			in >> diffuse.r >> diffuse.g >> diffuse.b;
+			in >> string;
+			in >> ambient.r >> ambient.g >> ambient.b;
+			in >> string;
+			in >> specualarExponent;
+			in >> string;
+			in >> reflectivity;
+
+			Material material(specular, diffuse, ambient, specualarExponent, reflectivity);
+
+			mShapes.push_back(ShapePtr(new Sphere(center, radius, material)));
+		}
+		in >> string;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +98,7 @@ void Scene::buildScene()
 Color Scene::traceRay(const Ray& CameraRay, int Depth)
 {
 	if (Depth < 1)
-		return BACKGROUND_COLOR;
+		return mBackgroundColor;
 
 	float maxTValue(9999);
 	Intersection closestIntersection;
@@ -112,10 +149,10 @@ Color Scene::traceRay(const Ray& CameraRay, int Depth)
 		}
 
 		// return computed color totals with ambient contribution
-		return outputColor + (GLOBAL_AMBIENT_COLOR * surfaceMaterial.ambientColor);
+		return outputColor + (mGlobalAmbient * surfaceMaterial.ambientColor);
 	}
 	else
-		return BACKGROUND_COLOR;
+		return mBackgroundColor;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

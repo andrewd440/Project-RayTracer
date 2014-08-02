@@ -3,13 +3,20 @@
 
 #include "Scene.h"
 #include <iostream>
+#include <istream>
 
 using namespace std;
 
 int main()
 {
-	Scene scene;
-	scene.renderScene();
+	std::filebuf fb;
+	if (fb.open("SceneConfig.scn", std::ios::in))
+	{
+		std::istream configStream(&fb);
+		Scene scene;
+		scene.buildScene(configStream);
+		scene.renderScene();
+	}
 
 	return 0;
 }

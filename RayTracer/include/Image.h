@@ -3,6 +3,7 @@
 #include "Vector2.h"
 
 #include <vector>
+#include <fstream>
 
 /* Used to write to a .ppm image file */
 class Image

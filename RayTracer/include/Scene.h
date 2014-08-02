@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <memory>
+#include <istream>
 
 /** 
 * Represents a scene that will be raytraced 
@@ -22,11 +23,15 @@ public:
 	*/
 	Scene();
 
+	// Don't allow copies of a scene
+	Scene& operator=(const Scene& copy) = delete;
+
 	/**
 	* Builds the scene. 
 	* Add the camera, lights, and geometry to the scene.
+	* @param SceneConfig - Scene setup file stream
 	*/
-	void buildScene();
+	void buildScene(std::istream& SceneConfig);
 
 	/**
 	* Traces a ray into the scene and computes the resulting color
@@ -73,5 +78,9 @@ private:
 	Camera mCamera; /* Camera for the scene */
 	std::vector<ShapePtr> mShapes; /* All shapes in the scene */
 	std::vector<LightPtr> mLights; /* All lights in the scene */
+
+	Vector2i mOutputResolution; /* Output resolution of the image */
+	Color mBackgroundColor; /* Background color for the scene */
+	Color mGlobalAmbient;
 };
 

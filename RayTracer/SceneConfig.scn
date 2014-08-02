@@ -1,0 +1,57 @@
+Camera
+	Position: 0 0 0
+	Direction: 0 0 1
+	FOV: 65
+	
+DirectionalLight
+	Color: 255 255 255
+	Direction: -1 -1 -3
+	
+DirectionalLight
+	Color: 255 255 255
+	Direction: 1 1 2
+
+Sphere
+	Center: 0 0 17
+	Radius: 2
+	Specular: 150 150 150
+	Diffuse: 255 0 0	
+	Ambient: 25 25 25
+	SpecualarExponent: 50
+	Reflectivity: .9
+	
+Sphere
+	Center: 0 4 17
+	Radius: 1.5
+	Specular: 150 150 150
+	Diffuse: 0 255 0
+	Ambient: 25 25 25
+	SpecualarExponent: 50
+	Reflectivity: .9
+
+Sphere
+	Center: 0 -4 17
+	Radius: 1.5
+	Specular: 150 150 150
+	Diffuse: 0 0 255
+	Ambient: 25 25 25
+	SpecualarExponent: 50
+	Reflectivity: .9
+	
+Sphere
+	Center: 4 0 17
+	Radius: 1.5
+	Specular: 150 150 150
+	Diffuse: 255 255 0
+	Ambient: 25 25 25
+	SpecualarExponent: 50
+	Reflectivity: .9
+
+Sphere
+	Center: -4 0 17
+	Radius: 1.5
+	Specular: 150 150 150
+	Diffuse: 255 255 255
+	Ambient: 25 25 25
+	SpecualarExponent: 50
+	Reflectivity: .9
