@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cstdint>
 
 /* Class for representing and manipulating RGB values */
 class Color
@@ -17,7 +18,7 @@ public:
 	* @param G - Green component
 	* @param B - Blue component
 	*/
-	Color(unsigned int R, unsigned int G, unsigned int B);
+	Color(uint32_t R, uint32_t G, uint32_t B);
 
 	/**
 	* Performs component-wise addition of colors.
@@ -40,9 +41,9 @@ public:
 	*/
 	Color& operator*=(const float& scalar);
 
-	unsigned int r;
-	unsigned int g;
-	unsigned int b;
+	uint32_t r;
+	uint32_t g;
+	uint32_t b;
 
 	static const Color Red;
 	static const Color Green;

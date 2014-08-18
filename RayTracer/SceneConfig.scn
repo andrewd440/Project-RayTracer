@@ -15,18 +15,9 @@ DirectionalLight
 	Direction: 1 -1 4
 
 Sphere
-	Center: 0 0 17
-	Radius: 2.5
-	Specular: 175 125 125
-	Diffuse: 255 0 0	
-	Ambient: 75 75 75
-	SpecularExponent: 64
-	Reflectivity: 1
-
-Sphere
 	Center: 4 2 8
 	Radius: 1.5
-	Specular: 75 75 150
+	Specular: 75 75 75
 	Diffuse: 255 0 0	
 	Ambient: 75 75 75
 	SpecularExponent: 32
@@ -50,15 +41,6 @@ Sphere
 	Ambient: 75 75 75
 	SpecularExponent: 50
 	Reflectivity: .9
-
-Sphere
-	Center: -1 -4 20
-	Radius: 1.5
-	Specular: 0 0 0
-	Diffuse: 0 0 255
-	Ambient: 75 75 75
-	SpecularExponent: 1
-	Reflectivity: 0
 	
 Sphere
 	Center: 4 0 17

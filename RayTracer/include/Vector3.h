@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 template <typename T>
 /**
 * Class of manipulating a 3D vector.
@@ -70,7 +72,7 @@ public:
 	T z; /* Z coordinate of the vector */
 };
 
-typedef Vector3<int> Vector3i;	/* Vector type for integers */
+typedef Vector3<int32_t> Vector3i;	/* Vector type for integers */
 typedef Vector3<float> Vector3f; /* Vector type for floats */
 
 template <typename T>

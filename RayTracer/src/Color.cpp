@@ -14,7 +14,7 @@ Color::Color()
 
 }
 
-Color::Color(unsigned int R, unsigned int G, unsigned int B)
+Color::Color(uint32_t R, uint32_t G, uint32_t B)
 		: r(R), g(G), b(B) 
 {
 
@@ -23,9 +23,9 @@ Color::Color(unsigned int R, unsigned int G, unsigned int B)
 
 Color& Color::operator+=(const Color& rhs)
 {
-	r = std::min(r + rhs.r, (unsigned)255);
-	g = std::min(g + rhs.g, (unsigned)255);
-	b = std::min(b + rhs.b, (unsigned)255);
+	r = std::min(r + rhs.r, (uint32_t)255);
+	g = std::min(g + rhs.g, (uint32_t)255);
+	b = std::min(b + rhs.b, (uint32_t)255);
 
 	return *this;
 }
@@ -33,18 +33,18 @@ Color& Color::operator+=(const Color& rhs)
 
 Color& Color::operator*=(const Color& rhs)
 {
-	r = std::min(r + rhs.r, (unsigned)255);
-	g = std::min(g + rhs.g, (unsigned)255);
-	b = std::min(b + rhs.b, (unsigned)255);
+	r = std::min(r + rhs.r, (uint32_t)255);
+	g = std::min(g + rhs.g, (uint32_t)255);
+	b = std::min(b + rhs.b, (uint32_t)255);
 
 	return *this;
 }
 
 Color& Color::operator*=(const float& scalar)
 {
-	r = std::min(unsigned(r * scalar), (unsigned)255);
-	g = std::min(unsigned(g * scalar), (unsigned)255);
-	b = std::min(unsigned(b * scalar), (unsigned)255);
+	r = std::min(uint32_t(r * scalar), (uint32_t)255);
+	g = std::min(uint32_t(g * scalar), (uint32_t)255);
+	b = std::min(uint32_t(b * scalar), (uint32_t)255);
 
 	return *this;
 }
@@ -63,17 +63,17 @@ Color operator*(const Color& lhs, const Color& rhs)
 Color operator*(const Color& lhs, const float& scalar)
 {
 	Color result;
-	result.r = std::min(unsigned(lhs.r * scalar), (unsigned)255);
-	result.g = std::min(unsigned(lhs.g * scalar), (unsigned)255);
-	result.b = std::min(unsigned(lhs.b * scalar), (unsigned)255);
+	result.r = std::min(uint32_t(lhs.r * scalar), (uint32_t)255);
+	result.g = std::min(uint32_t(lhs.g * scalar), (uint32_t)255);
+	result.b = std::min(uint32_t(lhs.b * scalar), (uint32_t)255);
 	return result;
 }
 
 Color operator+(const Color& lhs, const Color& rhs)
 {
 	Color result;
-	result.r = std::min(lhs.r + rhs.r, (unsigned)255);
-	result.g = std::min(lhs.g + rhs.g, (unsigned)255);
-	result.b = std::min(lhs.b + rhs.b, (unsigned)255);
+	result.r = std::min(lhs.r + rhs.r, (uint32_t)255);
+	result.g = std::min(lhs.g + rhs.g, (uint32_t)255);
+	result.b = std::min(lhs.b + rhs.b, (uint32_t)255);
 	return result;
 }

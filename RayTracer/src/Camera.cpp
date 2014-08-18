@@ -11,7 +11,7 @@ Camera::Camera(Vector3f CameraPosition, Vector3f CameraDirection, float FOV, Vec
 
 }
 
-Ray Camera::generateRay(int X, int Y) const
+Ray Camera::generateRay(int32_t X, int32_t Y) const
 {
 	// Calculate coordinates of pixel on screen plane (u, v, d)
 	const float u = -1 + (2 * (X + 0.5f)) / mOutputResolution.x;

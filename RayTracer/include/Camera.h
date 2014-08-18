@@ -3,6 +3,8 @@
 #include "Vector2.h"
 #include "Ray.h"
 
+#include <cstdint>
+
 /**
 * Represents a camera in the scene.
 * Used to generate rays from a viewpoint through pixels on the screen.
@@ -26,7 +28,7 @@ public:
 	* @param Y - y coordinate of the pixel
 	* @return The generated ray
 	*/
-	Ray generateRay(int X, int Y) const;
+	Ray generateRay(int32_t X, int32_t Y) const;
 
 	/**
 	* Retrieves the horizontal FOV of the camera.

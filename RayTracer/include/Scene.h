@@ -15,8 +15,8 @@
 class Scene
 {
 public:
-	typedef std::unique_ptr<Shape> ShapePtr;
-	typedef std::unique_ptr<Light> LightPtr;
+	using ShapePtr =  std::unique_ptr<Shape>;
+	using LightPtr = std::unique_ptr<Light>;
 
 	/**
 	* Default constructor.
@@ -40,7 +40,7 @@ public:
 	*						on the screen.
 	* @return The resulting color for the source pixel.
 	*/
-	Color traceRay(const Ray& CameraRay, int depth);
+	Color traceRay(const Ray& CameraRay, int32_t depth);
 
 	/**
 	* Renders the scene to an image.

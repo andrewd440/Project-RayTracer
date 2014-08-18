@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <fstream>
+#include <cstdint>
 
 /* Used to write to a .ppm image file */
 class Image
@@ -22,7 +23,7 @@ public:
 	* @param Y - y coordinate of the pixel
 	* @param Color - The color of the pixel
 	*/
-	void setPixel(const int& X, const int& Y, const Color& Color);
+	void setPixel(const int32_t& X, const int32_t& Y, const Color& Color);
 
 	/**
 	* Writes a .ppm image file with the rgb values currently stored for

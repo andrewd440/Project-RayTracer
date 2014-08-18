@@ -12,7 +12,7 @@ Image::Image(const std::string& Filename, const Vector2i& OutputResolution)
 		row.resize(OutputResolution.x);
 }
 
-void Image::setPixel(const int& X, const int& Y, const Color& Color)
+void Image::setPixel(const int32_t& X, const int32_t& Y, const Color& Color)
 {
 	mPixelColors[Y][X] = Color;
 }

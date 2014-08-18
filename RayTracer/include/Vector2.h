@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 template <typename T>
 /**
 * Class of manipulating a 2D vector.
@@ -26,5 +28,5 @@ public:
 	T y; /* Y coordinate of the vector */
 };
 
-typedef Vector2<int> Vector2i;	/* Vector type for integers */
+typedef Vector2<int32_t> Vector2i;	/* Vector type for integers */
 typedef Vector2<float> Vector2f; /* Vector type for floats */

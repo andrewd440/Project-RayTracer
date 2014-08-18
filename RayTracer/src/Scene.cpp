@@ -114,7 +114,7 @@ void Scene::buildScene(std::istream& in)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Color Scene::traceRay(const Ray& CameraRay, int Depth)
+Color Scene::traceRay(const Ray& CameraRay, int32_t Depth)
 {
 	if (Depth < 1)
 		return mBackgroundColor;
