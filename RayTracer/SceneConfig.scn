@@ -1,5 +1,5 @@
 BackgroundColor: 0 0 0
-GlobalAmbientColor: 25 25 75
+GlobalAmbientColor: 100 100 100
 
 Camera
 	Position: 1 0 0

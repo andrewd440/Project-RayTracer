@@ -72,8 +72,8 @@ public:
 	T z; /* Z coordinate of the vector */
 };
 
-typedef Vector3<int32_t> Vector3i;	/* Vector type for integers */
-typedef Vector3<float> Vector3f; /* Vector type for floats */
+using Vector3i = Vector3<int32_t>;	/* Vector type for integers */
+using Vector3f = Vector3<float>; /* Vector type for floats */
 
 template <typename T>
 /**
