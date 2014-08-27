@@ -13,12 +13,8 @@ Triangle::Triangle(Vector3f V1, Vector3f V2, Vector3f V3, const Material& Lighti
 	mNormal.normalize();
 }
 
-bool Triangle::isIntersectingRay(Ray Ray, float& tValueOut, Intersection& IntersectionOut)
+bool Triangle::isIntersectingRay(Ray Ray, float* tValueOut, Intersection* IntersectionOut)
 {
-	return false;
-}
 
-bool Triangle::isIntersectingRay(Ray Ray)
-{
 	return false;
 }

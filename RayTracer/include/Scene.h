@@ -1,6 +1,6 @@
 #pragma once
 #include "Light.h"
-#include "Sphere.h"
+#include "Shape.h"
 #include "Camera.h"
 #include "Image.h"
 
@@ -67,11 +67,11 @@ private:
 
 	/**
 	* Computes a mirror reflection from a light direction and a reflection normal
-	* @param LightDirection - Direction of the light
+	* @param ViewerDirection - Direction of the viewer
 	* @param SurfaceNormal - Normal to be reflected across
 	* @return A direction vector for the mirror reflection
 	*/
-	Vector3f computeMirriorReflection(const Vector3f& LightDirection, const Vector3f& SurfaceNormal) const;
+	Vector3f computeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const;
 
 	/**
 	* Reads in properties and creates a Material from an input stream 

@@ -29,9 +29,9 @@ void Image::writeImage()
 
 	for (const auto& row : mPixelColors)
 		for (const auto& pixel : row)
-			fileStream << static_cast<unsigned char>(pixel.r) 
-				<< static_cast<unsigned char>(pixel.g) 
-				<< static_cast<unsigned char>(pixel.b);
+			fileStream << static_cast<unsigned char>(pixel.r * 255) 
+				<< static_cast<unsigned char>(pixel.g * 255)
+				<< static_cast<unsigned char>(pixel.b * 255);
 
 	fileStream.flush();
 	fileStream.close();

@@ -18,7 +18,7 @@ public:
 	* @param G - Green component
 	* @param B - Blue component
 	*/
-	Color(uint32_t R, uint32_t G, uint32_t B);
+	Color(float R, float G, float B);
 
 	/**
 	* Performs component-wise addition of colors.
@@ -41,9 +41,9 @@ public:
 	*/
 	Color& operator*=(const float& scalar);
 
-	uint32_t r;
-	uint32_t g;
-	uint32_t b;
+	float r;
+	float g;
+	float b;
 
 	static const Color Red;
 	static const Color Green;
@@ -58,7 +58,7 @@ public:
 * @param rhs - Right operand
 * @return Resulting color
 */
-Color operator*(const Color& lhs, const Color& rhs);
+Color operator*(Color lhs, const Color& rhs);
 
 /**
 * Performs scalar multiplication of a color
@@ -66,7 +66,7 @@ Color operator*(const Color& lhs, const Color& rhs);
 * @param scalar - Right operand
 * @return Resulting color
 */
-Color operator*(const Color& lhs, const float& scalar);
+Color operator*(Color lhs, const float& scalar);
 
 /**
 * Performs component-wise addition of colors
@@ -74,4 +74,4 @@ Color operator*(const Color& lhs, const float& scalar);
 * @param rhs - Right operand
 * @return Resulting color
 */
-Color operator+(const Color& lhs, const Color& rhs);
+Color operator+(Color lhs, const Color& rhs);

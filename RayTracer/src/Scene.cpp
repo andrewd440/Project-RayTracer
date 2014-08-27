@@ -4,14 +4,17 @@
 #include "LocalGeometry.h"
 #include "Vector3.inl"
 #include "DirectionalLight.h"
+#include "Plane.h"
+#include "Sphere.h"
 
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <limits>
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(1500, 900);
+	const Vector2i OUTPUT_RESOLUTION(1000, 600);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,8 +26,7 @@ void throwSceneConfigError(const std::string& objectType)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-
-Scene::Scene()
+ Scene::Scene()
 	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
 	, mBackgroundColor(Color::Black)
 	, mGlobalAmbient(100, 100, 100)
@@ -90,6 +92,24 @@ void Scene::buildScene(std::istream& in)
 
 			mLights.push_back(LightPtr(new DirectionalLight(color, direction)));
 		}
+		else if (string == "Plane")
+		{
+			Vector3f direction;
+			Vector3f point;
+
+			in >> string;
+			if (string != "Direction:")
+				throwSceneConfigError("Plane");
+			in >> direction.x >> direction.y >> direction.z;
+			in >> string;
+			if (string != "Point:")
+				throwSceneConfigError("Plane");
+			in >> point.x >> point.y >> point.z;
+
+			Material material(readMaterial(in));
+
+			mShapes.push_back(ShapePtr(new Plane(material, direction, point)));
+		}
 		else if (string == "Sphere")
 		{
 			Vector3f center;
@@ -119,11 +139,11 @@ Color Scene::traceRay(const Ray& CameraRay, int32_t Depth)
 	if (Depth < 1)
 		return mBackgroundColor;
 
-	float maxTValue(9999);
+	float maxTValue(std::numeric_limits<float>::max());
 	Intersection closestIntersection;
 
 	for (const auto& shape : mShapes)
-		shape->isIntersectingRay(CameraRay, maxTValue, closestIntersection);
+		shape->isIntersectingRay(CameraRay, &maxTValue, &closestIntersection);
 	
 	// If an object was intersected
 	if (closestIntersection.object)
@@ -156,14 +176,14 @@ Color Scene::traceRay(const Ray& CameraRay, int32_t Depth)
 			float diffuseFactor = std::max(dotProduct(surfaceNormal, lightDirection), 0.f);
 
 			// Combine material color and light color for diffuse and specular
-			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor);
-			Color diffuseColor(light->getLightColor()  * surfaceMaterial.diffuseColor);
+			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor * specularFactor);
+			Color diffuseColor(light->getLightColor()  * surfaceMaterial.diffuseColor * diffuseFactor);
 
 			// Add diffuse and specular contributions to total
-			outputColor += ((diffuseColor * diffuseFactor) + (specularColor * specularFactor));
+			outputColor += specularColor + diffuseColor;
 
 			// Add mirror reflection contributions
-			Ray reflectionRay(surfacePoint, computeMirriorReflection(lightDirection, surfaceNormal));
+			Ray reflectionRay(surfacePoint, computeMirriorReflection(-CameraRay.direction, surfaceNormal));
 			outputColor += traceRay(reflectionRay, Depth - 1) * outputColor * surfaceMaterial.reflectivity;
 		}
 
@@ -216,11 +236,11 @@ bool Scene::isInShadow(Shape* ReferenceShape, const Ray& LightRay) const
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Vector3f Scene::computeMirriorReflection(const Vector3f& LightDirection, const Vector3f& SurfaceNormal) const
+Vector3f Scene::computeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const
 {
-	float lightDotNormal = dotProduct(SurfaceNormal, LightDirection);
-	Vector3f reflectionDirection(2 * lightDotNormal * SurfaceNormal - LightDirection);
-
+	float viewerDotNormal = dotProduct(SurfaceNormal, ViewerDirection);
+	Vector3f reflectionDirection(2 * (viewerDotNormal) * SurfaceNormal - ViewerDirection);
+	reflectionDirection.normalize();
 	return reflectionDirection;
 }
 
