@@ -18,7 +18,7 @@ int main()
 		scene.renderScene();
 	}
 
-
+	fb.close();
 
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include "DirectionalLight.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "Triangle.h"
 
 #include <iostream>
 #include <algorithm>
@@ -128,22 +129,41 @@ void Scene::buildScene(std::istream& in)
 
 			mShapes.push_back(ShapePtr(new Sphere(center, radius, material)));
 		}
+		else if (string == "Model")
+		{
+			std::string filename;
+			Vector3f translation;
+
+			in >> string;
+			if (string != "File:")
+				throwSceneConfigError("Model");
+			in >> filename;
+
+			in >> string;
+			if (string != "Translation:")
+				throwSceneConfigError("Model");
+			in >> translation.x >> translation.y >> translation.z;
+
+			Material material(readMaterial(in));
+
+			readModel(filename, translation, material);
+		}
 		in >> string;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Color Scene::traceRay(const Ray& CameraRay, int32_t Depth)
+Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 {
-	if (Depth < 1)
+	if (depth < 1)
 		return mBackgroundColor;
 
 	float maxTValue(std::numeric_limits<float>::max());
 	Intersection closestIntersection;
 
 	for (const auto& shape : mShapes)
-		shape->isIntersectingRay(CameraRay, &maxTValue, &closestIntersection);
+		shape->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 	
 	// If an object was intersected
 	if (closestIntersection.object)
@@ -160,7 +180,7 @@ Color Scene::traceRay(const Ray& CameraRay, int32_t Depth)
 			// Get direction of light and compute h reflection
 			const Ray& rayToLight(light->getRayToLight(surfacePoint));
 			const Vector3f& lightDirection(rayToLight.direction);
-			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -CameraRay.direction);
+			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
 			if (isInShadow(closestIntersection.object, rayToLight))
@@ -183,8 +203,8 @@ Color Scene::traceRay(const Ray& CameraRay, int32_t Depth)
 			outputColor += specularColor + diffuseColor;
 
 			// Add mirror reflection contributions
-			Ray reflectionRay(surfacePoint, computeMirriorReflection(-CameraRay.direction, surfaceNormal));
-			outputColor += traceRay(reflectionRay, Depth - 1) * outputColor * surfaceMaterial.reflectivity;
+			Ray reflectionRay(surfacePoint, computeMirriorReflection(-cameraRay.direction, surfaceNormal));
+			outputColor += traceRay(reflectionRay, depth - 1) * outputColor * surfaceMaterial.reflectivity;
 		}
 
 		// return computed color totals with ambient contribution
@@ -213,21 +233,21 @@ void Scene::renderScene()
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection)
+Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& lightDirection, const Vector3f& viewerDirection)
 {
-	Vector3f reflection(LightDirection + ViewerDirection);
+	Vector3f reflection(lightDirection + viewerDirection);
 	reflection.normalize();
 	return reflection;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Scene::isInShadow(Shape* ReferenceShape, const Ray& LightRay) const
+bool Scene::isInShadow(Shape* referenceShape, const Ray& lightRay) const
 {
 	for (const auto& shape : mShapes)
 	{
 		// If the object is not the reference one and intersects the light
-		if (shape.get() != ReferenceShape && shape->isIntersectingRay(LightRay))
+		if (shape.get() != referenceShape && shape->isIntersectingRay(lightRay))
 			return true;
 	}
 
@@ -236,10 +256,10 @@ bool Scene::isInShadow(Shape* ReferenceShape, const Ray& LightRay) const
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Vector3f Scene::computeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const
+Vector3f Scene::computeMirriorReflection(const Vector3f& viewerDirection, const Vector3f& surfaceNormal) const
 {
-	float viewerDotNormal = dotProduct(SurfaceNormal, ViewerDirection);
-	Vector3f reflectionDirection(2 * (viewerDotNormal) * SurfaceNormal - ViewerDirection);
+	float viewerDotNormal = dotProduct(surfaceNormal, viewerDirection);
+	Vector3f reflectionDirection(2 * (viewerDotNormal) * surfaceNormal - viewerDirection);
 	reflectionDirection.normalize();
 	return reflectionDirection;
 }
@@ -279,4 +299,51 @@ Material Scene::readMaterial(std::istream& input)
 	input >> reflectivity;
 
 	return Material(specular, diffuse, ambient, specualarExponent, reflectivity);
+}
+
+void Scene::readModel(std::string filename, Vector3f translation, Material material)
+{
+	std::filebuf modelBuffer;
+	if (modelBuffer.open(filename, std::ios::in))
+	{
+		std::istream in(&modelBuffer);
+
+		std::string string;
+		std::size_t vertexIndex;
+		Vector3f vertex;
+		std::vector<Vector3f> vertices;
+
+		// Vertex indices for each face
+		std::size_t faceV0, faceV1, faceV2;
+
+		in >> string;
+
+		while (in.good())
+		{
+			if (string == "Vertex")
+			{
+				in >> vertexIndex;
+				in >> vertex.x >> vertex.y >> vertex.z;
+				vertex *= 2.f;
+				vertex += translation;
+				vertices.push_back(vertex);
+			}
+			else if (string == "Face")
+			{
+				// pull out face number
+				in >> string;
+
+				// Get vertices' indices
+				in >> faceV0;
+				in >> faceV1;
+				in >> faceV2;
+
+				mShapes.push_back(ShapePtr(new Triangle(vertices[faceV0-1], vertices[faceV1-1], vertices[faceV2-1], material)));
+			}
+
+			in >> string;
+		}
+	}
+
+	modelBuffer.close();
 }

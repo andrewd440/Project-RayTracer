@@ -85,6 +85,15 @@ private:
 	*/
 	Material readMaterial(std::istream& Input);
 
+	/**
+	* Reads in a model from a file of vertices and faces. Applies a translation
+	* if given;
+	* @param Filename - File path for the model.
+	* @param Translation - 3D translation values.
+	* @param MaterialProperties - Model lighting material.
+	*/
+	void readModel(std::string Filename, Vector3f Translation, Material MaterialProperties);
+
 private:
 	Image mOutputImage; /* Output image for the rendered scene */
 	Camera mCamera; /* Camera for the scene */

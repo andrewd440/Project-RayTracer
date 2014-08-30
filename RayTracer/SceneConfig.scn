@@ -11,8 +11,8 @@ DirectionalLight
 	Direction: -1 -1 1
 
 DirectionalLight
-	Color: .25 .25 .25
-	Direction: 1 -.5 .5
+	Color: .5 .5 .5
+	Direction: 1 -1 .5
 
 Plane
 	Direction: 0 1 0
@@ -49,3 +49,12 @@ Sphere
 	Ambient: .1 .1 .1
 	SpecularExponent: 0
 	Reflectivity: 0
+
+Model
+	File: Models/Bunny500.m
+	Translation: 0 0 2
+	Specular: .1 .1 .1
+	Diffuse: 1 1 0
+	Ambient: .1 .1 .1
+	SpecularExponent: 24
+	Reflectivity: .2

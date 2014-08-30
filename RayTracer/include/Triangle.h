@@ -5,7 +5,7 @@
 class Triangle : public Shape
 {
 public:
-	Triangle(Vector3f V1, Vector3f V2, Vector3f V3, const Material& LightingMaterial);
+	Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& LightingMaterial);
 	
 	/**
 	* Checks if a ray intersects the triangle.
@@ -19,10 +19,19 @@ public:
 	*/
 	bool isIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
 
+
 private:
-	Vector3f mVertex1;
-	Vector3f mVertex2;
-	Vector3f mVertex3;
+	/**
+	* Constructs intersection properties for a point on this triangle
+	* @param IntersectionPoint - the point of the intersection
+	* @param IntersectionOut - intersection properties will be output through
+	*/
+	void constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
+
+private:
+	Vector3f mV0;
+	Vector3f mV1;
+	Vector3f mV2;
 	Vector3f mNormal;
 };
 
