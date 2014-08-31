@@ -1,6 +1,7 @@
 #pragma once
 #include "Ray.h"
 #include "Material.h"
+#include "AABB.h"
 
 struct Intersection;
 
@@ -38,7 +39,26 @@ public:
 	*/
 	Material getMaterial() const;
 
+	/**
+	* Retrieves the bounding box for the shape.
+	*/
+	AABB getBoundingBox() const;
+
+protected:
+	/**
+	* Sets the bounding box for the shape.
+	* @param boundingBox - AABB for the shape
+	*/
+	void setBoundingBox(AABB boundingBox);
+
+private:
+	/**
+	* Each derived class needs to construct their bounding box.
+	*/
+	virtual void constructAABB() = 0;
+
 private:
 	Material mMaterial; /* Lighting material properties for the shape */
+	AABB mBoundingBox;
 };
 

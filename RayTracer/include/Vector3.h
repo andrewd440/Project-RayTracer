@@ -53,6 +53,16 @@ public:
 	Vector3<T>& operator/=(const U& scalar);
 
 	/**
+	* Overload of subscript operators for X = 0, Y = 1, Z = 2.
+	*/
+	T& operator[](std::size_t idx);
+
+	/**
+	* Overload of subscript operators for X = 0, Y = 1, Z = 2.
+	*/
+	const T& operator[](std::size_t idx) const;
+
+	/**
 	* Normalizes the vector.
 	*/
 	void normalize();

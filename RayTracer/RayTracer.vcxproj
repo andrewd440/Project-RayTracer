@@ -99,6 +99,7 @@
     <ClCompile Include="src\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\AABB.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\DirectionalLight.h" />

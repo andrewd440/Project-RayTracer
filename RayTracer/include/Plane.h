@@ -33,6 +33,8 @@ private:
 	*/
 	void constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
 
+	void constructAABB();
+
 private:
 	Vector3f mNormal;
 	float mDistanceFromOrigin;

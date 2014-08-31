@@ -10,6 +10,7 @@ Plane::Plane(const Material& LightingMaterial, Vector3f PlaneNormal, Vector3f Po
 {
 	mNormal.normalize();
 	mDistanceFromOrigin = dotProduct(-PlaneNormal, PointOnPlane);
+	constructAABB();
 }
 
 bool Plane::isIntersectingRay(Ray Ray, float* tValueOut, Intersection* IntersectionOut)
@@ -37,4 +38,20 @@ void Plane::constructIntersection(Vector3f IntersectionPoint, Intersection& Inte
 	IntersectionOut.object = this;
 	IntersectionOut.localGeometry.surfaceNormal = mNormal;
 	IntersectionOut.localGeometry.point = IntersectionPoint;
+}
+
+void Plane::constructAABB()
+{
+	AABB boundingBox;
+
+		boundingBox.max.x = std::numeric_limits<float>::max();
+		boundingBox.min.x = -std::numeric_limits<float>::max();
+
+		boundingBox.max.y = std::numeric_limits<float>::max();
+		boundingBox.min.y = -std::numeric_limits<float>::max();
+
+		boundingBox.max.z = std::numeric_limits<float>::max();
+		boundingBox.min.z = -std::numeric_limits<float>::max();
+
+	setBoundingBox(boundingBox);
 }

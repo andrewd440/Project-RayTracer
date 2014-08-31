@@ -8,7 +8,7 @@ Sphere::Sphere(Vector3f center, float radius, Material LightingMaterial)
 	, mCenter(center)
 	, mRadius(radius)
 {
-
+	constructAABB();
 }
 
 bool Sphere::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
@@ -83,4 +83,13 @@ void Sphere::constructIntersection(Vector3f IntersectionPoint, Intersection& Int
 	geometry.point = IntersectionPoint;
 	
 	IntersectionOut.object = this;
+}
+
+void Sphere::constructAABB()
+{
+	AABB boundingBox;
+	boundingBox.max = Vector3f(mCenter.x + mRadius, mCenter.y + mRadius, mCenter.z + mRadius);
+	boundingBox.min = Vector3f(mCenter.x - mRadius, mCenter.y - mRadius, mCenter.z - mRadius);
+
+	setBoundingBox(boundingBox);
 }

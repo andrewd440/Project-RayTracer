@@ -15,7 +15,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(1000, 600);
+	const Vector2i OUTPUT_RESOLUTION(1920, 1080);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,13 +27,14 @@ void throwSceneConfigError(const std::string& objectType)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
- Scene::Scene()
+Scene::Scene()
 	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
 	, mBackgroundColor(Color::Black)
 	, mGlobalAmbient(100, 100, 100)
-	, mCamera(Vector3f(0, 0, 0), Vector3f(0, 0, 1), 65, OUTPUT_RESOLUTION)
+	, mCamera(Vector3f(0, 0, 0), Vector3f(0, 0, -1), 65, OUTPUT_RESOLUTION)
 	, mShapes()
 	, mLights()
+	, mKDTree()
 {
 
 }
@@ -54,7 +55,6 @@ void Scene::buildScene(std::istream& in)
 		else if(string == "Camera")
 		{
 			Vector3f position;
-			Vector3f direction;
 			float FOV;
 
 			in >> string;
@@ -63,17 +63,11 @@ void Scene::buildScene(std::istream& in)
 			in >> position.x >> position.y >> position.z;
 
 			in >> string;
-			if (string != "Direction:")
-				throwSceneConfigError("Camera");
-			in >> direction.x >> direction.y >> direction.z;
-
-			in >> string;
 			if (string != "FOV:")
 				throwSceneConfigError("Camera");
 			in >> FOV;
 
 			mCamera.setPosition(position);
-			mCamera.setDirection(direction);
 			mCamera.setFOV(FOV);
 		}
 		else if (string == "DirectionalLight")
@@ -150,6 +144,8 @@ void Scene::buildScene(std::istream& in)
 		}
 		in >> string;
 	}
+
+	mKDTree.buildTree(mShapes, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,8 +158,13 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 	float maxTValue(std::numeric_limits<float>::max());
 	Intersection closestIntersection;
 
+	/*
+	// For performs difference tests
 	for (const auto& shape : mShapes)
 		shape->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
+		*/
+
+	mKDTree.isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 	
 	// If an object was intersected
 	if (closestIntersection.object)
@@ -183,7 +184,7 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
-			if (isInShadow(closestIntersection.object, rayToLight))
+			if (isInShadow(rayToLight))
 				continue;
 
 			// Get dot product of surface normal and h for specular lighting
@@ -242,16 +243,21 @@ Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& lightDirection, c
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Scene::isInShadow(Shape* referenceShape, const Ray& lightRay) const
+bool Scene::isInShadow(const Ray& lightRay)
 {
+	return mKDTree.isIntersectingRay(lightRay);
+
+	/*
+	// For performance tests
 	for (const auto& shape : mShapes)
 	{
 		// If the object is not the reference one and intersects the light
-		if (shape.get() != referenceShape && shape->isIntersectingRay(lightRay))
+		if (shape->isIntersectingRay(lightRay))
 			return true;
 	}
 
 	return false;
+	*/
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,7 +330,7 @@ void Scene::readModel(std::string filename, Vector3f translation, Material mater
 			{
 				in >> vertexIndex;
 				in >> vertex.x >> vertex.y >> vertex.z;
-				vertex *= 2.f;
+				vertex *= 2;
 				vertex += translation;
 				vertices.push_back(vertex);
 			}

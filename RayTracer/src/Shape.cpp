@@ -15,3 +15,13 @@ Material Shape::getMaterial() const
 { 
 	return mMaterial; 
 }
+
+AABB Shape::getBoundingBox() const
+{
+	return mBoundingBox;
+}
+
+void Shape::setBoundingBox(AABB boundingBox)
+{
+	mBoundingBox = boundingBox;
+}

@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 
 template <typename T>
 inline Vector3<T>::Vector3()
@@ -59,6 +60,42 @@ inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& rhs)
 	z -= rhs.z;
 
 	return *this;
+}
+
+////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+T& Vector3<T>::operator[](std::size_t idx)
+{
+	switch (idx)
+	{
+		case 0 :
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		default:
+			throw std::out_of_range("Vector3 subscript out of range.");
+	};
+}
+
+////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+const T& Vector3<T>::operator[](std::size_t idx) const
+{
+	switch (idx)
+	{
+		case 0:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		default:
+			throw std::out_of_range("Vector3 subscript out of range.");
+	};
 }
 
 ////////////////////////////////////////////////////////////////////////

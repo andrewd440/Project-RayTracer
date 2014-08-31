@@ -60,6 +60,8 @@ private:
 	*/
 	void constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
 
+	void constructAABB();
+
 private:
 	Vector3f mCenter; /* Coordinates of the center of the sphere */
 	float mRadius; /* Length of the radius */

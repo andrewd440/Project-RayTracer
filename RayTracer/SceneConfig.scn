@@ -3,58 +3,57 @@ GlobalAmbientColor: .2 .2 .2
 
 Camera
 	Position: 0 0 0
-	Direction: 0 0 1
-	FOV: 65
+	FOV: 75
 
 DirectionalLight
 	Color: 1 1 1
-	Direction: -1 -1 1
+	Direction: -1 -1 -1
 
 DirectionalLight
 	Color: .5 .5 .5
-	Direction: 1 -1 .5
+	Direction: 0 -1 -.5
 
 Plane
 	Direction: 0 1 0
-	Point: 0 -5 0
-	Specular: .2 .2 .2
-	Diffuse: 1 1 1	
-	Ambient: .2 .2 .2
-	SpecularExponent: 8
-	Reflectivity: .2
+	Point: 0 -4 0
+	Specular: .5 .5 .5
+	Diffuse: .5 .5 .5
+	Ambient: .1 .1 .1
+	SpecularExponent: 12
+	Reflectivity: .3
 
 Sphere
-	Center: -5 -3 20
+	Center: 5 -2 -15
 	Radius: 2
-	Specular: .8 .8 .8
-	Diffuse: 1 0 0	
+	Specular: .9 .7 .7
+	Diffuse: 1 .5 .5
 	Ambient: .1 .1 .1
 	SpecularExponent: 32
 	Reflectivity: .7
 
 Sphere
-	Center: 0 -3 20
+	Center: 0 -2 -15
 	Radius: 2
-	Specular: 1 1 1
-	Diffuse: 1 1 1
+	Specular: 0 .7 .7
+	Diffuse: 0 .5 .5
 	Ambient: .1 .1 .1
-	SpecularExponent: 32
-	Reflectivity: .7
-	
+	SpecularExponent: 24
+	Reflectivity: .3
+
 Sphere
-	Center: 5 -3 20
+	Center: -5 -2 -15
 	Radius: 2
-	Specular: 0 0 0
-	Diffuse: 0 1 0
+	Specular: .9 .5 .5
+	Diffuse: .2 .8 .25
 	Ambient: .1 .1 .1
-	SpecularExponent: 0
-	Reflectivity: 0
+	SpecularExponent: 64
+	Reflectivity: .9
 
 Model
 	File: Models/Bunny500.m
-	Translation: 0 0 2
-	Specular: .1 .1 .1
-	Diffuse: 1 1 0
+	Translation: 0 0 -2
+	Specular: .4 .7 .7
+	Diffuse: .2 .5 .7
 	Ambient: .1 .1 .1
-	SpecularExponent: 24
-	Reflectivity: .2
+	SpecularExponent: 32
+	Reflectivity: .5

@@ -3,6 +3,7 @@
 #include "Shape.h"
 #include "Camera.h"
 #include "Image.h"
+#include "KDTree.h"
 
 #include <vector>
 #include <memory>
@@ -58,12 +59,11 @@ private:
 
 	/**
 	* Checks if a light ray is blocked by another object.
-	* @param ReferenceShape - The shape to check for shadows
 	* @param LightRay - A ray from the surface point on the shape to the light source
 	* @return True if the point is in a shadow
 	*
 	*/
-	bool isInShadow(Shape* ReferenceShape, const Ray& LightRay) const;
+	bool isInShadow(const Ray& LightRay);
 
 	/**
 	* Computes a mirror reflection from a light direction and a reflection normal
@@ -101,5 +101,5 @@ private:
 	std::vector<LightPtr> mLights; /* All lights in the scene */
 	Color mBackgroundColor; /* Background color for the scene */
 	Color mGlobalAmbient; /* Color used for global ambient lighting */
+	KDTree mKDTree;
 };
-

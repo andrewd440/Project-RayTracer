@@ -18,7 +18,7 @@ Ray Camera::generateRay(int32_t X, int32_t Y) const
 	const float v = mAspectRatio - (2 * mAspectRatio * (Y + 0.5f)) / mOutputResolution.y;
 
 	// Compute direction of ray
-	Vector3f rayDirection(u, v, mDistanceFromScreenPlane);
+	Vector3f rayDirection(u, v, -mDistanceFromScreenPlane);
 	rayDirection.normalize();
 
 	return Ray(mPosition, rayDirection);

@@ -116,6 +116,9 @@
     <ClInclude Include="include\KDTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\AABB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\Vector3.inl">
