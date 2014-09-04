@@ -4,6 +4,7 @@
 #include "LocalGeometry.h"
 #include "Vector3.inl"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "Plane.h"
 #include "Sphere.h"
 #include "Triangle.h"
@@ -15,7 +16,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(1920, 1080);
+	const Vector2i OUTPUT_RESOLUTION(500, 300);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +87,23 @@ void Scene::buildScene(std::istream& in)
 			in >> direction.x >> direction.y >> direction.z;
 
 			mLights.push_back(LightPtr(new DirectionalLight(color, direction)));
+		}
+		else if (string == "PointLight")
+		{
+			Color color;
+			Vector3f position;
+
+			in >> string;
+			if (string != "Color:")
+				throwSceneConfigError("PointLight");
+			in >> color.r >> color.g >> color.b;
+
+			in >> string;
+			if (string != "Position:")
+				throwSceneConfigError("PointLight");
+			in >> position.x >> position.y >> position.z;
+
+			mLights.push_back(LightPtr(new PointLight(color, position)));
 		}
 		else if (string == "Plane")
 		{
@@ -158,11 +176,11 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 	float maxTValue(std::numeric_limits<float>::max());
 	Intersection closestIntersection;
 
-	/*
+	
 	// For performs difference tests
-	for (const auto& shape : mShapes)
-		shape->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
-		*/
+	//for (const auto& shape : mShapes)
+	//	shape->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
+		
 
 	mKDTree.isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 	
@@ -247,17 +265,17 @@ bool Scene::isInShadow(const Ray& lightRay)
 {
 	return mKDTree.isIntersectingRay(lightRay);
 
-	/*
+	
 	// For performance tests
-	for (const auto& shape : mShapes)
-	{
-		// If the object is not the reference one and intersects the light
-		if (shape->isIntersectingRay(lightRay))
-			return true;
-	}
+	//for (const auto& shape : mShapes)
+	//{
+	//	// If the object is not the reference one and intersects the light
+	//	if (shape->isIntersectingRay(lightRay))
+	//		return true;
+	//}
 
-	return false;
-	*/
+	//return false;
+	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

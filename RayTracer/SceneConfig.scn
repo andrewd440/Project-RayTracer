@@ -5,13 +5,11 @@ Camera
 	Position: 0 0 0
 	FOV: 75
 
-DirectionalLight
-	Color: 1 1 1
-	Direction: -1 -1 -1
 
-DirectionalLight
-	Color: .5 .5 .5
-	Direction: 0 -1 -.5
+
+PointLight
+	Color: 1 1 1
+	Position: 1 2 -12
 
 Plane
 	Direction: 0 1 0
@@ -48,12 +46,3 @@ Sphere
 	Ambient: .1 .1 .1
 	SpecularExponent: 64
 	Reflectivity: .9
-
-Model
-	File: Models/Bunny500.m
-	Translation: 0 0 -2
-	Specular: .4 .7 .7
-	Diffuse: .2 .5 .7
-	Ambient: .1 .1 .1
-	SpecularExponent: 32
-	Reflectivity: .5
