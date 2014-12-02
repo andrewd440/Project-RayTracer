@@ -130,5 +130,8 @@
     <None Include="include\Vector3.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="include\Vector2.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

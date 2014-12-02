@@ -5,6 +5,8 @@
 #include <iostream>
 #include <istream>
 #include <time.h>
+#include "Vector2.h"
+#include "Vector2.inl"
 
 using namespace std;
 
@@ -23,5 +25,6 @@ int main()
 	fb.close();
 	t2 = clock();
 	cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+
 	return 0;
 }

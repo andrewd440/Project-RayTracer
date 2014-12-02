@@ -11,7 +11,7 @@ struct Intersection;
 class Shape
 {
 public:
-	Shape(const Material& LightingMaterial);
+	explicit Shape(const Material& LightingMaterial);
 
 	virtual ~Shape(){};
 
