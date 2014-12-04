@@ -13,7 +13,7 @@ public:
 	/**
 	* Constructs a directional light from a color and direction.
 	* @param LightColor - Color of the light
-	* @param LightDirection - Direction (normalized) of the light
+	* @param LightDirection - Direction (Normalized) of the light
 	*/
 	DirectionalLight(Color LightColor, Vector3f LightDirection);
 	
@@ -26,7 +26,7 @@ public:
 
 	/**
 	* Sets the direction of the light.
- 	* @param LightDirection - The direction (normalized) of the light
+ 	* @param LightDirection - The direction (Normalized) of the light
 	*/
 	void setLightDirection(const Vector3f& LightDirection);
 
@@ -37,6 +37,6 @@ public:
 	Vector3f getLightDirection() const;
 
 private:
-	Vector3f mLightDirection; /* Direction (normalized) of the light*/
+	Vector3f mLightDirection; /* Direction (Normalized) of the light*/
 };
 

@@ -110,7 +110,7 @@
     <ClInclude Include="include\Light.h" />
     <ClInclude Include="include\LocalGeometry.h" />
     <ClInclude Include="include\Material.h" />
-    <ClInclude Include="include\Matrix.h" />
+    <ClInclude Include="include\Matrix4.h" />
     <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\Ray.h" />
@@ -121,10 +121,7 @@
     <ClInclude Include="include\Triangle.h" />
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\Vector3.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="include\Vector2.inl" />
-    <None Include="include\Vector3.inl" />
+    <ClInclude Include="include\Vector4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,4 @@
 #include "DirectionalLight.h"
-#include "Vector3.inl"
 
 DirectionalLight::DirectionalLight()
 	: Light()
@@ -12,7 +11,7 @@ DirectionalLight::DirectionalLight(Color LightColor, Vector3f LightDirection)
 	: Light(LightColor)
 	, mLightDirection(LightDirection)
 {
-	mLightDirection.normalize();
+	mLightDirection.Normalize();
 }
 
 
@@ -25,7 +24,7 @@ Ray DirectionalLight::getRayToLight(const Vector3f& SurfacePoint)
 void DirectionalLight::setLightDirection(const Vector3f& LightDirection)
 {
 	mLightDirection = LightDirection;
-	mLightDirection.normalize();
+	mLightDirection.Normalize();
 }
 
 Vector3f DirectionalLight::getLightDirection() const

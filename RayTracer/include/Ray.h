@@ -17,7 +17,7 @@ struct Ray
 		: origin(OriginPoint)
 		, direction(DirectionVector)
 	{
-		direction.normalize();
+		direction.Normalize();
 	}
 
 	/**

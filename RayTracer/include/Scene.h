@@ -51,8 +51,8 @@ public:
 private:
 	/**
 	* Computes a specular reflection based on the Blinn Model for Specular Reflection.
-	* @param LightDirection - The normalized direction of the light
-	* @param ViewerDirection - The normalized direction of the viewer
+	* @param LightDirection - The Normalized direction of the light
+	* @param ViewerDirection - The Normalized direction of the viewer
 	* @return Normalized direction vector for the specular reflection 
 	*/
 	Vector3f computeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection);

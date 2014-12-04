@@ -1,7 +1,6 @@
 #include "Sphere.h"
 #include "Intersection.h"
 #include "LocalGeometry.h"
-#include "Vector3.inl"
 
 Sphere::Sphere(Vector3f center, float radius, Material LightingMaterial)
 	: Shape(LightingMaterial)
@@ -18,8 +17,8 @@ bool Sphere::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersec
 	const Vector3f m = rayOrigin - mCenter;
 
 	// Coefficients for quandratic equation
-	const float b = dotProduct(m, rayDirection);
-	const float c = dotProduct(m, m) - mRadius * mRadius;
+	const float b = Vector3f::Dot(m, rayDirection);
+	const float c = Vector3f::Dot(m, m) - mRadius * mRadius;
 
 	// If the ray origin is outside the sphere and direction is pointing away from sphere
 	if (c > 0 && b > 0) 
@@ -77,7 +76,7 @@ void Sphere::constructIntersection(Vector3f IntersectionPoint, Intersection& Int
 	LocalGeometry& geometry = IntersectionOut.localGeometry;
 
 	Vector3f normal = IntersectionPoint - mCenter;
-	normal.normalize();
+	normal.Normalize();
 	geometry.surfaceNormal = normal;
 
 	geometry.point = IntersectionPoint;

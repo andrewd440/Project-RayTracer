@@ -1,5 +1,4 @@
 #include "Triangle.h"
-#include "Vector3.inl"
 #include "Intersection.h"
 
 #include <cmath>
@@ -12,8 +11,8 @@ Triangle::Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& Lighti
 {
 	Vector3f e1 = V1 - V0;
 	Vector3f e2 = V2 - V1;
-	mNormal = crossProduct(e1, e2);
-	mNormal.normalize();
+	mNormal = Vector3f::Cross(e1, e2);
+	mNormal.Normalize();
 	constructAABB();
 }
 
@@ -22,17 +21,17 @@ bool Triangle::isIntersectingRay(Ray ray, float* tValueOut, Intersection* inters
 	// Ray/Triangle intersection test from 3D Math Primier for Graphics and Game Development
 
 	// Compute gradient, how steep is the ray against the triangle
-	float gradient = dotProduct(mNormal, ray.direction);
+	float gradient = Vector3f::Dot(mNormal, ray.direction);
 
 	// Check if ray is pointing towards the triangle
 	if (!(gradient < 0.0f))
 		return false;
 
 	// Compute value for plane equation, Ax + Bx + Cz = d
-	float d = dotProduct(mNormal, mV0);
+	float d = Vector3f::Dot(mNormal, mV0);
 
 	// Compute parametric point of intersection with plane.
-	float t = d - dotProduct(mNormal, ray.origin);
+	float t = d - Vector3f::Dot(mNormal, ray.origin);
 
 	// Bail if ray is on backside of plane
 	if (!(t <= 0.0f))

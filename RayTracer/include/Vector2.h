@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
 
 template <typename T>
 /**
@@ -10,26 +13,19 @@ class Vector2
 {
 public:
 	/**
-	* Default constructor. x=y=0
+	* Constructs vector with 2 components.
+	* @param X - value of X component
+	* @param Y - value of Y component
 	*/
-	Vector2()
-		: x(0), y(0) {}
-
-	/**
-	* Constructs vector with x, y coordinates.
-	* @param X - position of X coordinate
-	* @param Y - position of Y coordinate
-	*/
-	Vector2(T X, T Y)
-		: x(X), y(Y) {}
+	Vector2(T X = 0, T Y = 0);
 
 	template <typename U>
 	/**
 	* Performs vector-scalar multiplication.
-	* @param scalar - Scalar to multiply by.
+	* @param Scalar - Scalar to multiply by.
 	* @return Reference to this vector.
 	*/
-	Vector2<T>& operator*=(const U& scalar);
+	Vector2<T>& operator*=(const U& Scalar);
 
 	/**
 	* Performs vector addition.
@@ -48,10 +44,10 @@ public:
 	template <typename U>
 	/**
 	* Performs vector division.
-	* @param rhs - Unit to divide by.
+	* @param Scalar - Unit to divide by.
 	* @return Reference to this vector
 	*/
-	Vector2<T>& operator/=(const U& scalar);
+	Vector2<T>& operator/=(const U& Scalar);
 
 	/**
 	* Overload of subscript operators for X = 0, Y = 1.
@@ -66,13 +62,30 @@ public:
 	/**
 	* Normalizes the vector.
 	*/
-	void normalize();
+	void Normalize();
 
 	/**
 	* Calculates the length/magnatude of the vector.
 	* @return The length/magnatude
 	*/
-	float length();
+	float Length();
+
+	/**
+	* Reflects the vector across a normal.
+	* @return Reflected vector
+	*/
+	Vector2<T> Reflect(const Vector2<T>& Normal) const;
+
+	/* Prints the string representation of the vector */
+	void Print();
+
+	/**
+	* Calculates the dot product of two vectors.
+	* @param lhs - Left operand
+	* @param rhs - Right operand
+	* @return The dot product
+	*/
+	static T Dot(const Vector2<T>& lhs, const Vector2<T>& rhs);
 
 public:
 	T x; /* X coordinate of the vector */
@@ -82,14 +95,117 @@ public:
 typedef Vector2<int32_t> Vector2i;	/* Vector type for integers */
 typedef Vector2<float> Vector2f; /* Vector type for floats */
 
+/////////////////////////////////////////////////////
+//////////// Inlined Member Functions ///////////////
+/////////////////////////////////////////////////////
+
 template <typename T>
-/**
-* Calculates the dot product of two vectors.
-* @param lhs - Left operand
-* @param rhs - Right operand
-* @return
-*/
-T dotProduct(const Vector2<T>& lhs, const Vector2<T>& rhs);
+Vector2<T>::Vector2(T X = 0, T Y = 0)
+	: x(X), y(Y) {}
+
+template <typename T>
+template <typename U>
+inline Vector2<T>& Vector2<T>::operator*=(const U& Scalar)
+{
+	x *= Scalar;
+	y *= Scalar;
+
+	return *this;
+}
+
+
+template <typename T>
+template <typename U>
+Vector2<T>& Vector2<T>::operator/=(const U& Scalar)
+{
+	x /= Scalar;
+	y /= Scalar;
+
+	return *this;
+}
+
+
+template <typename T>
+inline Vector2<T>& Vector2<T>::operator+=(const Vector2<T>& rhs)
+{
+	x += rhs.x;
+	y += rhs.y;
+
+	return *this;
+}
+
+
+template <typename T>
+inline Vector2<T>& Vector2<T>::operator-=(const Vector2<T>& rhs)
+{
+	x -= rhs.x;
+	y -= rhs.y;
+
+	return *this;
+}
+
+
+template <typename T>
+T& Vector2<T>::operator[](std::size_t idx)
+{
+	switch (idx)
+	{
+	case 0:
+		return x;
+	case 1:
+		return y;
+	default:
+		throw std::out_of_range("Vector2 subscript out of range.");
+	};
+}
+
+
+template <typename T>
+const T& Vector2<T>::operator[](std::size_t idx) const
+{
+	switch (idx)
+	{
+	case 0:
+		return x;
+	case 1:
+		return y;
+	default:
+		throw std::out_of_range("Vector2 subscript out of range.");
+	};
+}
+
+
+template <typename T>
+inline void Vector2<T>::Normalize()
+{
+	*this /= Length();
+}
+
+
+template <typename T>
+inline float Vector2<T>::Length()
+{
+	return std::sqrt(x*x + y*y);
+}
+
+template <typename T>
+void Vector2<T>::Print()
+{
+	if (typeid(T) == typeid(float))
+		printf("X: %.3f Y: %.3f", x, y);
+	else if (typeid(T) == typeid(int))
+		printf("X: %i Y: %i", x, y);
+}
+
+template <typename T>
+inline T Dot(const Vector2<T>& lhs, const Vector2<T>& rhs)
+{
+	return lhs.x * rhs.x + lhs.y * rhs.y;
+}
+
+/////////////////////////////////////////////////////////////////////
+//////////////// Non-member Functions ///////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 template <typename T>
 /**
@@ -98,7 +214,10 @@ template <typename T>
 * @param rhs - Right operand
 * @return Addition of the two vectors.
 */
-Vector2<T> operator+(const Vector2<T>& lhs, const Vector2<T>& rhs);
+inline Vector2<T> operator+(const Vector2<T>& lhs, const Vector2<T>& rhs)
+{
+	return Vector2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
+}
 
 template <typename T>
 /**
@@ -107,7 +226,10 @@ template <typename T>
 * @param rhs - Right operand
 * @return Difference of the two vectors.
 */
-Vector2<T> operator-(const Vector2<T>& lhs, const Vector2<T>& rhs);
+inline Vector2<T> operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
+{
+	return Vector2<T>(lhs.x - rhs.x, lhs.y - rhs.y);
+}
 
 template <typename T>
 /**
@@ -115,30 +237,43 @@ template <typename T>
 * @param lhs - Left operand
 * @return The negated vector.
 */
-Vector2<T> operator-(const Vector2<T>& lhs);
+inline Vector2<T> operator-(const Vector2<T>& lhs)
+{
+	return Vector2<T>(-lhs.x, -lhs.y);
+}
 
 template <typename T, typename U>
 /**
 * Performs vector-scalar multiplication of two vectors.
-* @param vector - Left operand (vector)
-* @param scalar - Right operand (scalar)
+* @param Vec - Left operand (vector)
+* @param Scalar - Right operand (scalar)
 * @return Memberwise multiplied vector
 */
-Vector2<T> operator*(const Vector2<T>& vector, const U& scalar);
+inline Vector2<T> operator*(const Vector2<T>& Vec, const U& Scalar)
+{
+	return Vector2<T>(Vec.x * Scalar, Vec.y * Scalar);
+}
 
 template <typename T, typename U>
 /**
 * Performs vector-scalar multiplication of two vectors.
-* @param scalar - Left operand (scalar)
+* @param Scalar - Left operand (scalar)
 * @param vector - Right operand (vector)
 * @return Memberwise multiplied vector
 */
-Vector2<T> operator*(const U& scalar, const Vector2<T>& vector);
+inline Vector2<T> operator*(const U& Scalar, const Vector2<T>& Vec)
+{
+	return Vector2<T>(Vec.x * Scalar, Vec.y * Scalar);
+}
 
 template <typename T, typename U>
 /**
 * Performs vector division.
-* @param rhs - Unit to divide by.
+* @param Vec - Vector to divide.
+* @param Scalar - Unit to divide by.
 * @return Memberwise divided vector
 */
-Vector2<T> operator/(const Vector2<T>& vector, const U& scalar);
+inline Vector2<T> operator/(const Vector2<T>& Vec, const U& Scalar)
+{
+	return Vector2<T>(Vec.x / Scalar, Vec.y / Scalar);
+}

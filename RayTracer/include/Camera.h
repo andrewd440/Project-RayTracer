@@ -15,12 +15,12 @@ public:
 	/**
 	* Constructs a scene camera from it's world position, direction, distance from the screen, and 
 	* screen size.
-	* @param CameraPosition - world position of the camera
-	* @param CameraDirection - normalized direction vector of the camera's direction
+	* @param EyePosition - world position of the camera
+	* @param LookDirection - Normalized direction vector of the camera's direction
 	* @param FOV - the distance of the camera from the screen
 	* @param OutputResolution - size of the screen (in pixels)
 	*/
-	Camera(Vector3f CameraPosition, Vector3f CameraDirection, float FOV, Vector2i OutputResolution);
+	Camera(Vector3f EyePosition, Vector3f LookDirection, float FOV, Vector2i OutputResolution);
 
 	/**
 	* Generates a ray from the viewpoint through a screen pixel.

@@ -1,5 +1,4 @@
 #include "KDTree.h"
-#include "Vector3.inl"
 #include "Intersection.h"
 
 #include <algorithm>

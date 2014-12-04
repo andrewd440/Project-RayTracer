@@ -1,6 +1,5 @@
 #include "Plane.h"
 #include "Intersection.h"
-#include "Vector3.inl"
 
 
 Plane::Plane(const Material& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane)
@@ -8,18 +7,18 @@ Plane::Plane(const Material& LightingMaterial, Vector3f PlaneNormal, Vector3f Po
 	, mNormal(PlaneNormal)
 	, mDistanceFromOrigin()
 {
-	mNormal.normalize();
-	mDistanceFromOrigin = dotProduct(-PlaneNormal, PointOnPlane);
+	mNormal.Normalize();
+	mDistanceFromOrigin = Vector3f::Dot(-PlaneNormal, PointOnPlane);
 	constructAABB();
 }
 
 bool Plane::isIntersectingRay(Ray Ray, float* tValueOut, Intersection* IntersectionOut)
 {
-	if (dotProduct(Ray.direction, mNormal) == 0)
+	if (Vector3f::Dot(Ray.direction, mNormal) == 0)
 		return false;
 
 	// Plane/Ray intersection from Mathmatics for 3D Game Programming and Computer Graphics
-	float tValue = -(dotProduct(mNormal, Ray.origin) + mDistanceFromOrigin) / (dotProduct(mNormal, Ray.direction));
+	float tValue = -(Vector3f::Dot(mNormal, Ray.origin) + mDistanceFromOrigin) / (Vector3f::Dot(mNormal, Ray.direction));
 
 	if (tValue <= .01f)
 		return false;

@@ -2,7 +2,6 @@
 #include "Sphere.h"
 #include "Intersection.h"
 #include "LocalGeometry.h"
-#include "Vector3.inl"
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "Plane.h"
@@ -206,13 +205,13 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 				continue;
 
 			// Get dot product of surface normal and h for specular lighting
-			float specularFactor = std::max(dotProduct(surfaceNormal, h), 0.f);
+			float specularFactor = std::max(Vector3f::Dot(surfaceNormal, h), 0.f);
 
 			// Add glossiness expononent
 			specularFactor = pow(specularFactor, surfaceMaterial.glossiness);
 
 			// Get dot product of surface normal and light direction for diffuse lighting
-			float diffuseFactor = std::max(dotProduct(surfaceNormal, lightDirection), 0.f);
+			float diffuseFactor = std::max(Vector3f::Dot(surfaceNormal, lightDirection), 0.f);
 
 			// Combine material color and light color for diffuse and specular
 			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor * specularFactor);
@@ -255,7 +254,7 @@ void Scene::renderScene()
 Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& lightDirection, const Vector3f& viewerDirection)
 {
 	Vector3f reflection(lightDirection + viewerDirection);
-	reflection.normalize();
+	reflection.Normalize();
 	return reflection;
 }
 
@@ -282,9 +281,9 @@ bool Scene::isInShadow(const Ray& lightRay)
 
 Vector3f Scene::computeMirriorReflection(const Vector3f& viewerDirection, const Vector3f& surfaceNormal) const
 {
-	float viewerDotNormal = dotProduct(surfaceNormal, viewerDirection);
+	float viewerDotNormal = Vector3f::Dot(surfaceNormal, viewerDirection);
 	Vector3f reflectionDirection(2 * (viewerDotNormal) * surfaceNormal - viewerDirection);
-	reflectionDirection.normalize();
+	reflectionDirection.Normalize();
 	return reflectionDirection;
 }
 

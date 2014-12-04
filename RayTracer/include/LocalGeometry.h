@@ -19,7 +19,7 @@ struct LocalGeometry
 	/**
 	* Construct local geometry from a surface point and normal
 	* @param Point - a point on a geometry
-	* @param Normal - normalized surface normal at the pointVector
+	* @param Normal - Normalized surface normal at the pointVector
 	*/
 	LocalGeometry(Vector3f Point, Vector3f Normal)
 		: point(Point)

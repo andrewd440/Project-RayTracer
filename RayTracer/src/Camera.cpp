@@ -1,11 +1,11 @@
 #include "Camera.h"
 
-Camera::Camera(Vector3f CameraPosition, Vector3f CameraDirection, float FOV, Vector2i OutputResolution)
-	: mPosition(CameraPosition)
-	, mDirection(CameraDirection)
+Camera::Camera(Vector3f EyePosition, Vector3f LookDirection, float FOV, Vector2i OutputResolution)
+	: mPosition(EyePosition)
+	, mDirection(LookDirection)
 	, mFieldOfView(FOV)
 	, mOutputResolution(OutputResolution)
-	, mDistanceFromScreenPlane((float)(1 / std::tan(((FOV / 180) * 3.14159265) / 2)))
+	, mDistanceFromScreenPlane((1 / std::tan(((FOV / 180.0f) * 3.14159265f) / 2.0f)))
 	, mAspectRatio((float)OutputResolution.y / OutputResolution.x)
 {
 
@@ -19,7 +19,7 @@ Ray Camera::generateRay(int32_t X, int32_t Y) const
 
 	// Compute direction of ray
 	Vector3f rayDirection(u, v, -mDistanceFromScreenPlane);
-	rayDirection.normalize();
+	rayDirection.Normalize();
 
 	return Ray(mPosition, rayDirection);
 }
@@ -43,7 +43,7 @@ Vector3f Camera::getDirection() const
 void Camera::setDirection(Vector3f direction)
 {
 	mDirection = direction;
-	mDirection.normalize();
+	mDirection.Normalize();
 }
 
 Vector3f Camera::getPosition() const
