@@ -63,7 +63,7 @@ public:
 	/**
 	* Normalizes the vector.
 	*/
-	void Normalize();
+	Vector3<T>& Normalize();
 
 	/**
 	* Calculates the length/magnatude of the vector.
@@ -191,9 +191,9 @@ const T& Vector3<T>::operator[](std::size_t idx) const
 }
 
 template <typename T>
-inline void Vector3<T>::Normalize()
+inline Vector3<T>& Vector3<T>::Normalize()
 {
-	*this /= Length();
+	return *this /= Length();
 }
 
 

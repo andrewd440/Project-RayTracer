@@ -4,6 +4,8 @@
 #include <cmath>
 #include <ostream>
 
+#include "Vector3.h"
+
 template <typename T>
 /**
 * Class of manipulating a 4 component vector.
@@ -19,6 +21,13 @@ public:
 	* @param W - value of W component
 	*/
 	Vector4(T X = 0, T Y = 0, T Z = 0, T W = 1);
+
+	/**
+	* Constructs vector with first 3 components of
+	* Vector3.
+	* @param Vec3 Vector with x, y, z components.
+	*/
+	Vector4(const Vector3<T>& Vec3);
 
 	template <typename U>
 	/**
@@ -63,7 +72,7 @@ public:
 	/**
 	* Normalizes x, y, z components of the vector.
 	*/
-	void Normalize3();
+	Vector4<T>& Normalize3();
 
 	/**
 	* Calculates the length/magnatude of the vector with all four
@@ -134,6 +143,12 @@ using Vector4f = Vector4<float>; /* Vector type for floats */
 template <typename T>
 Vector4<T>::Vector4(T X = 0.0f, T Y = 0.0f, T Z = 0.0f, T W = 1.0f)
 	: x(X), y(Y), z(Z), w(W){}
+
+template <typename T>
+Vector4<T>::Vector4(const Vector3<T>& Vec3)
+	: Vector4<T>(Vec3.x, Vec3.y, Vec3.z)
+{
+}
 
 template <typename T>
 template <typename U>
@@ -214,10 +229,10 @@ inline const T& Vector4<T>::operator[](std::size_t idx) const
 }
 
 template <typename T>
-inline void Vector4<T>::Normalize3()
+inline Vector4<T>& Vector4<T>::Normalize3()
 {
 	float invLength = 1.0f / Length3();
-	*this *= invLength;
+	return *this *= invLength;
 }
 
 template <typename T>
