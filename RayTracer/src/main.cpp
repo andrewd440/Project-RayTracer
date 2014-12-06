@@ -1,14 +1,15 @@
 // RayTracer.cpp : Defines the entry point for the console application.
 //
 
-#include "Scene.h"
 #include <iostream>
 #include <istream>
 #include <time.h>
-#include "Matrix4.h"
-#include "Vector4.h"
-#include "Vector2.h"
+
+#include "Camera.h"
+#include "Ray.h"
 #include "Vector3.h"
+#include "Vector2.h"
+#include "Scene.h"
 
 using namespace std;
 

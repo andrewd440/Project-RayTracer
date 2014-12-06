@@ -51,6 +51,16 @@ public:
 	Vector3<T>& operator/=(const U& Scalar);
 
 	/**
+	* Checks vector equality.
+	*/
+	bool operator==(const Vector3<T>& Rhs) const;
+
+	/**
+	* Checks vector inequality.
+	*/
+	bool operator!=(const Vector3<T>& Rhs) const;
+
+	/**
 	* Overload of subscript operators for X = 0, Y = 1, Z = 2.
 	*/
 	T& operator[](std::size_t idx);
@@ -156,6 +166,26 @@ inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& rhs)
 	z -= rhs.z;
 
 	return *this;
+}
+
+template <typename T>
+inline bool Vector3<T>::operator==(const Vector3<T>& Rhs) const
+{
+	for (size_t i = 0; i < 3; i++)
+		if ((*this)[i] != Rhs[i])
+			return false;
+
+	return true;
+}
+
+template <typename T>
+inline bool Vector3<T>::operator!=(const Vector3<T>& Rhs) const
+{
+	for (size_t i = 0; i < 3; i++)
+		if ((*this)[i] != Rhs[i])
+			return true;
+
+	return false;
 }
 
 template <typename T>

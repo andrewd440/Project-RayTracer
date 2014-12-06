@@ -1,16 +1,17 @@
 #pragma once
 
 #include <initializer_list>
+#include <cassert>
+
 #include "Vector3.h"
 #include "Vector4.h"
 
 /**
-*	4x4 floating-point matrix
+*	4x4 floating-point column-matrix
 *	Elements are access by [row][col]
 */
 struct Matrix4
 {
-public:
 	enum class Axis
 	{
 		X,
@@ -18,7 +19,6 @@ public:
 		Z
 	};
 
-public:
 	/** 
 	* Each row in the matrix is a vector.
 	*/
@@ -37,11 +37,11 @@ public:
 
 	/**
 	* Constructs a matrix by row vectors.
-	* @param XRow X vector
-	* @param YRow Y vector
-	* @param ZRow Z vector
+	* @param XBasis X vector
+	* @param YBasis Y vector
+	* @param ZBasis Z vector
 	*/
-	Matrix4(const Vector3f& XRow, const Vector3f& YRow, const Vector3f& ZRow);
+	Matrix4(const Vector3f& XBasis, const Vector3f& YBasis, const Vector3f& ZBasis);
 	
 	/**
 	* Performs matrix-matrix multiplication.
@@ -63,6 +63,21 @@ public:
 	* @return Reference to this matrix.
 	*/
 	Matrix4& operator+=(const Matrix4& Rhs);
+
+	/**
+	* Checks matrix equality.
+	*/
+	bool operator==(const Matrix4& Rhs) const;
+
+	/**
+	* Checks matrix inequality.
+	*/
+	bool operator!=(const Matrix4& Rhs) const;
+
+	/**
+	* Get the transpose of the matrix.
+	*/
+	Matrix4 Transpose() const;
 
 	/**
 	* Transforms a vector without taking translation into account.
@@ -90,6 +105,22 @@ public:
 	void SetAxis(Matrix4::Axis Axis, const Vector3f& Basis);
 
 	/**
+	* Gets the world origin of the matrix. (translation vector)
+	*/
+	Vector3f GetOrigin() const;
+
+	/**
+	* Sets the world origin of the matrix. (translation vector)
+	*/
+	void SetOrigin(const Vector3f& Origin);
+
+	/**
+	* Retreive a Column of the matrix. Includes translation component.
+	* @param Row of the matrix, 0 = first row, 1 = second row ...
+	*/
+	Vector4f GetColumn(int Col) const;
+
+	/**
 	* Retreive a row of the matrix. Includes translation component.
 	* @param Row of the matrix, 0 = first row, 1 = second row ...
 	*/
@@ -101,7 +132,8 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 
 inline Matrix4::Matrix4()
-	: Matrix4({ 1, 0, 0, 0,
+	: Matrix4({ 
+	1, 0, 0, 0,
 	0, 1, 0, 0,
 	0, 0, 1, 0,
 	0, 0, 0, 1 })
@@ -119,11 +151,11 @@ inline Matrix4::Matrix4(const std::initializer_list<float>& Mat)
 	M[3][0] = *(itr++); M[3][1] = *(itr++); M[3][2] = *(itr++); M[3][3] = *(itr++);
 }
 
-inline Matrix4::Matrix4(const Vector3f& XRow, const Vector3f& YRow, const Vector3f& ZRow)
+inline Matrix4::Matrix4(const Vector3f& XBasis, const Vector3f& YBasis, const Vector3f& ZBasis)
 {
-	SetAxis(Axis::X, XRow);
-	SetAxis(Axis::Y, YRow);
-	SetAxis(Axis::Z, ZRow);
+	SetAxis(Axis::X, XBasis);
+	SetAxis(Axis::Y, YBasis);
+	SetAxis(Axis::Z, ZBasis);
 
 	M[3][0] = M[3][1] = M[3][2] = M[0][3] = M[1][3] = M[2][3] = 0.0f;
 	M[3][3] = 1.0f;
@@ -170,6 +202,31 @@ inline Matrix4& Matrix4::operator+=(const Matrix4& Rhs)
 	return *this;
 }
 
+inline bool Matrix4::operator==(const Matrix4& Rhs) const
+{
+	for (size_t i = 0; i < 4; i++)
+		for (size_t j = 0; j < 4; j++)
+			if (M[i][j] != Rhs.M[i][j])
+				return false;
+
+	return true;
+}
+
+inline bool Matrix4::operator!=(const Matrix4& Rhs) const
+{
+	return !(*this == Rhs);
+}
+
+inline Matrix4 Matrix4::Transpose() const
+{
+	return Matrix4{
+		M[0][0], M[1][0], M[2][0], M[3][0],
+		M[0][1], M[1][1], M[2][1], M[3][1],
+		M[0][2], M[1][2], M[2][2], M[3][2],
+		M[0][3], M[1][3], M[2][3], M[3][3]
+	};
+}
+
 inline Vector3f Matrix4::TransformDirection(const Vector3f& Direction) const
 {
 	Vector4f vec(Direction);
@@ -180,9 +237,7 @@ inline Vector3f Matrix4::TransformDirection(const Vector3f& Direction) const
 
 inline Vector3f Matrix4::TransformPosition(const Vector3f& Position) const
 {
-	Vector4f vec(Position);
-	vec.w = 1.0f;
-	vec = TransformVector(vec);
+	Vector4f vec(TransformVector(Position));
 	return Vector3f(vec.x, vec.y, vec.z);
 }
 
@@ -201,33 +256,38 @@ inline Vector3f Matrix4::GetAxis(Matrix4::Axis Axis) const
 	switch (Axis)
 	{
 	case Axis::X:
-		return Vector3f(M[0][0], M[0][1], M[0][2]);
+		return Vector3f(M[0][0], M[1][0], M[2][0]);
 	case Axis::Y:
-		return Vector3f(M[1][0], M[1][1], M[1][2]);
+		return Vector3f(M[0][1], M[1][1], M[2][1]);
 	case Axis::Z:
-		return Vector3f(M[2][0], M[2][1], M[2][2]);
+		return Vector3f(M[0][2], M[1][2], M[2][2]);
 	}
 }
 
 inline void Matrix4::SetAxis(Matrix4::Axis Axis, const Vector3f& Basis)
 {
-	int row = -1;
+	int col = -1;
 	switch (Axis)
 	{
 		case Axis::X:
-			row = 0;
+			col = 0;
 			break;
 		case Axis::Y:
-			row = 1;
+			col = 1;
 			break;
 		case Axis::Z:
-			row = 2;
+			col = 2;
 			break;
 		default:
 			return;
 	}
 
-	M[row][0] = Basis.x; M[row][1] = Basis.y; M[row][2] = Basis.z;
+	M[0][col] = Basis.x; M[1][col] = Basis.y; M[2][col] = Basis.z;
+}
+
+inline Vector4f Matrix4::GetColumn(int Col) const
+{
+	return Vector4f(M[0][Col], M[1][Col], M[2][Col], M[3][Col]);
 }
 
 inline Vector4f Matrix4::GetRow(int Row) const
@@ -235,6 +295,15 @@ inline Vector4f Matrix4::GetRow(int Row) const
 	return Vector4f(M[Row][0], M[Row][1], M[Row][2], M[Row][3]);
 }
 
+inline Vector3f Matrix4::GetOrigin() const
+{
+	return Vector3f(M[0][3], M[1][3], M[2][3]);
+}
+
+inline void Matrix4::SetOrigin(const Vector3f& Origin)
+{
+	M[0][3] = Origin.x; M[1][3] = Origin.y; M[2][3] = Origin.z;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 ////////////////// Non Member Functions ///////////////////////////////////
@@ -265,7 +334,7 @@ inline Matrix4 operator+(Matrix4 Lhs, const Matrix4& Rhs)
 /**
 * A camera look-at matrix.
 */
-struct LookAtMatrix : Matrix4
+struct LookAtMatrix : public Matrix4
 {
 	/**
 	* Constructs a look-at matrix.
@@ -276,22 +345,22 @@ struct LookAtMatrix : Matrix4
 	LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocation, const Vector3f& UpDirection);
 };
 
-LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocation, const Vector3f& UpDirection)
+inline LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocation, const Vector3f& UpDirection)
 {
 	Vector3f N = (LookLocation - Eye).Normalize();
 	Vector3f U = Vector3f::Cross(N, UpDirection).Normalize();
 	Vector3f V = Vector3f::Cross(U, N).Normalize();
 
-	for (int col = 0; col < 3; col++)
+	for (int row = 0; row < 3; row++)
 	{
-		M[0][col] = U[col];
-		M[1][col] = V[col];
-		M[2][col] = N[col];
-		M[3][col] = 0.0f;
+		M[row][0] = U[row];
+		M[row][1] = V[row];
+		M[row][2] = -N[row];
+		M[row][3] = 0.0f;
 	}
 
 	M[0][3] = -Vector3f::Dot(Eye, U);
 	M[1][3] = -Vector3f::Dot(Eye, V);
-	M[2][3] = -Vector3f::Dot(Eye, N);
+	M[2][3] = -Vector3f::Dot(Eye, -N);
 	M[3][3] = 1.0f;
 }

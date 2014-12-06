@@ -5,8 +5,6 @@ Camera
 	Position: 0 0 0
 	FOV: 75
 
-
-
 PointLight
 	Color: 1 1 1
 	Position: 1 2 -12
@@ -41,6 +39,24 @@ Sphere
 Sphere
 	Center: -5 -2 -15
 	Radius: 2
+	Specular: .9 .5 .5
+	Diffuse: .2 .8 .25
+	Ambient: .1 .1 .1
+	SpecularExponent: 64
+	Reflectivity: .9
+
+Sphere
+	Center: -3 -1 -20
+	Radius: 1
+	Specular: .9 .5 .5
+	Diffuse: .2 .8 .25
+	Ambient: .1 .1 .1
+	SpecularExponent: 64
+	Reflectivity: .9
+
+Sphere
+	Center: -2 2 -25
+	Radius: 3
 	Specular: .9 .5 .5
 	Diffuse: .2 .8 .25
 	Ambient: .1 .1 .1

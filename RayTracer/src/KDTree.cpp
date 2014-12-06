@@ -10,10 +10,10 @@ KDTree::KDTree()
 }
 
 
-void KDTree::buildTree(const std::vector<std::unique_ptr<Shape>>& shapes, uint32_t depth)
+void KDTree::buildTree(const std::vector<std::unique_ptr<Shape>>& Shapes, uint32_t depth)
 {
-	for (const auto& shape : shapes)
-		mRoot.shapeList.push_back(shape.get());
+	for (const auto& Shape : Shapes)
+		mRoot.ShapeList.push_back(Shape.get());
 
 	mRoot.axis = 0;
 
@@ -23,19 +23,19 @@ void KDTree::buildTree(const std::vector<std::unique_ptr<Shape>>& shapes, uint32
 
 void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 {
-	if (depth == 0 || currentNode.shapeList.size() <= 1)
+	if (depth == 0 || currentNode.ShapeList.size() <= 1)
 		return;
 
 	uint32_t dividingAxis = currentNode.axis;
-	std::vector<Shape*>& currentShapes = currentNode.shapeList;
+	std::vector<Shape*>& currentShapes = currentNode.ShapeList;
 
 	std::sort(currentShapes.begin(), currentShapes.end(), [dividingAxis](const Shape* lhs, const Shape* rhs) -> bool
 	{
 		return lhs->getBoundingBox().getCenter()[dividingAxis] < rhs->getBoundingBox().getCenter()[dividingAxis];
 	});
 
-	uint32_t shapeListSize = currentNode.shapeList.size();
-	std::size_t medianShapeIndex = shapeListSize / 2;
+	size_t ShapeListSize = currentNode.ShapeList.size();
+	size_t medianShapeIndex = ShapeListSize / 2;
 	Shape* medianShape = currentShapes[medianShapeIndex];
 	float medianAxisValue = medianShape->getBoundingBox().getCenter()[dividingAxis];
 	currentNode.splitValue = medianAxisValue;
@@ -46,7 +46,7 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 	currentNode.child[1] = std::unique_ptr<KDNode>(new KDNode());
 
 	// check for objects straddling the dividing axis, if so, add them to array
-	for (int16_t i = medianShapeIndex - 1; i >= 0; i--)
+	for (int i = medianShapeIndex - 1; i >= 0; i--)
 	{
 		const AABB& currentBBox = currentShapes[i]->getBoundingBox();
 		float axisRange = std::abs(currentBBox.min[dividingAxis] - currentBBox.max[dividingAxis]);
@@ -55,11 +55,11 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 			straddlingShapes.push_back(currentShapes[i]);
 		else
 		{
-			currentNode.child[0]->shapeList.push_back(currentShapes[i]);
+			currentNode.child[0]->ShapeList.push_back(currentShapes[i]);
 		}
 	}
 
-	for (int16_t i = medianShapeIndex + 1; i < shapeListSize; i++)
+	for (size_t i = medianShapeIndex + 1; i < ShapeListSize; i++)
 	{
 		const AABB& currentBBox = currentShapes[i]->getBoundingBox();
 		float axisRange = currentBBox.max[dividingAxis] - currentBBox.min[dividingAxis];
@@ -68,12 +68,12 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 			straddlingShapes.push_back(currentShapes[i]);
 		else
 		{
-			currentNode.child[1]->shapeList.push_back(currentShapes[i]);
+			currentNode.child[1]->ShapeList.push_back(currentShapes[i]);
 		}
 	}
 
 	currentNode.child[0]->axis = currentNode.child[1]->axis = ++dividingAxis % 3;
-	currentNode.shapeList = straddlingShapes;
+	currentNode.ShapeList = straddlingShapes;
 
 	buildTreeHelper(*currentNode.child[0], depth - 1);
 	buildTreeHelper(*currentNode.child[1], depth - 1);
@@ -91,8 +91,8 @@ bool KDTree::visitNodesAgainstRay(KDNode* currentNode, Ray ray, float* tValueOut
 
 	bool isIntersecting = false;
 
-	for (Shape* shape : currentNode->shapeList)
-		isIntersecting |= shape->isIntersectingRay(ray, tValueOut, intersectionOut);
+	for (Shape* Shape : currentNode->ShapeList)
+		isIntersecting |= Shape->isIntersectingRay(ray, tValueOut, intersectionOut);
 
 	// check which child to traverse first from axis split
 	uint32_t axis = currentNode->axis;

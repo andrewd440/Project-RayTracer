@@ -60,6 +60,16 @@ public:
 	Vector4<T>& operator/=(const U& scalar);
 
 	/**
+	* Checks vector equality.
+	*/
+	bool operator==(const Vector4<T>& Rhs) const;
+
+	/**
+	* Checks vector inequality.
+	*/
+	bool operator!=(const Vector4<T>& Rhs) const;
+
+	/**
 	* Overload of subscript operators for X = 0, Y = 1, Z = 2, W = 3.
 	*/
 	T& operator[](std::size_t idx);
@@ -190,6 +200,26 @@ inline Vector4<T>& Vector4<T>::operator/=(const U& scalar)
 	z /= scalar;
 	w /= scalar;
 	return *this;
+}
+
+template <typename T>
+inline bool Vector4<T>::operator==(const Vector4<T>& Rhs) const
+{
+	for (size_t i = 0; i < 4; i++)
+		if (*this[i] != Rhs[i])
+			return false;
+
+	return true;
+}
+
+template <typename T>
+inline bool Vector4<T>::operator!=(const Vector4<T>& Rhs) const
+{
+	for (size_t i = 0; i < 4; i++)
+		if ((*this)[i] != Rhs[i])
+			return true;
+
+	return false;
 }
 
 template <typename T>

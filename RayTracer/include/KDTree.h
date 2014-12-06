@@ -11,7 +11,7 @@ struct KDNode
 	std::unique_ptr<KDNode> child[2]; // 0 = near, 1 = far
 	int axis; // x, y, or z splitting axis
 	float splitValue; // value on the splitting axis
-	std::vector<Shape*> shapeList; // linked list of shapes within this node
+	std::vector<Shape*> ShapeList; // linked list of Shapes within this node
 };
 
 class KDTree
@@ -19,7 +19,7 @@ class KDTree
 public:
 	KDTree();
 
-	void buildTree(const std::vector<std::unique_ptr<Shape>>& shapes, uint32_t depth);
+	void buildTree(const std::vector<std::unique_ptr<Shape>>& Shapes, uint32_t depth);
 
 	/**
 	* Checks if a ray intersects an object in the kdtree.
@@ -29,7 +29,7 @@ public:
 	* @param tValueOut(optional) - the smallest t parameter will be output to this
 	* @param IntersectionOut(optional) - intersection attributes will be assigned to this reference if
 	*							if the interection returns true
-	* @return True if the ray intersects the shape.
+	* @return True if the ray intersects the Shape.
 	*/
 	bool isIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
 

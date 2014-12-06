@@ -1,57 +1,45 @@
 #include "Camera.h"
 
-Camera::Camera(Vector3f EyePosition, Vector3f LookDirection, float FOV, Vector2i OutputResolution)
-	: mPosition(EyePosition)
-	, mDirection(LookDirection)
+Camera::Camera(const Vector3f& EyePosition, const Vector3f& LookDirection, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution)
+	: mViewTransform(EyePosition, LookDirection, UpDirection)
 	, mFieldOfView(FOV)
-	, mOutputResolution(OutputResolution)
 	, mDistanceFromScreenPlane((1 / std::tan(((FOV / 180.0f) * 3.14159265f) / 2.0f)))
 	, mAspectRatio((float)OutputResolution.y / OutputResolution.x)
+	, mOutputResolution(OutputResolution)
 {
 
 }
 
-Ray Camera::generateRay(int32_t X, int32_t Y) const
+Ray Camera::GenerateRay(int32_t X, int32_t Y) const
 {
 	// Calculate coordinates of pixel on screen plane (u, v, d)
 	const float u = -1 + (2 * (X + 0.5f)) / mOutputResolution.x;
 	const float v = mAspectRatio - (2 * mAspectRatio * (Y + 0.5f)) / mOutputResolution.y;
 
-	// Compute direction of ray
-	Vector3f rayDirection(u, v, -mDistanceFromScreenPlane);
+	// Compute direction of ray in world space
+	Vector3f rayDirection = mViewTransform.TransformDirection(Vector3f(u, v, -mDistanceFromScreenPlane));
 	rayDirection.Normalize();
 
-	return Ray(mPosition, rayDirection);
+	return Ray(mViewTransform.GetOrigin(), rayDirection);
 }
 
-float Camera::getFOV() const
+float Camera::GetFOV() const
 {
 	return mFieldOfView;
 }
 
-void Camera::setFOV(float FOV)
+void Camera::SetFOV(float FOV)
 {
 	mFieldOfView = FOV;
 	mDistanceFromScreenPlane = (float)(1 / std::tan((FOV / 180 * 3.14159265) / 2));
 }
 
-Vector3f Camera::getDirection() const
+void Camera::SetPosition(const Vector3f& Position)
 {
-	return mDirection;
+	mViewTransform.SetOrigin(Position);
 }
 
-void Camera::setDirection(Vector3f direction)
+LookAtMatrix Camera::GetViewTransform() const
 {
-	mDirection = direction;
-	mDirection.Normalize();
-}
-
-Vector3f Camera::getPosition() const
-{
-	return mPosition;
-}
-
-void Camera::setPosition(Vector3f position)
-{
-	mPosition = position;
+	return mViewTransform;
 }
