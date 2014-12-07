@@ -31,13 +31,13 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 
 	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const Primitive* lhs, const Primitive* rhs) -> bool
 	{
-		return lhs->getBoundingBox().getCenter()[dividingAxis] < rhs->getBoundingBox().getCenter()[dividingAxis];
+		return lhs->getBoundingBox().GetCenter()[dividingAxis] < rhs->getBoundingBox().GetCenter()[dividingAxis];
 	});
 
 	size_t PrimitiveListSize = currentNode.PrimitiveList.size();
 	size_t medianPrimitiveIndex = PrimitiveListSize / 2;
 	Primitive* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
-	float medianAxisValue = medianPrimitive->getBoundingBox().getCenter()[dividingAxis];
+	float medianAxisValue = medianPrimitive->getBoundingBox().GetCenter()[dividingAxis];
 	currentNode.splitValue = medianAxisValue;
 
 	std::vector<Primitive*> straddlingPrimitives;
@@ -79,7 +79,7 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 	buildTreeHelper(*currentNode.child[1], depth - 1);
 }
 
-bool KDTree::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
+bool KDTree::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
 {
 	return visitNodesAgainstRay(&mRoot, ray, tValueOut, intersectionOut);
 }
@@ -91,8 +91,8 @@ bool KDTree::visitNodesAgainstRay(KDNode* currentNode, Ray ray, float* tValueOut
 
 	bool isIntersecting = false;
 
-	for (Primitive* Primitive : currentNode->PrimitiveList)
-		isIntersecting |= Primitive->isIntersectingRay(ray, tValueOut, intersectionOut);
+	for (Primitive* primitive : currentNode->PrimitiveList)
+		isIntersecting |= primitive->IsIntersectingRay(ray, tValueOut, intersectionOut);
 
 	// check which child to traverse first from axis split
 	uint32_t axis = currentNode->axis;

@@ -31,7 +31,7 @@ Scene::Scene()
 	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
 	, mBackgroundColor(Color::Black)
 	, mGlobalAmbient(100, 100, 100)
-	, mCamera(Vector3f(0, 5, 0), Vector3f(0, 0, -20), Vector3f(0, 1, 0), 65, OUTPUT_RESOLUTION)
+	, mCamera(Vector3f(0, 0, 0), Vector3f(0, 0, -1), Vector3f(0, 1, 0), 65, OUTPUT_RESOLUTION)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
@@ -102,7 +102,7 @@ void Scene::buildScene(std::istream& in)
 				throwSceneConfigError("PointLight");
 			in >> position.x >> position.y >> position.z;
 
-			mLights.push_back(LightPtr(new PointLight(color, position, 2, 15))); ///////////////////////////////////////CHANGE TO FILE INPUT
+			mLights.push_back(LightPtr(new PointLight(color, position, 2, 25))); ///////////////////////////////////////CHANGE TO FILE INPUT
 		}
 		else if (string == "Plane")
 		{
@@ -162,6 +162,7 @@ void Scene::buildScene(std::istream& in)
 		in >> string;
 	}
 
+	mPrimitives.push_back(PrimitivePtr(new Triangle(Vector3f(-10,3,-15), Vector3f(-5,0,-15), Vector3f(-5,4,-15), Material(Color::White, Color::Blue, Color(.2,.2,.2), 24, .5))));
 	mKDTree.buildTree(mPrimitives, 10);
 }
 
@@ -176,15 +177,11 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 	Intersection closestIntersection;
 
 	
-	// For performs difference tests
-	//for (const auto& Primitive : mPrimitives)
-	//	Primitive->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
+	 //For performs difference tests
+	for (const auto& primitive : mPrimitives)
+		primitive->IsIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 		
-	mKDTree.isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
-	
-	// get camera ray in world space
-	const Matrix4 viewTransformInverse = Camera::ViewTransform.Transpose();
-	const Ray cameraRayWorldSpace(viewTransformInverse.TransformPosition(cameraRay.origin), viewTransformInverse.TransformPosition(cameraRay.direction));
+	//mKDTree.IsIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 
 	// If an object was intersected
 	if (closestIntersection.object)
@@ -207,7 +204,7 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 			// Get direction of light and compute h reflection
 			const Ray& rayToLight(light->GetRayToLight(surfacePoint));
 			const Vector3f& lightDirection(rayToLight.direction);
-			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRayWorldSpace.direction);
+			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
 			if (isInShadow(rayToLight))
@@ -230,7 +227,8 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 			outputColor += specularColor + diffuseColor;
 
 			// Add mirror reflection contributions
-			Ray reflectionRay(surfacePoint, computeMirriorReflection(-cameraRayWorldSpace.direction, surfaceNormal));
+			Vector3f mirrorReflection = -cameraRay.direction.Reflect(surfaceNormal);
+			Ray reflectionRay(surfacePoint, mirrorReflection);
 			outputColor += traceRay(reflectionRay, depth - 1) * outputColor * surfaceMaterial.reflectivity;
 		}
 
@@ -271,18 +269,18 @@ Vector3f Scene::computeBlinnSpecularReflection(const Vector3f& lightDirection, c
 
 bool Scene::isInShadow(const Ray& lightRay)
 {
-	return mKDTree.isIntersectingRay(lightRay);
+	//return mKDTree.IsIntersectingRay(lightRay);
 
 	
 	// For performance tests
-	//for (const auto& Primitive : mPrimitives)
-	//{
-	//	// If the object is not the reference one and intersects the light
-	//	if (Primitive->isIntersectingRay(lightRay))
-	//		return true;
-	//}
+	for (const auto& Primitive : mPrimitives)
+	{
+		// If the object is not the reference one and intersects the light
+		if (Primitive->IsIntersectingRay(lightRay))
+			return true;
+	}
 
-	//return false;
+	return false;
 	
 }
 

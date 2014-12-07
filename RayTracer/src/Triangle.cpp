@@ -13,10 +13,10 @@ Triangle::Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& Lighti
 	Vector3f e2 = V2 - V1;
 	mNormal = Vector3f::Cross(e1, e2);
 	mNormal.Normalize();
-	constructAABB();
+	ConstructAABB();
 }
 
-bool Triangle::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
+bool Triangle::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
 {
 	// Ray/Triangle intersection test from 3D Math Primier for Graphics and Game Development
 
@@ -120,20 +120,20 @@ bool Triangle::isIntersectingRay(Ray ray, float* tValueOut, Intersection* inters
 	if (tValueOut && t < *tValueOut)
 	{
 		*tValueOut = t;
-		constructIntersection(ray.origin + t * ray.direction, *intersectionOut);
+		ConstructIntersection(ray.origin + t * ray.direction, *intersectionOut);
 	}
 
 	return true;
 }
 
-void Triangle::constructIntersection(Vector3f intersectionPoint, Intersection& intersectionOut)
+void Triangle::ConstructIntersection(Vector3f intersectionPoint, Intersection& intersectionOut)
 {
 	intersectionOut.object = this;
 	intersectionOut.point = intersectionPoint;
 	intersectionOut.normal = mNormal;
 }
 
-void Triangle::constructAABB()
+void Triangle::ConstructAABB()
 {
 	AABB boundingBox;
 	boundingBox.max = Vector3f(std::max({ mV0.x, mV1.x, mV2.x }), std::max({ mV0.y, mV1.y, mV2.y }), std::max({ mV0.z, mV1.z, mV2.z }));

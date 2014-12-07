@@ -26,31 +26,31 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the sphere.
 	*/
-	bool isIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
 
 	/**
 	* Retrieves the center point of the sphere.
 	* @reture 3D coordinates of the center of the sphere
 	*/
-	Vector3f getCenter() const;
+	Vector3f GetCenter() const;
 
 	/**
 	* Sets the center point of the sphere.
 	* @param CenterPoint - 3D position of the sphere's center
 	*/
-	void setCenter(const Vector3f& CenterPoint);
+	void SetCenter(const Vector3f& CenterPoint);
 
 	/**
 	* Retrieves the radius of the sphere.
 	* @return The length of the radius
 	*/
-	float getRadius() const;
+	float GetRadius() const;
 
 	/**
 	* Sets the radius of the sphere.
 	* @param Radius - length of the radius
 	*/
-	void setRadius(const float& Radius);
+	void SetRadius(const float& Radius);
 
 private:
 	/**
@@ -58,12 +58,11 @@ private:
 	* @param IntersectionPoint - the point of the intersection
 	* @param IntersectionOut - intersection properties will be output through
 	*/
-	void constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
+	void ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
 
-	void constructAABB();
+	void ConstructAABB();
 
 private:
 	float mRadius; /* Length of the radius */
-	Vector3f mCenterInViewSpace; /* Center of the sphere in view space */
 };
 

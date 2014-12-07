@@ -17,7 +17,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the triangle.
 	*/
-	bool isIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
 
 
 private:
@@ -26,9 +26,9 @@ private:
 	* @param IntersectionPoint - the point of the intersection
 	* @param IntersectionOut - intersection properties will be output through
 	*/
-	void constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
+	void ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
 
-	void constructAABB();
+	void ConstructAABB();
 
 private:
 	Vector3f mV0;

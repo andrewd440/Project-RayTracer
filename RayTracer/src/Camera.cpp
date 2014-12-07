@@ -5,8 +5,9 @@ Camera::Camera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector
 	, mDistanceFromScreenPlane((1 / std::tan(((FOV / 180.0f) * 3.14159265f) / 2.0f)))
 	, mAspectRatio((float)OutputResolution.y / OutputResolution.x)
 	, mOutputResolution(OutputResolution)
+	, mViewTransform(EyePosition, LookAt, UpDirection)
 {
-	ViewTransform = LookAtMatrix(EyePosition, LookAt, UpDirection);
+	mViewTransform = mViewTransform.GetInverseAffine();
 }
 
 Ray Camera::GenerateRay(int32_t X, int32_t Y) const
@@ -19,7 +20,10 @@ Ray Camera::GenerateRay(int32_t X, int32_t Y) const
 	Vector3f rayDirection = Vector3f(u, v, -mDistanceFromScreenPlane);
 	rayDirection.Normalize();
 
-	return Ray(Vector3f(), rayDirection);
+	Ray pixelRay(Vector3f(), rayDirection);
+
+	// send ray in world space
+	return mViewTransform.TransformRay(pixelRay);
 }
 
 float Camera::GetFOV() const
@@ -32,10 +36,3 @@ void Camera::SetFOV(float FOV)
 	mFieldOfView = FOV;
 	mDistanceFromScreenPlane = (float)(1 / std::tan((FOV / 180 * 3.14159265) / 2));
 }
-
-void Camera::SetPosition(const Vector3f& Position)
-{
-	ViewTransform.SetOrigin(Position);
-}
-
-LookAtMatrix Camera::ViewTransform(Vector3f(), Vector3f(0,0,-1), Vector3f(0, 1, 0));

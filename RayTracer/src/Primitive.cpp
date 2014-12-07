@@ -19,7 +19,10 @@ Material Primitive::getMaterial() const
 
 AABB Primitive::getBoundingBox() const
 {
-	return mBoundingBox;
+	AABB transformedBox = mBoundingBox;
+	transformedBox.max = mTransform.TransformPosition(transformedBox.max);
+	transformedBox.min = mTransform.TransformPosition(transformedBox.min);
+	return transformedBox;
 }
 
 Matrix4 Primitive::GetTransform() const
@@ -30,9 +33,4 @@ Matrix4 Primitive::GetTransform() const
 void Primitive::setBoundingBox(AABB boundingBox)
 {
 	mBoundingBox = boundingBox;
-}
-
-void Primitive::SetTransform(Matrix4 NewTransform)
-{
-	mTransform = NewTransform;
 }

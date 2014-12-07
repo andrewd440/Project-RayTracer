@@ -26,7 +26,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	virtual bool isIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) = 0;
+	virtual bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) = 0;
 
 	/**
 	* Set the material properties for the Primitives' surface.
@@ -57,19 +57,14 @@ protected:
 	*/
 	void setBoundingBox(AABB boundingBox);
 
-	/**
-	* Set the model transform for the object.
-	*/
-	void SetTransform(Matrix4 NewTransform);
-
 protected:
-	Matrix4 mTransform; /* Transforms objects from model to world space */
+	Matrix4 mTransform; /* Object space transform */
 
 private:
 	/**
 	* Each derived class needs to construct their bounding box.
 	*/
-	virtual void constructAABB() = 0;
+	virtual void ConstructAABB() = 0;
 
 private:
 	Material mMaterial; /* Lighting material properties for the Primitive */

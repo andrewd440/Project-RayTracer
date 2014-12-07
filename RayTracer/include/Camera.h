@@ -14,8 +14,6 @@
 class Camera
 {
 public:
-	static LookAtMatrix ViewTransform; /* View space transformation */
-
 	/**
 	* Constructs a scene camera from it's world position, direction, distance from the screen, and 
 	* screen size.
@@ -47,15 +45,11 @@ public:
 	*/
 	void SetFOV(float FOV);
 
-	/**
-	* Sets the origin of the camera.
-	*/
-	void SetPosition(const Vector3f& Position);
-
 private:
 	float mFieldOfView; /* Horizontal FOV of the camera */
 	float mAspectRatio; /* Output resolution height/width */
 	float mDistanceFromScreenPlane; /* Distance between viewpoint and screen */
 	Vector2i mOutputResolution; /* Size, in pixels, of the output image */
+	LookAtMatrix mViewTransform; /* From View space to world space */
 };
 

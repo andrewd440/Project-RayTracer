@@ -6,7 +6,7 @@ struct AABB
 {
 	Vector3f min, max;
 
-	Vector3f getCenter() const
+	Vector3f GetCenter() const
 	{
 		return (min + max) * 0.5f;
 	}

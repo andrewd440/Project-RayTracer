@@ -4,6 +4,7 @@
 #include <iostream>
 #include <istream>
 #include <time.h>
+#include "Matrix4.h"
 
 #include "Camera.h"
 #include "Ray.h"

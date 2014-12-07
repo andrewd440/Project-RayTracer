@@ -6,6 +6,7 @@
 
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Ray.h"
 #include "FMath.h"
 
 /**
@@ -44,7 +45,17 @@ struct Matrix4
 	* @param ZBasis Z vector
 	*/
 	Matrix4(const Vector3f& XBasis, const Vector3f& YBasis, const Vector3f& ZBasis);
+
+	/**
+	* Copy Constructor
+	*/
+	Matrix4(const Matrix4& Other);
 	
+	/**
+	* Copy assignment
+	*/
+	Matrix4& operator=(const Matrix4& Other);
+
 	/**
 	* Performs matrix-matrix multiplication.
 	* @param Rhs Matrix to multiply by.
@@ -97,6 +108,11 @@ struct Matrix4
 	Vector4f TransformVector(const Vector4f& Vector) const;
 
 	/**
+	* Transforms a ray.
+	*/
+	Ray TransformRay(const Ray& OldRay) const;
+
+	/**
 	* Retrieve an axis vector from the matrix.
 	*/
 	Vector3f GetAxis(Matrix4::Axis Axis) const;
@@ -134,6 +150,16 @@ struct Matrix4
 	* @param Row of the matrix, 0 = first row, 1 = second row ...
 	*/
 	Vector4f GetRow(int Row) const;
+
+	/**
+	* Calculates the inverse of the matrix.
+	*/
+	Matrix4 GetInverse() const;
+
+	/**
+	* Calculates the inverse of an affine 4x4 matrix.
+	*/
+	Matrix4 GetInverseAffine() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -157,7 +183,7 @@ inline Matrix4 operator+(Matrix4 Lhs, const Matrix4& Rhs)
 
 inline Matrix4 operator*(Matrix4 Lhs, const Matrix4& Rhs)
 {
-	return Lhs *= Rhs;
+	return (Lhs *= Rhs);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -194,17 +220,49 @@ inline Matrix4::Matrix4(const Vector3f& XBasis, const Vector3f& YBasis, const Ve
 	M[3][3] = 1.0f;
 }
 
-inline Matrix4& Matrix4::operator*=(const Matrix4& Rhs)
+inline Matrix4::Matrix4(const Matrix4& Other)
 {
 	for (int row = 0; row < 4; row++)
 	{
 		for (int col = 0; col < 4; col++)
 		{
-			Vector4f thisRow(M[row][0], M[row][1], M[row][2], M[row][3]);
-			Vector4f rhsCol(Rhs.M[0][col], Rhs.M[1][col], Rhs.M[2][col], Rhs.M[3][col]);
-			M[row][col] = Vector4f::Dot4(thisRow, rhsCol);
+			M[row][col] = Other.M[row][col];
 		}
 	}
+}
+
+inline Matrix4& Matrix4::operator=(const Matrix4& Other)
+{
+	for (int row = 0; row < 4; row++)
+	{
+		for (int col = 0; col < 4; col++)
+		{
+			M[row][col] = Other.M[row][col];
+		}
+	}
+
+	return *this;
+}
+
+inline Matrix4& Matrix4::operator*=(const Matrix4& Rhs)
+{
+	float tempM[4][4];
+	for (int row = 0; row < 4; row++)
+	{
+		for (int col = 0; col < 4; col++)
+		{
+			tempM[row][col] = Vector4f::Dot4(GetRow(row), Rhs.GetColumn(col));
+		}
+	}
+
+	for (int row = 0; row < 4; row++)
+	{
+		for (int col = 0; col < 4; col++)
+		{
+			M[row][col] = tempM[row][col];
+		}
+	}
+
 
 	return *this;
 }
@@ -284,6 +342,11 @@ inline Vector4f Matrix4::TransformVector(const Vector4f& Vector) const
 	return transformed;
 }
 
+inline Ray Matrix4::TransformRay(const Ray& OldRay) const
+{
+	return Ray(TransformPosition(OldRay.origin), TransformDirection(OldRay.direction));
+}
+
 inline Vector3f Matrix4::GetAxis(Matrix4::Axis Axis) const
 {
 	switch (Axis)
@@ -335,15 +398,15 @@ inline void Matrix4::Rotate(Axis Axis, float Degrees)
 	case Axis::Y:
 		rotationMat = Matrix4{
 			(float)cos(radians),	0.0f,	(float)sin(radians),	0.0f,
-			0.0f,					0.0f,	0.0f,					0.0f,
-			0.0f,					0.0f,	0.0f,					0.0f,
-			(float)-sin(radians),	0.0f,	(float)cos(radians),	1.0f };
+			0.0f,					1.0f,	0.0f,					0.0f,
+			(float)-sin(radians),	0.0f,	(float)cos(radians),	0.0f,
+			0.0f,					0.0f,	0.0f,					1.0f };
 		break;
 	case Axis::Z:
 		rotationMat = Matrix4{
 			(float)cos(radians),	(float)-sin(radians),	0.0f,	0.0f,
 			(float)sin(radians),	(float)cos(radians),	0.0f,	0.0f,
-			0.0f,					0.0f,					0.0f,	0.0f,
+			0.0f,					0.0f,					1.0f,	0.0f,
 			0.0f,					0.0f,					0.0f,	1.0f };
 		break;
 	default:
@@ -378,6 +441,64 @@ inline void Matrix4::SetOrigin(const Vector3f& Origin)
 	M[0][3] = Origin.x; M[1][3] = Origin.y; M[2][3] = Origin.z;
 }
 
+inline Matrix4 Matrix4::GetInverse() const
+{
+	Matrix4 inv;
+	float* invM = &(inv.M[0][0]);
+	const float	m0 = M[0][0],	m1 = M[0][1],	m2 = M[0][2],	m3 = M[0][3],
+				m4 = M[1][0],	m5 = M[1][1],	m6 = M[1][2],	m7 = M[1][3],
+				m8 = M[2][0],	m9 = M[2][1],	m10 = M[2][2],	m11 = M[2][3],
+				m12 = M[3][0],	m13 = M[3][1],	m14 = M[3][2],	m15 = M[3][3];
+
+	invM[0] = m5 * m10 * m15 - m5 * m11 * m14 - m9 * m6 * m15 + m9 * m7 * m14 + m13 * m6 * m11 - m13 * m7 * m10;
+	invM[1] = -m1 * m10 * m15 + m1 * m11 * m14 + m9 * m2 * m15 - m9 * m3 * m14 - m13 * m2 * m11 + m13 * m3 * m10;
+	invM[2] = m1 * m6  * m15 - m1 * m7  * m14 - m5 * m2 * m15 + m5 * m3 * m14 + m13 * m2 * m7 - m13 * m3 * m6;
+	invM[3] = -m1 * m6  * m11 + m1 * m7  * m10 + m5 * m2 * m11 - m5 * m3 * m10 - m9  * m2 * m7 + m9  * m3 * m6;
+	invM[4] = -m4 * m10 * m15 + m4 * m11 * m14 + m8 * m6 * m15 - m8 * m7 * m14 - m12 * m6 * m11 + m12 * m7 * m10;
+	invM[5] = m0 * m10 * m15 - m0 * m11 * m14 - m8 * m2 * m15 + m8 * m3 * m14 + m12 * m2 * m11 - m12 * m3 * m10;
+	invM[6] = -m0 * m6  * m15 + m0 * m7  * m14 + m4 * m2 * m15 - m4 * m3 * m14 - m12 * m2 * m7 + m12 * m3 * m6;
+	invM[7] = m0 * m6  * m11 - m0 * m7  * m10 - m4 * m2 * m11 + m4 * m3 * m10 + m8  * m2 * m7 - m8  * m3 * m6;
+	invM[8] = m4 * m9  * m15 - m4 * m11 * m13 - m8 * m5 * m15 + m8 * m7 * m13 + m12 * m5 * m11 - m12 * m7 * m9;
+	invM[9] = -m0 * m9  * m15 + m0 * m11 * m13 + m8 * m1 * m15 - m8 * m3 * m13 - m12 * m1 * m11 + m12 * m3 * m9;
+	invM[10] = m0 * m5  * m15 - m0 * m7  * m13 - m4 * m1 * m15 + m4 * m3 * m13 + m12 * m1 * m7 - m12 * m3 * m5;
+	invM[11] = -m0 * m5  * m11 + m0 * m7  * m9 + m4 * m1 * m11 - m4 * m3 * m9 - m8  * m1 * m7 + m8  * m3 * m5;
+	invM[12] = -m4 * m9  * m14 + m4 * m10 * m13 + m8 * m5 * m14 - m8 * m6 * m13 - m12 * m5 * m10 + m12 * m6 * m9;
+	invM[13] = m0 * m9  * m14 - m0 * m10 * m13 - m8 * m1 * m14 + m8 * m2 * m13 + m12 * m1 * m10 - m12 * m2 * m9;
+	invM[14] = -m0 * m5  * m14 + m0 * m6  * m13 + m4 * m1 * m14 - m4 * m2 * m13 - m12 * m1 * m6 + m12 * m2 * m5;
+	invM[15] = m0 * m5  * m10 - m0 * m6  * m9 - m4 * m1 * m10 + m4 * m2 * m9 + m8  * m1 * m6 - m8  * m2 * m5;
+
+	float det = m0 * invM[0] + m1 * invM[4] + m2 * invM[8] + m3 * invM[12];
+	if (det != 0.0f)
+	{
+		det = 1.0f / det;
+	}
+	
+	for (int i = 0; i < 16; i++)
+	{
+		invM[i] *= det;
+	}
+
+	return inv;
+}
+
+inline Matrix4 Matrix4::GetInverseAffine() const
+{
+	Matrix4 result;
+	const Vector3f& translateVector(GetOrigin());
+
+	// swap row/col in 3x3 portion
+	for (int row = 0; row < 3; row++)
+	{
+		for (int col = 0; col < 3; col++)
+		{
+			result.M[row][col] = M[col][row];
+		}
+	}
+
+	result.SetOrigin(-result.TransformPosition(translateVector));
+	return result;
+}
+
 
 /**
 * A camera look-at matrix.
@@ -391,6 +512,8 @@ struct LookAtMatrix : public Matrix4
 	* @param UpDirection Direction of up.
 	*/
 	LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocation, const Vector3f& UpDirection);
+
+	LookAtMatrix& operator=(const Matrix4& Other);
 };
 
 inline LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocation, const Vector3f& UpDirection)
@@ -411,4 +534,17 @@ inline LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocat
 	M[1][3] = -Vector3f::Dot(Eye, V);
 	M[2][3] = -Vector3f::Dot(Eye, -N);
 	M[3][3] = 1.0f;
+}
+
+inline LookAtMatrix& LookAtMatrix::operator=(const Matrix4& Other)
+{
+	for (int row = 0; row < 4; row++)
+	{
+		for (int col = 0; col < 4; col++)
+		{
+			M[row][col] = Other.M[row][col];
+		}
+	}
+
+	return *this;
 }
