@@ -14,16 +14,18 @@
 class Camera
 {
 public:
+	static LookAtMatrix ViewTransform; /* View space transformation */
+
 	/**
 	* Constructs a scene camera from it's world position, direction, distance from the screen, and 
 	* screen size.
 	* @param EyePosition World position of the camera
-	* @param LookDirection Normalized direction vector of the camera's direction
+	* @param LookAt Position the camera is facing
 	* @param UpDirection Direction toward up.
 	* @param FOV The distance of the camera from the screen
 	* @param OutputResolution Size of the screen (in pixels)
 	*/
-	Camera(const Vector3f& EyePosition, const Vector3f& LookDirection, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution);
+	Camera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution);
 
 	/**
 	* Generates a ray from the viewpoint through a screen pixel.
@@ -50,13 +52,7 @@ public:
 	*/
 	void SetPosition(const Vector3f& Position);
 
-	/**
-	* Retrieves the view transform.
-	*/
-	LookAtMatrix GetViewTransform() const;
-
 private:
-	LookAtMatrix mViewTransform; /* View space transformation */
 	float mFieldOfView; /* Horizontal FOV of the camera */
 	float mAspectRatio; /* Output resolution height/width */
 	float mDistanceFromScreenPlane; /* Distance between viewpoint and screen */

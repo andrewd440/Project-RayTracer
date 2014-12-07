@@ -2,12 +2,20 @@ BackgroundColor: 0 0 0
 GlobalAmbientColor: .2 .2 .2
 
 Camera
-	Position: 0 0 0
+	Position: 10 0 0
 	FOV: 75
 
 PointLight
-	Color: 1 1 1
+	Color: .5 1 1
 	Position: 1 2 -12
+
+PointLight
+	Color: 1 .5 1
+	Position: -10 1 -25
+
+DirectionalLight
+	Color: .6 .4 .4
+	Direction: 1 -1 0
 
 Plane
 	Direction: 0 1 0

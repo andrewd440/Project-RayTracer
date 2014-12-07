@@ -1,7 +1,6 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Intersection.h"
-#include "LocalGeometry.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "Plane.h"
@@ -16,7 +15,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(500, 200);
+	const Vector2i OUTPUT_RESOLUTION(1000, 600);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,8 +31,8 @@ Scene::Scene()
 	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
 	, mBackgroundColor(Color::Black)
 	, mGlobalAmbient(100, 100, 100)
-	, mCamera(Vector3f(0, 0, 0), Vector3f(0, 0, -1), Vector3f(0, 1, 0), 65, OUTPUT_RESOLUTION)
-	, mShapes()
+	, mCamera(Vector3f(0, 5, 0), Vector3f(0, 0, -20), Vector3f(0, 1, 0), 65, OUTPUT_RESOLUTION)
+	, mPrimitives()
 	, mLights()
 	, mKDTree()
 {
@@ -68,7 +67,7 @@ void Scene::buildScene(std::istream& in)
 				throwSceneConfigError("Camera");
 			in >> FOV;
 
-			mCamera.SetPosition(position);
+			//mCamera.SetPosition(position);
 			mCamera.SetFOV(FOV);
 		}
 		else if (string == "DirectionalLight")
@@ -103,7 +102,7 @@ void Scene::buildScene(std::istream& in)
 				throwSceneConfigError("PointLight");
 			in >> position.x >> position.y >> position.z;
 
-			mLights.push_back(LightPtr(new PointLight(color, position)));
+			mLights.push_back(LightPtr(new PointLight(color, position, 2, 15))); ///////////////////////////////////////CHANGE TO FILE INPUT
 		}
 		else if (string == "Plane")
 		{
@@ -121,7 +120,7 @@ void Scene::buildScene(std::istream& in)
 
 			Material material(readMaterial(in));
 
-			mShapes.push_back(ShapePtr(new Plane(material, direction, point)));
+			mPrimitives.push_back(PrimitivePtr(new Plane(material, direction, point)));
 		}
 		else if (string == "Sphere")
 		{
@@ -139,7 +138,7 @@ void Scene::buildScene(std::istream& in)
 			
 			Material material(readMaterial(in));
 
-			mShapes.push_back(ShapePtr(new Sphere(center, radius, material)));
+			mPrimitives.push_back(PrimitivePtr(new Sphere(center, radius, material)));
 		}
 		else if (string == "Model")
 		{
@@ -163,7 +162,7 @@ void Scene::buildScene(std::istream& in)
 		in >> string;
 	}
 
-	mKDTree.buildTree(mShapes, 10);
+	mKDTree.buildTree(mPrimitives, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,11 +177,15 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 
 	
 	// For performs difference tests
-	//for (const auto& Shape : mShapes)
-	//	Shape->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
+	//for (const auto& Primitive : mPrimitives)
+	//	Primitive->isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 		
 	mKDTree.isIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 	
+	// get camera ray in world space
+	const Matrix4 viewTransformInverse = Camera::ViewTransform.Transpose();
+	const Ray cameraRayWorldSpace(viewTransformInverse.TransformPosition(cameraRay.origin), viewTransformInverse.TransformPosition(cameraRay.direction));
+
 	// If an object was intersected
 	if (closestIntersection.object)
 	{
@@ -190,15 +193,21 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 
 		// Get the surface material, point, and normal
 		const Material& surfaceMaterial(closestIntersection.object->getMaterial());
-		const Vector3f& surfacePoint(closestIntersection.localGeometry.point);
-		const Vector3f& surfaceNormal(closestIntersection.localGeometry.surfaceNormal);
+		const Vector3f& surfacePoint(closestIntersection.point);
+		const Vector3f& surfaceNormal(closestIntersection.normal);
 
 		for (const auto& light : mLights)
 		{
+			const Color lightColor = light->GetIntesityAt(surfacePoint);
+
+			// if the light intesity is 0, skip this light
+			if (lightColor == Color::Black)
+				continue;
+
 			// Get direction of light and compute h reflection
-			const Ray& rayToLight(light->getRayToLight(surfacePoint));
+			const Ray& rayToLight(light->GetRayToLight(surfacePoint));
 			const Vector3f& lightDirection(rayToLight.direction);
-			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRay.direction);
+			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRayWorldSpace.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
 			if (isInShadow(rayToLight))
@@ -214,14 +223,14 @@ Color Scene::traceRay(const Ray& cameraRay, int32_t depth)
 			float diffuseFactor = std::max(Vector3f::Dot(surfaceNormal, lightDirection), 0.f);
 
 			// Combine material color and light color for diffuse and specular
-			Color specularColor(light->getLightColor() * surfaceMaterial.specularColor * specularFactor);
-			Color diffuseColor(light->getLightColor()  * surfaceMaterial.diffuseColor * diffuseFactor);
+			Color specularColor(lightColor * surfaceMaterial.specularColor * specularFactor);
+			Color diffuseColor(lightColor  * surfaceMaterial.diffuseColor * diffuseFactor);
 
 			// Add diffuse and specular contributions to total
 			outputColor += specularColor + diffuseColor;
 
 			// Add mirror reflection contributions
-			Ray reflectionRay(surfacePoint, computeMirriorReflection(-cameraRay.direction, surfaceNormal));
+			Ray reflectionRay(surfacePoint, computeMirriorReflection(-cameraRayWorldSpace.direction, surfaceNormal));
 			outputColor += traceRay(reflectionRay, depth - 1) * outputColor * surfaceMaterial.reflectivity;
 		}
 
@@ -241,7 +250,7 @@ void Scene::renderScene()
 		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
 		{
 			Ray ray = mCamera.GenerateRay(x, y);
-			Color pixelColor = traceRay(ray,20);
+			Color pixelColor = traceRay(ray,5);
 			mOutputImage.setPixel(x, y, pixelColor);
 		}
 	}
@@ -266,10 +275,10 @@ bool Scene::isInShadow(const Ray& lightRay)
 
 	
 	// For performance tests
-	//for (const auto& Shape : mShapes)
+	//for (const auto& Primitive : mPrimitives)
 	//{
 	//	// If the object is not the reference one and intersects the light
-	//	if (Shape->isIntersectingRay(lightRay))
+	//	if (Primitive->isIntersectingRay(lightRay))
 	//		return true;
 	//}
 
@@ -361,7 +370,7 @@ void Scene::readModel(std::string filename, Vector3f translation, Material mater
 				in >> faceV1;
 				in >> faceV2;
 
-				mShapes.push_back(ShapePtr(new Triangle(vertices[faceV0-1], vertices[faceV1-1], vertices[faceV2-1], material)));
+				mPrimitives.push_back(PrimitivePtr(new Triangle(vertices[faceV0-1], vertices[faceV1-1], vertices[faceV2-1], material)));
 			}
 
 			in >> string;

@@ -11,8 +11,6 @@
 #include "Vector2.h"
 #include "Scene.h"
 
-using namespace std;
-
 int main()
 {
 	clock_t t1, t2;
@@ -27,7 +25,7 @@ int main()
 	}
 	fb.close();
 	t2 = clock();
-	cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << endl;
+	std::cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << std::endl;
 
 	return 0;
 }

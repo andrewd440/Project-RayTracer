@@ -1,8 +1,8 @@
 #pragma once
-#include "Shape.h"
+#include "Primitive.h"
 #include "Vector3.h"
 
-class Triangle : public Shape
+class Triangle : public Primitive
 {
 public:
 	Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& LightingMaterial);

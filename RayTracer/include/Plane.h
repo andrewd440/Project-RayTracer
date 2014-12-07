@@ -1,8 +1,8 @@
 #pragma once
-#include "Shape.h"
+#include "Primitive.h"
 
 /* Represents a plane in 3D space. */
-class Plane : public Shape
+class Plane : public Primitive
 {
 public:
 	/**

@@ -1,20 +1,21 @@
 #include "Sphere.h"
 #include "Intersection.h"
-#include "LocalGeometry.h"
+#include "Camera.h"
 
-Sphere::Sphere(Vector3f center, float radius, Material LightingMaterial)
-	: Shape(LightingMaterial)
-	, mCenter(center)
-	, mRadius(radius)
+Sphere::Sphere(Vector3f Center, float Radius, Material LightingMaterial)
+	: Primitive(LightingMaterial)
+	, mRadius(Radius)
 {
+	mCenterInViewSpace = Camera::ViewTransform.TransformPosition(Center);
+	mTransform.SetOrigin(Center);
 	constructAABB();
 }
 
 bool Sphere::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
-{
+{ 
 	const Vector3f rayDirection = ray.direction;
 	const Vector3f rayOrigin = ray.origin;
-	const Vector3f m = rayOrigin - mCenter;
+	const Vector3f m = ray.origin - mCenterInViewSpace;
 
 	// Coefficients for quandratic equation
 	const float b = Vector3f::Dot(m, rayDirection);
@@ -43,6 +44,10 @@ bool Sphere::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersec
 	{
 		*tValueOut = smallestTValue;
 
+		// get intersection in world space
+		Vector3f intersection = rayOrigin + smallestTValue * rayDirection;
+		intersection = Camera::ViewTransform.Transpose().TransformPosition(intersection);
+		
 		// Construct intersection with t solution
 		constructIntersection(rayOrigin + smallestTValue * rayDirection, *intersectionOut);
 	}
@@ -53,12 +58,12 @@ bool Sphere::isIntersectingRay(Ray ray, float* tValueOut, Intersection* intersec
 
 Vector3f Sphere::getCenter() const
 {
-	return mCenter;
+	return mTransform.GetOrigin();
 }
 
 void Sphere::setCenter(const Vector3f& CenterPoint)
 {
-	mCenter = CenterPoint;
+	mTransform.SetOrigin(CenterPoint);
 }
 
 float Sphere::getRadius() const
@@ -73,22 +78,17 @@ void Sphere::setRadius(const float& radius)
 
 void Sphere::constructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut)
 {
-	LocalGeometry& geometry = IntersectionOut.localGeometry;
-
-	Vector3f normal = IntersectionPoint - mCenter;
-	normal.Normalize();
-	geometry.surfaceNormal = normal;
-
-	geometry.point = IntersectionPoint;
-	
+	IntersectionOut.normal = (IntersectionPoint - getCenter()).Normalize();
+	IntersectionOut.point = IntersectionPoint;
 	IntersectionOut.object = this;
 }
 
 void Sphere::constructAABB()
 {
 	AABB boundingBox;
-	boundingBox.max = Vector3f(mCenter.x + mRadius, mCenter.y + mRadius, mCenter.z + mRadius);
-	boundingBox.min = Vector3f(mCenter.x - mRadius, mCenter.y - mRadius, mCenter.z - mRadius);
+	Vector3f center = mTransform.GetOrigin();
+	boundingBox.max = Vector3f(center.x + mRadius, center.y + mRadius, center.z + mRadius);
+	boundingBox.min = Vector3f(center.x - mRadius, center.y - mRadius, center.z - mRadius);
 
 	setBoundingBox(boundingBox);
 }

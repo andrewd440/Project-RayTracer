@@ -10,10 +10,10 @@ KDTree::KDTree()
 }
 
 
-void KDTree::buildTree(const std::vector<std::unique_ptr<Shape>>& Shapes, uint32_t depth)
+void KDTree::buildTree(const std::vector<std::unique_ptr<Primitive>>& Primitives, uint32_t depth)
 {
-	for (const auto& Shape : Shapes)
-		mRoot.ShapeList.push_back(Shape.get());
+	for (const auto& Primitive : Primitives)
+		mRoot.PrimitiveList.push_back(Primitive.get());
 
 	mRoot.axis = 0;
 
@@ -23,57 +23,57 @@ void KDTree::buildTree(const std::vector<std::unique_ptr<Shape>>& Shapes, uint32
 
 void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 {
-	if (depth == 0 || currentNode.ShapeList.size() <= 1)
+	if (depth == 0 || currentNode.PrimitiveList.size() <= 1)
 		return;
 
 	uint32_t dividingAxis = currentNode.axis;
-	std::vector<Shape*>& currentShapes = currentNode.ShapeList;
+	std::vector<Primitive*>& currentPrimitives = currentNode.PrimitiveList;
 
-	std::sort(currentShapes.begin(), currentShapes.end(), [dividingAxis](const Shape* lhs, const Shape* rhs) -> bool
+	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const Primitive* lhs, const Primitive* rhs) -> bool
 	{
 		return lhs->getBoundingBox().getCenter()[dividingAxis] < rhs->getBoundingBox().getCenter()[dividingAxis];
 	});
 
-	size_t ShapeListSize = currentNode.ShapeList.size();
-	size_t medianShapeIndex = ShapeListSize / 2;
-	Shape* medianShape = currentShapes[medianShapeIndex];
-	float medianAxisValue = medianShape->getBoundingBox().getCenter()[dividingAxis];
+	size_t PrimitiveListSize = currentNode.PrimitiveList.size();
+	size_t medianPrimitiveIndex = PrimitiveListSize / 2;
+	Primitive* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
+	float medianAxisValue = medianPrimitive->getBoundingBox().getCenter()[dividingAxis];
 	currentNode.splitValue = medianAxisValue;
 
-	std::vector<Shape*> straddlingShapes;
-	straddlingShapes.push_back(medianShape);
+	std::vector<Primitive*> straddlingPrimitives;
+	straddlingPrimitives.push_back(medianPrimitive);
 	currentNode.child[0] = std::unique_ptr<KDNode>(new KDNode());
 	currentNode.child[1] = std::unique_ptr<KDNode>(new KDNode());
 
 	// check for objects straddling the dividing axis, if so, add them to array
-	for (int i = medianShapeIndex - 1; i >= 0; i--)
+	for (int i = medianPrimitiveIndex - 1; i >= 0; i--)
 	{
-		const AABB& currentBBox = currentShapes[i]->getBoundingBox();
+		const AABB& currentBBox = currentPrimitives[i]->getBoundingBox();
 		float axisRange = std::abs(currentBBox.min[dividingAxis] - currentBBox.max[dividingAxis]);
 		float dividedRange = std::abs(currentBBox.min[dividingAxis] - medianAxisValue);
 		if (axisRange > dividedRange)
-			straddlingShapes.push_back(currentShapes[i]);
+			straddlingPrimitives.push_back(currentPrimitives[i]);
 		else
 		{
-			currentNode.child[0]->ShapeList.push_back(currentShapes[i]);
+			currentNode.child[0]->PrimitiveList.push_back(currentPrimitives[i]);
 		}
 	}
 
-	for (size_t i = medianShapeIndex + 1; i < ShapeListSize; i++)
+	for (size_t i = medianPrimitiveIndex + 1; i < PrimitiveListSize; i++)
 	{
-		const AABB& currentBBox = currentShapes[i]->getBoundingBox();
+		const AABB& currentBBox = currentPrimitives[i]->getBoundingBox();
 		float axisRange = currentBBox.max[dividingAxis] - currentBBox.min[dividingAxis];
 		float dividedRange = currentBBox.max[dividingAxis] - medianAxisValue;
 		if (axisRange > dividedRange)
-			straddlingShapes.push_back(currentShapes[i]);
+			straddlingPrimitives.push_back(currentPrimitives[i]);
 		else
 		{
-			currentNode.child[1]->ShapeList.push_back(currentShapes[i]);
+			currentNode.child[1]->PrimitiveList.push_back(currentPrimitives[i]);
 		}
 	}
 
 	currentNode.child[0]->axis = currentNode.child[1]->axis = ++dividingAxis % 3;
-	currentNode.ShapeList = straddlingShapes;
+	currentNode.PrimitiveList = straddlingPrimitives;
 
 	buildTreeHelper(*currentNode.child[0], depth - 1);
 	buildTreeHelper(*currentNode.child[1], depth - 1);
@@ -91,8 +91,8 @@ bool KDTree::visitNodesAgainstRay(KDNode* currentNode, Ray ray, float* tValueOut
 
 	bool isIntersecting = false;
 
-	for (Shape* Shape : currentNode->ShapeList)
-		isIntersecting |= Shape->isIntersectingRay(ray, tValueOut, intersectionOut);
+	for (Primitive* Primitive : currentNode->PrimitiveList)
+		isIntersecting |= Primitive->isIntersectingRay(ray, tValueOut, intersectionOut);
 
 	// check which child to traverse first from axis split
 	uint32_t axis = currentNode->axis;

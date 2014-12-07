@@ -4,7 +4,7 @@
 #include <cmath>
 
 Triangle::Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& LightingMaterial)
-	: Shape(LightingMaterial)
+	: Primitive(LightingMaterial)
 	, mV0(V0)
 	, mV1(V1)
 	, mV2(V2)
@@ -129,10 +129,8 @@ bool Triangle::isIntersectingRay(Ray ray, float* tValueOut, Intersection* inters
 void Triangle::constructIntersection(Vector3f intersectionPoint, Intersection& intersectionOut)
 {
 	intersectionOut.object = this;
-
-	LocalGeometry& geometry = intersectionOut.localGeometry;
-	geometry.point = intersectionPoint;
-	geometry.surfaceNormal = mNormal;
+	intersectionOut.point = intersectionPoint;
+	intersectionOut.normal = mNormal;
 }
 
 void Triangle::constructAABB()

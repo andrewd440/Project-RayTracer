@@ -4,7 +4,7 @@
 #include "Image.h"
 #include "KDTree.h"
 #include "Light.h"
-#include "Shape.h"
+#include "Primitive.h"
 
 #include <vector>
 #include <memory>
@@ -17,7 +17,7 @@
 class Scene
 {
 public:
-	using ShapePtr =  std::unique_ptr<Shape>;
+	using PrimitivePtr =  std::unique_ptr<Primitive>;
 	using LightPtr = std::unique_ptr<Light>;
 
 	/**
@@ -60,7 +60,7 @@ private:
 
 	/**
 	* Checks if a light ray is blocked by another object.
-	* @param LightRay - A ray from the surface point on the Shape to the light source
+	* @param LightRay - A ray from the surface point on the Primitive to the light source
 	* @return True if the point is in a shadow
 	*
 	*/
@@ -98,7 +98,7 @@ private:
 private:
 	Image mOutputImage; /* Output image for the rendered scene */
 	Camera mCamera; /* Camera for the scene */
-	std::vector<ShapePtr> mShapes; /* All Shapes in the scene */
+	std::vector<PrimitivePtr> mPrimitives; /* All Primitives in the scene */
 	std::vector<LightPtr> mLights; /* All lights in the scene */
 	Color mBackgroundColor; /* Background color for the scene */
 	Color mGlobalAmbient; /* Color used for global ambient lighting */

@@ -100,7 +100,7 @@
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\Scene.cpp" />
-    <ClCompile Include="src\Shape.cpp" />
+    <ClCompile Include="src\Primitive.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
   </ItemGroup>
@@ -113,14 +113,14 @@
     <ClInclude Include="include\Intersection.h" />
     <ClInclude Include="include\KDTree.h" />
     <ClInclude Include="include\Light.h" />
-    <ClInclude Include="include\LocalGeometry.h" />
     <ClInclude Include="include\Material.h" />
+    <ClInclude Include="include\FMath.h" />
     <ClInclude Include="include\Matrix4.h" />
     <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\Ray.h" />
     <ClInclude Include="include\Scene.h" />
-    <ClInclude Include="include\Shape.h" />
+    <ClInclude Include="include\Primitive.h" />
     <ClInclude Include="include\Sphere.h" />
     <ClInclude Include="include\Triangle.h" />
     <ClInclude Include="include\Vector2.h" />

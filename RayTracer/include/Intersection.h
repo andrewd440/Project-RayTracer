@@ -1,7 +1,6 @@
 #pragma once
-#include "LocalGeometry.h"
 
-class Shape;
+class Primitive;
 
 /**
 * Struct for describing the properties of an intersection 
@@ -10,27 +9,32 @@ class Shape;
 struct Intersection
 {
 	/**
-	* Default constructor.
+	* Default Constructor 
 	*/
-	Intersection()
+	inline Intersection()
 		: object(nullptr)
-		, localGeometry()
+		, point()
+		, normal()
 	{
 	}
 
 	/**
 	* Construct Intersection from the object of the intersection and the points' local
 	* geometry properties
-	* @param IntersectedObject - object of the intersection
-	* @param GeometryAtIntersection - the geometry of the point of intersection
+	* @param IntersectedObject Object of the intersection
+	* @param IntersectionPoint Point of intersection
+	* @param SurfaceNormal Normal at the intersection of the object
 	*/
-	Intersection(Shape& IntersectedObject, LocalGeometry GeometryAtIntersection)
+	inline Intersection(Primitive& IntersectedObject, Vector3f IntersectionPoint, Vector3f SurfaceNormal)
 		: object(&IntersectedObject)
-		, localGeometry(GeometryAtIntersection)
+		, point(IntersectionPoint)
+		, normal(SurfaceNormal)
 	{
 	}
+
 		
-	Shape* object; /* The primative of the intersection */
-	LocalGeometry localGeometry; /* The geometry at the point of intersection */
+	Primitive* object;				/* The primative of the intersection */
+	Vector3f point;				/* Point on the surface of the geometry */
+	Vector3f normal;			/* Surface normal at the point on the geometry */
 };
 

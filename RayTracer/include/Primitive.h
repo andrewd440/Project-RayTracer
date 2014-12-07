@@ -2,54 +2,68 @@
 #include "Ray.h"
 #include "Material.h"
 #include "AABB.h"
+#include "Matrix4.h"
 
 struct Intersection;
 
 /**
-* Abstract class for all Shapes.
+* Abstract class for all Primitives.
 */
-class Shape
+class Primitive
 {
 public:
-	explicit Shape(const Material& LightingMaterial);
+	explicit Primitive(const Material& LightingMaterial);
 
-	virtual ~Shape(){};
+	virtual ~Primitive(){};
 
 	/**
-	* Checks if a ray intersects the Shape.
+	* Checks if a ray intersects the Primitive.
 	* If the intersection succeeds, the intersection properties and t value are output through
 	* an optional t value and intersection pointer.
 	* @param Ray - the ray to check for intersection
 	* @param tValueOut(optional) - the smallest t parameter will be output to this
 	* @param IntersectionOut(optional) - intersection attributes will be assigned to this reference if
 	*							if the interection returns true
-	* @return True if the ray intersects the Shape.
+	* @return True if the ray intersects the Primitive.
 	*/
 	virtual bool isIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) = 0;
 
 	/**
-	* Set the material properties for the Shapes' surface.
-	* @param NewMaterial - The material for the Shape
+	* Set the material properties for the Primitives' surface.
+	* @param NewMaterial - The material for the Primitive
 	*/
 	void setMaterial(const Material& NewMaterial);
 
 	/**
-	* Retrieves the material for the Shape.
+	* Retrieves the material for the Primitive.
 	* @return The material
 	*/
 	Material getMaterial() const;
 
 	/**
-	* Retrieves the bounding box for the Shape.
+	* Retrieves the bounding box for the Primitive.
 	*/
 	AABB getBoundingBox() const;
 
+	/**
+	* Gets the model transform for the object.
+	*/
+	Matrix4 GetTransform() const;
+
 protected:
 	/**
-	* Sets the bounding box for the Shape.
-	* @param boundingBox - AABB for the Shape
+	* Sets the bounding box for the Primitive.
+	* @param boundingBox - AABB for the Primitive
 	*/
 	void setBoundingBox(AABB boundingBox);
+
+	/**
+	* Set the model transform for the object.
+	*/
+	void SetTransform(Matrix4 NewTransform);
+
+protected:
+	Matrix4 mTransform; /* Transforms objects from model to world space */
 
 private:
 	/**
@@ -58,7 +72,7 @@ private:
 	virtual void constructAABB() = 0;
 
 private:
-	Material mMaterial; /* Lighting material properties for the Shape */
-	AABB mBoundingBox;
+	Material mMaterial; /* Lighting material properties for the Primitive */
+	AABB mBoundingBox; /* AABB for KD-tree */
 };
 

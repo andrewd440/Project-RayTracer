@@ -25,13 +25,14 @@ public:
 	* @param SurfacePoint - The destination point for the light
 	* @return A ray from the surface point to the light position.
 	*/
-	virtual Ray getRayToLight(const Vector3f& SurfacePoint) = 0;
+	virtual Ray GetRayToLight(const Vector3f& SurfacePoint) = 0;
 
 	/**
-	* Retrieves the RGB color of the light.
+	* Retrieves the color intensity of the light at a point.
+	* @param Position Point to check intensity at.
 	* @return The color of the light.
 	*/
-	Color getLightColor() const;
+	virtual Color GetIntesityAt(Vector3f Position) const = 0;
 
 	/**
 	* Sets the color of the light.
@@ -39,7 +40,7 @@ public:
 	*/
 	void setLightColor(const Color& LightColor);
 
-private:
+protected:
 	Color mLightColor; /* Color of the light. */
 };
 

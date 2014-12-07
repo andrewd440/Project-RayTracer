@@ -15,7 +15,7 @@ DirectionalLight::DirectionalLight(Color LightColor, Vector3f LightDirection)
 }
 
 
-Ray DirectionalLight::getRayToLight(const Vector3f& SurfacePoint)
+Ray DirectionalLight::GetRayToLight(const Vector3f& SurfacePoint)
 {
 	return Ray(SurfacePoint, -mLightDirection);
 }
@@ -30,4 +30,10 @@ void DirectionalLight::setLightDirection(const Vector3f& LightDirection)
 Vector3f DirectionalLight::getLightDirection() const
 {
 	return mLightDirection;
+}
+
+Color DirectionalLight::GetIntesityAt(Vector3f Position) const
+{
+	Position; // turn off compiler warning
+	return mLightColor;
 }

@@ -2,9 +2,11 @@
 
 #include <initializer_list>
 #include <cassert>
+#include <cmath>
 
 #include "Vector3.h"
 #include "Vector4.h"
+#include "FMath.h"
 
 /**
 *	4x4 floating-point column-matrix
@@ -115,6 +117,13 @@ struct Matrix4
 	void SetOrigin(const Vector3f& Origin);
 
 	/**
+	* Rotate, in degrees, around an axis.
+	* @param Axis to rotate around.
+	* @param Degrees to rotate by.
+	*/
+	void Rotate(Axis Axis, float Degrees);
+
+	/**
 	* Retreive a Column of the matrix. Includes translation component.
 	* @param Row of the matrix, 0 = first row, 1 = second row ...
 	*/
@@ -126,6 +135,30 @@ struct Matrix4
 	*/
 	Vector4f GetRow(int Row) const;
 };
+
+///////////////////////////////////////////////////////////////////////////
+////////////////// Non Member Functions ///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+inline Matrix4 operator*(Matrix4 Lhs, float Scalar)
+{
+	return Lhs *= Scalar;
+}
+
+inline Matrix4 operator*(float Scalar, Matrix4 Lhs)
+{
+	return Lhs *= Scalar;
+}
+
+inline Matrix4 operator+(Matrix4 Lhs, const Matrix4& Rhs)
+{
+	return Lhs += Rhs;
+}
+
+inline Matrix4 operator*(Matrix4 Lhs, const Matrix4& Rhs)
+{
+	return Lhs *= Rhs;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 ////////////////// Inlined Member Functions ///////////////////////////////
@@ -285,6 +318,46 @@ inline void Matrix4::SetAxis(Matrix4::Axis Axis, const Vector3f& Basis)
 	M[0][col] = Basis.x; M[1][col] = Basis.y; M[2][col] = Basis.z;
 }
 
+inline void Matrix4::Rotate(Axis Axis, float Degrees)
+{
+	float radians = (float)(_PI * Degrees / 180.0f);
+	Matrix4 rotationMat;
+
+	switch (Axis)
+	{
+	case Axis::X:
+		rotationMat = Matrix4{ 
+			1.0f,			0.0f,					0.0f,					0.0f,
+			0.0f,			(float)cos(radians),	(float)-sin(radians),	0.0f,
+			0.0f,			(float)sin(radians),	(float)cos(radians),	0.0f,
+			0.0f,			 0.0f,					0.0f,					1.0f };
+		break;
+	case Axis::Y:
+		rotationMat = Matrix4{
+			(float)cos(radians),	0.0f,	(float)sin(radians),	0.0f,
+			0.0f,					0.0f,	0.0f,					0.0f,
+			0.0f,					0.0f,	0.0f,					0.0f,
+			(float)-sin(radians),	0.0f,	(float)cos(radians),	1.0f };
+		break;
+	case Axis::Z:
+		rotationMat = Matrix4{
+			(float)cos(radians),	(float)-sin(radians),	0.0f,	0.0f,
+			(float)sin(radians),	(float)cos(radians),	0.0f,	0.0f,
+			0.0f,					0.0f,					0.0f,	0.0f,
+			0.0f,					0.0f,					0.0f,	1.0f };
+		break;
+	default:
+		return;
+	}
+
+	// save and remove translation
+	Vector3f translation = GetOrigin();
+	M[0][3] = M[1][3] = M[2][3] = 0.0f;
+
+	*this = rotationMat * (*this);
+	SetOrigin(translation);
+}
+
 inline Vector4f Matrix4::GetColumn(int Col) const
 {
 	return Vector4f(M[0][Col], M[1][Col], M[2][Col], M[3][Col]);
@@ -305,31 +378,6 @@ inline void Matrix4::SetOrigin(const Vector3f& Origin)
 	M[0][3] = Origin.x; M[1][3] = Origin.y; M[2][3] = Origin.z;
 }
 
-///////////////////////////////////////////////////////////////////////////
-////////////////// Non Member Functions ///////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
-inline Matrix4 operator*(Matrix4 Lhs, const Matrix4& Rhs)
-{
-	return Lhs *= Rhs;
-}
-
-inline Matrix4 operator*(Matrix4 Lhs, float Scalar)
-{
-	return Lhs *= Scalar;
-}
-
-inline Matrix4 operator*(float Scalar, Matrix4 Lhs)
-{
-	return Lhs *= Scalar;
-}
-
-inline Matrix4 operator+(Matrix4 Lhs, const Matrix4& Rhs)
-{
-	return Lhs += Rhs;
-}
-
-
 
 /**
 * A camera look-at matrix.
@@ -337,7 +385,7 @@ inline Matrix4 operator+(Matrix4 Lhs, const Matrix4& Rhs)
 struct LookAtMatrix : public Matrix4
 {
 	/**
-	* Constructs a look-at matrix.
+	* Constructs a look-at matrix that takes objects from view space to world space.
 	* @param Eye Position of the eye.
 	* @param LookLocation Position to look toward.
 	* @param UpDirection Direction of up.
@@ -351,12 +399,12 @@ inline LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocat
 	Vector3f U = Vector3f::Cross(N, UpDirection).Normalize();
 	Vector3f V = Vector3f::Cross(U, N).Normalize();
 
-	for (int row = 0; row < 3; row++)
+	for (int col = 0; col < 3; col++)
 	{
-		M[row][0] = U[row];
-		M[row][1] = V[row];
-		M[row][2] = -N[row];
-		M[row][3] = 0.0f;
+		M[0][col] = U[col];
+		M[1][col] = V[col];
+		M[2][col] = -N[col];
+		M[3][col] = 0.0f;
 	}
 
 	M[0][3] = -Vector3f::Dot(Eye, U);

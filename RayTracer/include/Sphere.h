@@ -1,11 +1,11 @@
 #pragma once
-#include "Shape.h"
+#include "Primitive.h"
 #include "Vector3.h"
 
 /**
 * Class for representing a sphere in 3D space.
 */
-class Sphere : public Shape
+class Sphere : public Primitive
 {
 public:
 	/**
@@ -63,7 +63,7 @@ private:
 	void constructAABB();
 
 private:
-	Vector3f mCenter; /* Coordinates of the center of the sphere */
 	float mRadius; /* Length of the radius */
+	Vector3f mCenterInViewSpace; /* Center of the sphere in view space */
 };
 
