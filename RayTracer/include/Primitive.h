@@ -50,15 +50,20 @@ public:
 	*/
 	Matrix4 GetTransform() const;
 
+	/**
+	* Sets the model transform for the object.
+	*/
+	void Primitive::SetTransform(const Matrix4& NewTransform);
+
+public:
+	Matrix4 mTransform; /* Object space transform */
+
 protected:
 	/**
 	* Sets the bounding box for the Primitive.
 	* @param boundingBox - AABB for the Primitive
 	*/
 	void setBoundingBox(AABB boundingBox);
-
-protected:
-	Matrix4 mTransform; /* Object space transform */
 
 private:
 	/**

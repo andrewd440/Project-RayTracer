@@ -30,6 +30,11 @@ Matrix4 Primitive::GetTransform() const
 	return mTransform;
 }
 
+void Primitive::SetTransform(const Matrix4& NewTransform)
+{
+	mTransform = NewTransform;
+}
+
 void Primitive::setBoundingBox(AABB boundingBox)
 {
 	mBoundingBox = boundingBox;

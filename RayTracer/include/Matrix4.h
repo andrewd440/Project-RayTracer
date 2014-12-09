@@ -39,7 +39,7 @@ struct Matrix4
 	Matrix4(const std::initializer_list<float>& Mat);
 
 	/**
-	* Constructs a matrix by row vectors.
+	* Constructs a matrix by basis vectors.
 	* @param XBasis X vector
 	* @param YBasis Y vector
 	* @param ZBasis Z vector
@@ -140,6 +140,30 @@ struct Matrix4
 	void Rotate(Axis Axis, float Degrees);
 
 	/**
+	* Sets a uniform scale from origin.
+	* @param Scale Value to scale by.
+	*/
+	void Scale(float Scale);
+
+	/**
+	* Sets the scale about an axis from origin.
+	* @param Axis to scale by.
+	* @param Scale Value to scale by.
+	*/
+	void Scale(Axis Axis, float Scale);
+
+	/**
+	* Sets the scale about each axis from a vector.
+	* @param Scale Values to scale by.
+	*/
+	void Scale(const Vector3f& Scale);
+
+	/**
+	* Gets the scale vector from the matrix.
+	*/
+	Vector3f Matrix4::GetScale() const;
+
+	/**
 	* Retreive a Column of the matrix. Includes translation component.
 	* @param Row of the matrix, 0 = first row, 1 = second row ...
 	*/
@@ -212,9 +236,12 @@ inline Matrix4::Matrix4(const std::initializer_list<float>& Mat)
 
 inline Matrix4::Matrix4(const Vector3f& XBasis, const Vector3f& YBasis, const Vector3f& ZBasis)
 {
-	SetAxis(Axis::X, XBasis);
-	SetAxis(Axis::Y, YBasis);
-	SetAxis(Axis::Z, ZBasis);
+	for (int col = 0; col < 4; col++)
+	{
+		M[0][col] = XBasis[col];
+		M[1][col] = YBasis[col];
+		M[2][col] = ZBasis[col];
+	}
 
 	M[3][0] = M[3][1] = M[3][2] = M[0][3] = M[1][3] = M[2][3] = 0.0f;
 	M[3][3] = 1.0f;
@@ -419,6 +446,59 @@ inline void Matrix4::Rotate(Axis Axis, float Degrees)
 
 	*this = rotationMat * (*this);
 	SetOrigin(translation);
+}
+
+inline void Matrix4::Scale(float Scale)
+{
+	Matrix4::Scale(Vector3f(Scale, Scale, Scale));
+}
+
+inline void Matrix4::Scale(Axis Axis, float Scale)
+{
+	int intAxis = -1;
+	switch (Axis)
+	{
+	case Axis::X:
+		intAxis = 0;
+		break;
+	case Axis::Y:
+		intAxis = 1;
+		break;
+	case Axis::Z:
+		intAxis = 2;
+		break;
+	default:
+		return;
+	}
+
+	
+	// set old scale values
+	Vector3f newScale = GetScale();
+	newScale[intAxis] = Scale;
+	Matrix4::Scale(newScale);
+
+}
+
+inline void Matrix4::Scale(const Vector3f& Scale)
+{
+	Matrix4 scaleMat;
+
+	// set new scale values
+	for (int i = 0; i < 3; i++)
+		scaleMat.M[i][i] = Scale[i];
+
+	// save translation and go to origin
+	const Vector3f& oldTranslation(GetOrigin());
+	SetOrigin(Vector3f());
+
+	// scale and translate back into place
+	*this = *this * scaleMat;
+	SetOrigin(oldTranslation);
+}
+
+inline Vector3f Matrix4::GetScale() const
+{
+	return Vector3f(M[0][0], M[1][1], M[2][2]);
 }
 
 inline Vector4f Matrix4::GetColumn(int Col) const

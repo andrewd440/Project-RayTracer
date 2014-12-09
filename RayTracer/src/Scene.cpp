@@ -7,6 +7,7 @@
 #include "Sphere.h"
 #include "Triangle.h"
 #include "Ray.h"
+#include "Cube.h"
 
 #include <iostream>
 #include <algorithm>
@@ -162,7 +163,32 @@ void Scene::buildScene(std::istream& in)
 		in >> string;
 	}
 
-	mPrimitives.push_back(PrimitivePtr(new Triangle(Vector3f(-10,3,-15), Vector3f(-5,0,-15), Vector3f(-5,4,-15), Material(Color::White, Color::Blue, Color(.2,.2,.2), 24, .5))));
+	mPrimitives.push_back(PrimitivePtr(new Triangle(Vector3f(-10, 3, -15), Vector3f(-5, 0, -15), Vector3f(-5, 4, -15), Material(Color(.9, .7, .7), Color(1, .5, .5), Color(.1, .1, .1), 32, .7))));
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(4, 2, -15), Material(Color(.2, .7, .7), Color(.2, .8, .8), Color(.1, .1, .1), 64, .9))));
+
+	Primitive* cube = mPrimitives.back().get();
+	cube->mTransform.Rotate(Matrix4::Axis::X, 15.0f);
+	cube->mTransform.Rotate(Matrix4::Axis::Y, -35.0f);
+	cube->mTransform.Rotate(Matrix4::Axis::Z, 10.0f);
+	cube->mTransform.Scale(Vector3f(2, 2, .5f));
+
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(-3, 2, -15), Material(Color(.9, .7, .9), Color(1, .5, 1), Color(.1, .1, .1), 12, .1))));
+	cube = mPrimitives.back().get();
+	cube->mTransform.Rotate(Matrix4::Axis::X, 15.0f);
+	cube->mTransform.Rotate(Matrix4::Axis::Y, 45.0f);
+
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(0, 4, -15), Material(Color(.2, .7, .7), Color(.2, .8, .8), Color(.1, .1, .1), 64, .9))));
+	cube = mPrimitives.back().get();
+	cube->mTransform.Rotate(Matrix4::Axis::X, 45.0f);
+	cube->mTransform.Rotate(Matrix4::Axis::Y, 45.0f);
+	cube->mTransform.Scale(0.25f);
+
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(-1, 4, -15), Material(Color(.9, .7, .9), Color(1, .5, 1), Color(.1, .1, .1), 12, .1))));
+	cube = mPrimitives.back().get();
+	cube->mTransform.Rotate(Matrix4::Axis::X, 45.0f);
+	cube->mTransform.Rotate(Matrix4::Axis::Y, 45.0f);
+	cube->mTransform.Scale(0.25f);
+
 	mKDTree.buildTree(mPrimitives, 10);
 }
 
