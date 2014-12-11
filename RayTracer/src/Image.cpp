@@ -2,7 +2,7 @@
 #include <sstream>
 #include <limits>
 
-Image::Image(const std::string& Filename, const Vector2i& OutputResolution)
+FImage::FImage(const std::string& Filename, const Vector2i& OutputResolution)
 	: mPixelColors(OutputResolution.y)
 	, mOutputResolution(OutputResolution)
 	, mFilename(Filename)
@@ -12,12 +12,12 @@ Image::Image(const std::string& Filename, const Vector2i& OutputResolution)
 		row.resize(OutputResolution.x);
 }
 
-void Image::setPixel(const int32_t& X, const int32_t& Y, const Color& Color)
+void FImage::setPixel(const int32_t& X, const int32_t& Y, const FColor& Color)
 {
 	mPixelColors[Y][X] = Color;
 }
 
-void Image::writeImage()
+void FImage::writeImage()
 {
 	// Write to a .ppm image
 	std::ostringstream headerStream;
@@ -37,12 +37,12 @@ void Image::writeImage()
 	fileStream.close();
 }
 
-void Image::setFilename(const std::string& Filename)
+void FImage::setFilename(const std::string& Filename)
 {
 	mFilename = Filename;
 }
 
-std::string Image::getFilename() const
+std::string FImage::getFilename() const
 {
 	return mFilename;
 }

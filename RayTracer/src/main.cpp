@@ -20,7 +20,7 @@ int main()
 	if (fb.open("SceneConfig.scn", std::ios::in))
 	{
 		std::istream configStream(&fb);
-		Scene scene;
+		FScene scene;
 		scene.buildScene(configStream);
 		scene.renderScene();
 	}

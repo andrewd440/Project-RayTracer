@@ -2,10 +2,10 @@
 #include "Primitive.h"
 #include "Vector3.h"
 
-class Triangle : public Primitive
+class FTriangle : public IPrimitive
 {
 public:
-	Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& LightingMaterial);
+	FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, const FMaterial& LightingMaterial);
 	
 	/**
 	* Checks if a ray intersects the triangle.
@@ -17,7 +17,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the triangle.
 	*/
-	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const override;
+	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
 
 private:
@@ -26,7 +26,7 @@ private:
 	* @param IntersectionPoint - the point of the intersection
 	* @param IntersectionOut - intersection properties will be output through
 	*/
-	void ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
+	void ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut);
 
 	void ConstructAABB() override;
 

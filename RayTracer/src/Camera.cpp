@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution)
+FCamera::FCamera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution)
 	: mFieldOfView(FOV)
 	, mDistanceFromScreenPlane((1 / std::tan(((FOV / 180.0f) * 3.14159265f) / 2.0f)))
 	, mAspectRatio((float)OutputResolution.y / OutputResolution.x)
@@ -10,7 +10,7 @@ Camera::Camera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector
 	mViewTransform = mViewTransform.GetInverseAffine();
 }
 
-Ray Camera::GenerateRay(int32_t X, int32_t Y) const
+FRay FCamera::GenerateRay(int32_t X, int32_t Y) const
 {
 	// Calculate coordinates of pixel on screen plane (u, v, d)
 	const float u = -1 + (2 * (X + 0.5f)) / mOutputResolution.x;
@@ -20,18 +20,18 @@ Ray Camera::GenerateRay(int32_t X, int32_t Y) const
 	Vector3f rayDirection = Vector3f(-u, v, -mDistanceFromScreenPlane);
 	rayDirection.Normalize();
 
-	Ray pixelRay(Vector3f(), rayDirection);
+	FRay pixelRay(Vector3f(), rayDirection);
 
 	// send ray in world space
 	return mViewTransform.TransformRay(pixelRay);
 }
 
-float Camera::GetFOV() const
+float FCamera::GetFOV() const
 {
 	return mFieldOfView;
 }
 
-void Camera::SetFOV(float FOV)
+void FCamera::SetFOV(float FOV)
 {
 	mFieldOfView = FOV;
 	mDistanceFromScreenPlane = (float)(1 / std::tan((FOV / 180 * 3.14159265) / 2));

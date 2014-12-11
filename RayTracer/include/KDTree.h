@@ -11,7 +11,7 @@ struct KDNode
 	std::unique_ptr<KDNode> child[2]; // 0 = near, 1 = far
 	int axis; // x, y, or z splitting axis
 	float splitValue; // value on the splitting axis
-	std::vector<Primitive*> PrimitiveList; // linked list of Primitives within this node
+	std::vector<IPrimitive*> PrimitiveList; // linked list of Primitives within this node
 };
 
 class KDTree
@@ -19,7 +19,7 @@ class KDTree
 public:
 	KDTree();
 
-	void buildTree(const std::vector<std::unique_ptr<Primitive>>& Primitives, uint32_t depth);
+	void buildTree(const std::vector<std::unique_ptr<IPrimitive>>& Primitives, uint32_t depth);
 
 	/**
 	* Checks if a ray intersects an object in the kdtree.
@@ -31,11 +31,11 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr);
 
 private:
 	void buildTreeHelper(KDNode& currentNode, uint32_t depth);
-	bool visitNodesAgainstRay(KDNode* currentNode, Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool visitNodesAgainstRay(KDNode* currentNode, FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr);
 
 private:
 	KDNode mRoot;

@@ -116,9 +116,6 @@
     <ClInclude Include="include\Matrix4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Vector4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Primitive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Vector4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

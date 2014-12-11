@@ -2,27 +2,27 @@
 #include "Light.h"
 #include "Vector3.h"
 
-class DirectionalLight : public Light
+class FDirectionalLight : public ILight
 {
 public:
 	/**
 	* Default constructor.
 	*/
-	DirectionalLight();
+	FDirectionalLight();
 
 	/**
 	* Constructs a directional light from a color and direction.
 	* @param LightColor - Color of the light
 	* @param LightDirection - Direction (Normalized) of the light
 	*/
-	DirectionalLight(Color LightColor, Vector3f LightDirection);
+	FDirectionalLight(FColor LightColor, Vector3f LightDirection);
 	
 	/**
 	* Generate a ray from a given point to the light source.
 	* @param SurfacePoint - The destination point for the light
 	* @return A ray from the light source pointing to the given surface point.
 	*/
-	Ray GetRayToLight(const Vector3f& SurfacePoint) const override;
+	FRay GetRayToLight(const Vector3f& SurfacePoint) const override;
 
 	/**
 	* Sets the direction of the light.
@@ -42,7 +42,7 @@ public:
 	* @param Position Point to check intensity at.
 	* @return The color of the light.
 	*/
-	virtual Color GetIntesityAt(Vector3f Position) const override;
+	virtual FColor GetIntesityAt(Vector3f Position) const override;
 
 private:
 	Vector3f mLightDirection; /* Direction (Normalized) of the light*/

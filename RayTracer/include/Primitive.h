@@ -4,17 +4,17 @@
 #include "AABB.h"
 #include "Matrix4.h"
 
-struct Intersection;
+struct FIntersection;
 
 /**
 * Abstract class for all Primitives.
 */
-class Primitive
+class IPrimitive
 {
 public:
-	explicit Primitive(const Material& LightingMaterial);
+	explicit IPrimitive(const FMaterial& LightingMaterial);
 
-	virtual ~Primitive(){};
+	virtual ~IPrimitive(){};
 
 	/**
 	* Checks if a ray intersects the Primitive.
@@ -26,19 +26,19 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	virtual bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const = 0;
+	virtual bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) = 0;
 
 	/**
 	* Set the material properties for the Primitives' surface.
 	* @param NewMaterial - The material for the Primitive
 	*/
-	void setMaterial(const Material& NewMaterial);
+	void setMaterial(const FMaterial& NewMaterial);
 
 	/**
 	* Retrieves the material for the Primitive.
 	* @return The material
 	*/
-	Material getMaterial() const;
+	FMaterial getMaterial() const;
 
 	/**
 	* Retrieves the bounding box for the Primitive.
@@ -48,15 +48,15 @@ public:
 	/**
 	* Gets the model transform for the object.
 	*/
-	Matrix4 GetTransform() const;
+	FMatrix4 GetTransform() const;
 
 	/**
 	* Sets the model transform for the object.
 	*/
-	void Primitive::SetTransform(const Matrix4& NewTransform);
+	void SetTransform(const FMatrix4& NewTransform);
 
 public:
-	Matrix4 mTransform; /* Object space transform */
+	FMatrix4 mTransform; /* Object space transform */
 
 protected:
 	/**
@@ -72,7 +72,7 @@ private:
 	virtual void ConstructAABB() = 0;
 
 private:
-	Material mMaterial; /* Lighting material properties for the Primitive */
+	FMaterial mMaterial; /* Lighting material properties for the Primitive */
 	AABB mBoundingBox; /* AABB for KD-tree */
 };
 

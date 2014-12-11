@@ -1,23 +1,23 @@
 #include "Light.h"
 
-Light::Light()
+ILight::ILight()
 	: mLightColor()
 {
 
 }
 
-Light::Light(Color LightColor)
+ILight::ILight(FColor LightColor)
 	: mLightColor(LightColor)
 {
 
 }
 
-Light::~Light()
+ILight::~ILight()
 {
 
 }
 
-void Light::setLightColor(const Color& LightColor)
+void ILight::setLightColor(const FColor& LightColor)
 {
 	mLightColor = LightColor;
 }

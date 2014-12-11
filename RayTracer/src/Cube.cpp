@@ -3,14 +3,14 @@
 #include <limits>
 
 
-Cube::Cube(Vector3f Center, Material LightingMaterial)
-	: Primitive(LightingMaterial)
+FCube::FCube(Vector3f Center, FMaterial LightingMaterial)
+	: IPrimitive(LightingMaterial)
 {
 	mTransform.SetOrigin(Center);
 	ConstructAABB();
 }
 
-bool Cube::IsIntersectingRay(Ray Ray, float* tValueOut, Intersection* IntersectionOut)
+bool FCube::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
 	/**
 	* Ray-AABB intersection test from Real-Time Collision Detection by Christer Ericson p. 181
@@ -65,13 +65,13 @@ bool Cube::IsIntersectingRay(Ray Ray, float* tValueOut, Intersection* Intersecti
 	return true;
 }
 
-void Cube::ConstructIntersection(const Vector3f& IntersectionPoint, Intersection* IntersectionOut)
+void FCube::ConstructIntersection(const Vector3f& IntersectionPoint, FIntersection* IntersectionOut)
 {
 	float largestSide = 0;
 	int intersectionAxis = 0;
 	int intersectionSide = 0;
 
-	const Matrix4& modelInverse = mTransform.GetInverse();
+	const FMatrix4& modelInverse = mTransform.GetInverse();
 
 	const Vector3f intersectionInObjectSpace = modelInverse.TransformPosition(IntersectionPoint);
 
@@ -98,7 +98,7 @@ void Cube::ConstructIntersection(const Vector3f& IntersectionPoint, Intersection
 	IntersectionOut->point = IntersectionPoint + (normal * _EPSILON);
 }
 
-void Cube::ConstructAABB()
+void FCube::ConstructAABB()
 {
 	Vector3f max(1, 1, -1);
 	Vector3f min(-1, -1, 1);
@@ -106,6 +106,6 @@ void Cube::ConstructAABB()
 	setBoundingBox(AABB{min, max});
 }
 
-Cube::~Cube()
+FCube::~FCube()
 {
 }

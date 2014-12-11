@@ -7,7 +7,7 @@
 #include <cstdint>
 
 /* Used to write to a .ppm image file */
-class Image
+class FImage
 {
 public:
 	/**
@@ -15,7 +15,7 @@ public:
 	* @param Filename - Name of the output image file
 	* @param OutputResolution - Resolution (in pixels) of the output image
 	*/
-	Image(const std::string& Filename, const Vector2i& OutputResolution);
+	FImage(const std::string& Filename, const Vector2i& OutputResolution);
 
 	/**
 	* Sets the color value of a pixel.
@@ -23,7 +23,7 @@ public:
 	* @param Y - y coordinate of the pixel
 	* @param Color - The color of the pixel
 	*/
-	void setPixel(const int32_t& X, const int32_t& Y, const Color& Color);
+	void setPixel(const int32_t& X, const int32_t& Y, const FColor& Color);
 
 	/**
 	* Writes a .ppm image file with the rgb values currently stored for
@@ -45,7 +45,7 @@ public:
 
 private:
 	/* Color values for each pixel. Indexed by [HorizontalPosition][VerticalPosition] */
-	std::vector<std::vector<Color>> mPixelColors;
+	std::vector<std::vector<FColor>> mPixelColors;
 
 	std::string mFilename; /* Filename for the output image file */
 	Vector2i mOutputResolution; /* Resolution of the output image file */

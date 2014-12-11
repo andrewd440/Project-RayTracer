@@ -14,19 +14,19 @@
 * Represents a scene that will be raytraced 
 * and rendered to an image. 
 */
-class Scene
+class FScene
 {
 public:
-	using PrimitivePtr =  std::unique_ptr<Primitive>;
-	using LightPtr = std::unique_ptr<Light>;
+	using PrimitivePtr = std::unique_ptr<IPrimitive>;
+	using LightPtr = std::unique_ptr<ILight>;
 
 	/**
 	* Default constructor.
 	*/
-	Scene();
+	FScene();
 
 	// Don't allow copies of a scene
-	Scene& operator=(const Scene& copy) = delete;
+	FScene& operator=(const FScene& copy) = delete;
 
 	/**
 	* Builds the scene. 
@@ -42,7 +42,7 @@ public:
 	*						on the screen.
 	* @return The resulting color for the source pixel.
 	*/
-	Color traceRay(const Ray& CameraRay, int32_t depth);
+	FColor traceRay(const FRay& CameraRay, int32_t depth);
 
 	/**
 	* Renders the scene to an image.
@@ -64,7 +64,7 @@ private:
 	* @return True if the point is in a shadow
 	*
 	*/
-	bool isInShadow(const Ray& LightRay);
+	bool isInShadow(const FRay& LightRay);
 
 	/**
 	* Computes a mirror reflection from a light direction and a reflection normal
@@ -84,7 +84,7 @@ private:
 	*					Reflectivity: -
 	* @return A Material with the given properties.
 	*/
-	Material readMaterial(std::istream& Input);
+	FMaterial readMaterial(std::istream& Input);
 
 	/**
 	* Reads in a model from a file of vertices and faces. Applies a translation
@@ -93,14 +93,14 @@ private:
 	* @param Translation - 3D translation values.
 	* @param MaterialProperties - Model lighting material.
 	*/
-	void readModel(std::string Filename, Vector3f Translation, Material MaterialProperties);
+	void readModel(std::string Filename, Vector3f Translation, FMaterial MaterialProperties);
 
 private:
-	Image mOutputImage; /* Output image for the rendered scene */
-	Camera mCamera; /* Camera for the scene */
+	FImage mOutputImage; /* Output image for the rendered scene */
+	FCamera mCamera; /* FCamera for the scene */
 	std::vector<PrimitivePtr> mPrimitives; /* All Primitives in the scene */
 	std::vector<LightPtr> mLights; /* All lights in the scene */
-	Color mBackgroundColor; /* Background color for the scene */
-	Color mGlobalAmbient; /* Color used for global ambient lighting */
+	FColor mBackgroundColor; /* Background color for the scene */
+	FColor mGlobalAmbient; /* Color used for global ambient lighting */
 	KDTree mKDTree;
 };

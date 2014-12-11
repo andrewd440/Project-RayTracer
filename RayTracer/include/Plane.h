@@ -2,7 +2,7 @@
 #include "Primitive.h"
 
 /* Represents a plane in 3D space. */
-class Plane : public Primitive
+class FPlane : public IPrimitive
 {
 public:
 	/**
@@ -10,7 +10,7 @@ public:
 	* @param PlaneNormal - The normal for the plane.
 	* @param PointOnPlane - A point on the plane.
 	*/
-	Plane(const Material& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane);
+	FPlane(const FMaterial& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane);
 	
 	/**
 	* Checks if a ray intersects the plane.
@@ -22,7 +22,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the plane.
 	*/
-	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const override;
+	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
 
 private:
@@ -31,7 +31,7 @@ private:
 	* @param IntersectionPoint - the point of the intersection
 	* @param IntersectionOut - intersection properties will be output through
 	*/
-	void ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
+	void ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut);
 
 	void ConstructAABB() override;
 

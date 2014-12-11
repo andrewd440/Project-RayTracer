@@ -2,15 +2,15 @@
 #include "Intersection.h"
 #include "Camera.h"
 
-Sphere::Sphere(Vector3f Center, float Radius, Material LightingMaterial)
-	: Primitive(LightingMaterial)
+FSphere::FSphere(Vector3f Center, float Radius, FMaterial LightingMaterial)
+	: IPrimitive(LightingMaterial)
 	, mRadius(Radius)
 {
 	mTransform.SetOrigin(Center);
 	ConstructAABB();
 }
 
-bool Sphere::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
+bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
 { 
 	// bring ray into object space
 	ray = mTransform.GetInverseAffine().TransformRay(ray);
@@ -55,34 +55,34 @@ bool Sphere::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* intersec
 		
 }
 
-void Sphere::ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut)
+void FSphere::ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut)
 {
 	IntersectionOut.normal = (IntersectionPoint - GetCenter()).Normalize();
 	IntersectionOut.point = IntersectionPoint;
 	IntersectionOut.object = this;
 }
 
-Vector3f Sphere::GetCenter() const
+Vector3f FSphere::GetCenter() const
 {
 	return mTransform.GetOrigin();
 }
 
-void Sphere::SetCenter(const Vector3f& CenterPoint)
+void FSphere::SetCenter(const Vector3f& CenterPoint)
 {
 	mTransform.SetOrigin(CenterPoint);
 }
 
-float Sphere::GetRadius() const
+float FSphere::GetRadius() const
 {
 	return mRadius;
 }
 
-void Sphere::SetRadius(const float& radius)
+void FSphere::SetRadius(const float& radius)
 {
 	mRadius = radius;
 }
 
-void Sphere::ConstructAABB()
+void FSphere::ConstructAABB()
 {
 	AABB boundingBox;
 	boundingBox.max = Vector3f(mRadius, mRadius, -mRadius);

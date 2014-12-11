@@ -1,7 +1,7 @@
 #pragma once
 #include "Primitive.h"
 
-class Cube : public Primitive
+class FCube : public IPrimitive
 {
 public:
 	/**
@@ -10,8 +10,8 @@ public:
 	* @param MaxPoint Max bounds of the cube.
 	* @LightingMaterial Material of the cube.
 	*/
-	Cube(Vector3f Center, Material LightingMaterial);
-	~Cube();
+	FCube(Vector3f Center, FMaterial LightingMaterial);
+	~FCube();
 
 	/**
 	* Checks if a ray intersects the Cube.
@@ -23,13 +23,13 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const override;
+	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
 private:
 	/**
 	* Constructs intersection info at a given point of the cube.
 	*/
-	void ConstructIntersection(const Vector3f& IntersectionPoint, Intersection* IntersectionOut);
+	void ConstructIntersection(const Vector3f& IntersectionPoint, FIntersection* IntersectionOut);
 
 	/**
 	* Construct AABB for KD-tree

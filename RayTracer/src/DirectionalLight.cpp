@@ -1,38 +1,38 @@
 #include "DirectionalLight.h"
 
-DirectionalLight::DirectionalLight()
-	: Light()
+FDirectionalLight::FDirectionalLight()
+	: ILight()
 	, mLightDirection(0,-1,0)
 {
 
 }
 
-DirectionalLight::DirectionalLight(Color LightColor, Vector3f LightDirection)
-	: Light(LightColor)
+FDirectionalLight::FDirectionalLight(FColor LightColor, Vector3f LightDirection)
+	: ILight(LightColor)
 	, mLightDirection(LightDirection)
 {
 	mLightDirection.Normalize();
 }
 
 
-Ray DirectionalLight::GetRayToLight(const Vector3f& SurfacePoint)
+FRay FDirectionalLight::GetRayToLight(const Vector3f& SurfacePoint) const
 {
-	return Ray(SurfacePoint, -mLightDirection);
+	return FRay(SurfacePoint, -mLightDirection);
 }
 
 
-void DirectionalLight::setLightDirection(const Vector3f& LightDirection)
+void FDirectionalLight::setLightDirection(const Vector3f& LightDirection)
 {
 	mLightDirection = LightDirection;
 	mLightDirection.Normalize();
 }
 
-Vector3f DirectionalLight::getLightDirection() const
+Vector3f FDirectionalLight::getLightDirection() const
 {
 	return mLightDirection;
 }
 
-Color DirectionalLight::GetIntesityAt(Vector3f Position) const
+FColor FDirectionalLight::GetIntesityAt(Vector3f Position) const
 {
 	Position; // turn off compiler warning
 	return mLightColor;

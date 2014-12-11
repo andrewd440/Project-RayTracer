@@ -2,8 +2,8 @@
 #include "Intersection.h"
 #include "Camera.h"
 
-Plane::Plane(const Material& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane)
-	: Primitive(LightingMaterial)
+FPlane::FPlane(const FMaterial& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane)
+	: IPrimitive(LightingMaterial)
 	, mNormal(PlaneNormal)
 	, mDistanceFromOrigin()
 {
@@ -13,7 +13,7 @@ Plane::Plane(const Material& LightingMaterial, Vector3f PlaneNormal, Vector3f Po
 	ConstructAABB();
 }
 
-bool Plane::IsIntersectingRay(Ray Ray, float* tValueOut, Intersection* IntersectionOut)
+bool FPlane::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
 	if (Vector3f::Dot(Ray.direction, mNormal) == 0)
 		return false;
@@ -33,14 +33,14 @@ bool Plane::IsIntersectingRay(Ray Ray, float* tValueOut, Intersection* Intersect
 	return true;
 }
 
-void Plane::ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut)
+void FPlane::ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut)
 {
 	IntersectionOut.object = this;
 	IntersectionOut.normal = mNormal;
 	IntersectionOut.point = IntersectionPoint;
 }
 
-void Plane::ConstructAABB()
+void FPlane::ConstructAABB()
 {
 	AABB boundingBox;
 

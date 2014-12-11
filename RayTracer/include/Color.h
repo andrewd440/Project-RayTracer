@@ -5,13 +5,13 @@
 #include <stdexcept>
 
 /* Class for representing and manipulating RGB values */
-class Color
+class FColor
 {
 public:
 	/**
 	* Default constructor. Creates a black color.
 	*/
-	Color();
+	FColor();
 
 	/**
 	* Constructs a color with given r, g, b values.
@@ -19,38 +19,38 @@ public:
 	* @param G - Green component
 	* @param B - Blue component
 	*/
-	Color(float R, float G, float B);
+	FColor(float R, float G, float B);
 
 	/**
 	* Performs component-wise addition of colors.
-	* @param rhs - Color to be added
+	* @param rhs - FColor to be added
 	* @return The resulting color
 	*/
-	Color& operator+=(const Color& rhs);
+	FColor& operator+=(const FColor& rhs);
 
 	/**
 	* Performs component-wise multiplication of colors.
-	* @param rhs - Color to be multiplied
+	* @param rhs - FColor to be multiplied
 	* @return The resulting color
 	*/
-	Color& operator*=(const Color& rhs);
+	FColor& operator*=(const FColor& rhs);
 
 	/**
 	* Performs component-wise multiplication of with a scalar.
 	* @param scalar - Unit to multiply by
 	* @return The resulting color
 	*/
-	Color& operator*=(const float& scalar);
+	FColor& operator*=(const float& scalar);
 
 	/**
 	* Checks for color equality.
 	*/
-	bool operator==(const Color& rhs) const;
+	bool operator==(const FColor& rhs) const;
 
 	/**
 	* Checks for color inequality.
 	*/
-	bool operator!=(const Color& rhs) const;
+	bool operator!=(const FColor& rhs) const;
 
 	/**
 	* Overload of subscript operators for R = 0, G = 1, B = 2.
@@ -66,31 +66,31 @@ public:
 	float g;
 	float b;
 
-	static const Color Red;
-	static const Color Green;
-	static const Color Blue;
-	static const Color White;
-	static const Color Black;
+	static const FColor Red;
+	static const FColor Green;
+	static const FColor Blue;
+	static const FColor White;
+	static const FColor Black;
 };
 
 /////////////////////////////////////////////////////////////////////
 //////////////// Inlined Member Functions ///////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-inline Color::Color()
+inline FColor::FColor()
 	: r(0), g(0), b(0)
 {
 
 }
 
-inline Color::Color(float R, float G, float B)
+inline FColor::FColor(float R, float G, float B)
 	: r(R), g(G), b(B)
 {
 
 }
 
 
-inline Color& Color::operator+=(const Color& rhs)
+inline FColor& FColor::operator+=(const FColor& rhs)
 {
 	r = std::min(r + rhs.r, 1.f);
 	g = std::min(g + rhs.g, 1.f);
@@ -100,7 +100,7 @@ inline Color& Color::operator+=(const Color& rhs)
 }
 
 
-inline Color& Color::operator*=(const Color& rhs)
+inline FColor& FColor::operator*=(const FColor& rhs)
 {
 	r *= rhs.r;
 	g *= rhs.g;
@@ -109,7 +109,7 @@ inline Color& Color::operator*=(const Color& rhs)
 	return *this;
 }
 
-inline Color& Color::operator*=(const float& scalar)
+inline FColor& FColor::operator*=(const float& scalar)
 {
 	r = std::min(r * scalar, 1.f);
 	g = std::min(g * scalar, 1.f);
@@ -118,7 +118,7 @@ inline Color& Color::operator*=(const float& scalar)
 	return *this;
 }
 
-inline bool Color::operator==(const Color& rhs) const
+inline bool FColor::operator==(const FColor& rhs) const
 {
 	for (size_t i = 0; i < 3; i++)
 		if ((*this)[i] != rhs[i])
@@ -126,12 +126,12 @@ inline bool Color::operator==(const Color& rhs) const
 	return true;
 }
 
-inline bool Color::operator!=(const Color& rhs) const
+inline bool FColor::operator!=(const FColor& rhs) const
 {
 	return !(*this == rhs);
 }
 
-inline float& Color::operator[](std::size_t idx)
+inline float& FColor::operator[](std::size_t idx)
 {
 	switch (idx)
 	{
@@ -142,11 +142,11 @@ inline float& Color::operator[](std::size_t idx)
 	case 2:
 		return b;
 	default:
-		throw std::out_of_range("Color subscript out of range.");
+		throw std::out_of_range("FColor subscript out of range.");
 	}
 }
 
-inline const float& Color::operator[](std::size_t idx) const
+inline const float& FColor::operator[](std::size_t idx) const
 {
 	switch (idx)
 	{
@@ -157,7 +157,7 @@ inline const float& Color::operator[](std::size_t idx) const
 	case 2:
 		return b;
 	default:
-		throw std::out_of_range("Color subscript out of range.");
+		throw std::out_of_range("FColor subscript out of range.");
 	}
 }
 
@@ -171,7 +171,7 @@ inline const float& Color::operator[](std::size_t idx) const
 * @param rhs - Right operand
 * @return Resulting color
 */
-inline Color operator*(Color lhs, const Color& rhs)
+inline FColor operator*(FColor lhs, const FColor& rhs)
 {
 	lhs *= rhs;
 	return lhs;
@@ -183,7 +183,7 @@ inline Color operator*(Color lhs, const Color& rhs)
 * @param scalar - Right operand
 * @return Resulting color
 */
-inline Color operator*(Color lhs, const float& scalar)
+inline FColor operator*(FColor lhs, const float& scalar)
 {
 	lhs *= scalar;
 	return lhs;
@@ -195,7 +195,7 @@ inline Color operator*(Color lhs, const float& scalar)
 * @param rhs - Right operand
 * @return Resulting color
 */
-inline Color operator+(Color lhs, const Color& rhs)
+inline FColor operator+(FColor lhs, const FColor& rhs)
 {
 	lhs += rhs;
 	return lhs;

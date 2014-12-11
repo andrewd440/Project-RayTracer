@@ -4,7 +4,7 @@
 /**
 * Represents point light in 3D
 */
-class PointLight : public Light
+class FPointLight : public ILight
 {
 public:
 	/**
@@ -14,16 +14,16 @@ public:
 	* @param MinDistance Distance when light fallout begins.
 	* @param MaxDistance Distance when light is not visible.
 	*/
-	PointLight(Color LightColor, Vector3f LightPosition, float MinDistance, float MaxDistance);
+	FPointLight(FColor LightColor, Vector3f LightPosition, float MinDistance, float MaxDistance);
 
-	~PointLight();
+	~FPointLight();
 
 	/**
 	* Generate a ray from a given point to the light source.
 	* @param surfacePoint - The destination point for the light
 	* @return A ray from the light source pointing to the given surface point.
 	*/
-	Ray GetRayToLight(const Vector3f& surfacePoint) const override;
+	FRay GetRayToLight(const Vector3f& surfacePoint) const override;
 
 	/**
 	* Sets the position of the light.
@@ -42,7 +42,7 @@ public:
 	* @param Position Point to check intensity at.
 	* @return The color of the light.
 	*/
-	Color GetIntesityAt(Vector3f Position) const override;
+	FColor GetIntesityAt(Vector3f Position) const override;
 
 private:
 	Vector3f mPosition;

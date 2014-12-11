@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-Triangle::Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& LightingMaterial)
-	: Primitive(LightingMaterial)
+FTriangle::FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, const FMaterial& LightingMaterial)
+	: IPrimitive(LightingMaterial)
 	, mV0(V0)
 	, mV1(V1)
 	, mV2(V2)
@@ -16,7 +16,7 @@ Triangle::Triangle(Vector3f V0, Vector3f V1, Vector3f V2, const Material& Lighti
 	ConstructAABB();
 }
 
-bool Triangle::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
+bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
 {
 	// Ray/Triangle intersection test from 3D Math Primier for Graphics and Game Development
 
@@ -126,14 +126,14 @@ bool Triangle::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* inters
 	return true;
 }
 
-void Triangle::ConstructIntersection(Vector3f intersectionPoint, Intersection& intersectionOut)
+void FTriangle::ConstructIntersection(Vector3f intersectionPoint, FIntersection& intersectionOut)
 {
 	intersectionOut.object = this;
 	intersectionOut.point = intersectionPoint;
 	intersectionOut.normal = mNormal;
 }
 
-void Triangle::ConstructAABB()
+void FTriangle::ConstructAABB()
 {
 	AABB boundingBox;
 	boundingBox.max = Vector3f(std::max({ mV0.x, mV1.x, mV2.x }), std::max({ mV0.y, mV1.y, mV2.y }), std::max({ mV0.z, mV1.z, mV2.z }));

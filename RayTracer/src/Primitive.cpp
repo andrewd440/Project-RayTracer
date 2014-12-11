@@ -1,23 +1,23 @@
 #include "Primitive.h"
 
-Primitive::Primitive(const Material& LightingMaterial)
+IPrimitive::IPrimitive(const FMaterial& LightingMaterial)
 	: mMaterial(LightingMaterial)
 	, mTransform()
 {
 
 }
 
-void Primitive::setMaterial(const Material& NewMaterial)
+void IPrimitive::setMaterial(const FMaterial& NewMaterial)
 { 
 	mMaterial = NewMaterial; 
 }
 
-Material Primitive::getMaterial() const
+FMaterial IPrimitive::getMaterial() const
 { 
 	return mMaterial; 
 }
 
-AABB Primitive::getBoundingBox() const
+AABB IPrimitive::getBoundingBox() const
 {
 	AABB transformedBox = mBoundingBox;
 	transformedBox.max = mTransform.TransformPosition(transformedBox.max);
@@ -25,17 +25,17 @@ AABB Primitive::getBoundingBox() const
 	return transformedBox;
 }
 
-Matrix4 Primitive::GetTransform() const
+FMatrix4 IPrimitive::GetTransform() const
 {
 	return mTransform;
 }
 
-void Primitive::SetTransform(const Matrix4& NewTransform)
+void IPrimitive::SetTransform(const FMatrix4& NewTransform)
 {
 	mTransform = NewTransform;
 }
 
-void Primitive::setBoundingBox(AABB boundingBox)
+void IPrimitive::setBoundingBox(AABB boundingBox)
 {
 	mBoundingBox = boundingBox;
 }

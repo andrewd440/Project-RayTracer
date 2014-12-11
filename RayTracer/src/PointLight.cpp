@@ -1,7 +1,7 @@
 #include "PointLight.h"
 
-PointLight::PointLight(Color LightColor, Vector3f LightPosition, float MinDistance, float MaxDistance)
-	: Light(LightColor)
+FPointLight::FPointLight(FColor LightColor, Vector3f LightPosition, float MinDistance, float MaxDistance)
+	: ILight(LightColor)
 	, mPosition(LightPosition)
 	, mMinRange(MinDistance)
 	, mMaxRange(MaxDistance)
@@ -9,22 +9,22 @@ PointLight::PointLight(Color LightColor, Vector3f LightPosition, float MinDistan
 
 }
 
-Ray PointLight::GetRayToLight(const Vector3f& surfacePoint)
+FRay FPointLight::GetRayToLight(const Vector3f& surfacePoint) const
 {
-	return Ray(surfacePoint, mPosition - surfacePoint);
+	return FRay(surfacePoint, mPosition - surfacePoint);
 }
 
-void PointLight::SetLightPosition(const Vector3f& lightPosition)
+void FPointLight::SetLightPosition(const Vector3f& lightPosition)
 {
 	mPosition = lightPosition;
 }
 
-Vector3f PointLight::GetLightPosition() const
+Vector3f FPointLight::GetLightPosition() const
 {
 	return mPosition;
 }
 
-Color PointLight::GetIntesityAt(Vector3f Position) const
+FColor FPointLight::GetIntesityAt(Vector3f Position) const
 {
 	float distance = (Position - mPosition).Length();
 	if (distance < mMinRange)
@@ -32,9 +32,9 @@ Color PointLight::GetIntesityAt(Vector3f Position) const
 	else if (distance < mMaxRange)
 		return mLightColor * ((mMaxRange - distance) / (mMaxRange - mMinRange));
 	else
-		return Color::Black;
+		return FColor::Black;
 }
 
-PointLight::~PointLight()
+FPointLight::~FPointLight()
 {
 }

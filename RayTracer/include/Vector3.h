@@ -9,7 +9,7 @@ template <typename T>
 /**
 * Class of manipulating a vector with 3 components.
 */
-class Vector3
+class TVector3
 {
 public:
 	/**
@@ -18,7 +18,7 @@ public:
 	* @param Y - position of Y coordinate
 	* @param Z - position of Z coordinate
 	*/
-	Vector3(T X = 0, T Y = 0, T Z = 0);
+	TVector3(T X = 0, T Y = 0, T Z = 0);
 
 	template <typename U>
 	/**
@@ -26,21 +26,21 @@ public:
 	* @param scalar - Scalar to multiply by.
 	* @return Reference to this vector.
 	*/
-	Vector3<T>& operator*=(const U& Scalar);
+	TVector3<T>& operator*=(const U& Scalar);
 
 	/**
 	* Performs vector addition.
-	* @param rhs - Vector3 to add.
+	* @param rhs - TVector3 to add.
 	* @return Reference to this vector.
 	*/
-	Vector3<T>& operator+=(const Vector3<T>& rhs);
+	TVector3<T>& operator+=(const TVector3<T>& rhs);
 
 	/**
 	* Performs vector subtraction.
-	* @param rhs - Vector3 to subtract
+	* @param rhs - TVector3 to subtract
 	* @return Reference to this vector
 	*/
-	Vector3<T>& operator-=(const Vector3<T>& rhs);
+	TVector3<T>& operator-=(const TVector3<T>& rhs);
 
 	template <typename U>
 	/**
@@ -48,17 +48,17 @@ public:
 	* @param rhs - Unit to divide by.
 	* @return Reference to this vector
 	*/
-	Vector3<T>& operator/=(const U& Scalar);
+	TVector3<T>& operator/=(const U& Scalar);
 
 	/**
 	* Checks vector equality.
 	*/
-	bool operator==(const Vector3<T>& Rhs) const;
+	bool operator==(const TVector3<T>& Rhs) const;
 
 	/**
 	* Checks vector inequality.
 	*/
-	bool operator!=(const Vector3<T>& Rhs) const;
+	bool operator!=(const TVector3<T>& Rhs) const;
 
 	/**
 	* Overload of subscript operators for X = 0, Y = 1, Z = 2.
@@ -73,7 +73,7 @@ public:
 	/**
 	* Normalizes the vector.
 	*/
-	Vector3<T>& Normalize();
+	TVector3<T>& Normalize();
 
 	/**
 	* Calculates the length/magnatude of the vector.
@@ -85,7 +85,7 @@ public:
 	* Reflects the vector across a normal.
 	* @return Reflected vector
 	*/
-	Vector3<T> Reflect(const Vector3<T>& Normal) const;
+	TVector3<T> Reflect(const TVector3<T>& Normal) const;
 
 	/* Prints the string representation of the vector */
 	void Print();
@@ -96,7 +96,7 @@ public:
 	* @param rhs - Right operand
 	* @return
 	*/
-	static T Dot(const Vector3<T>& lhs, const Vector3<T>& rhs);
+	static T Dot(const TVector3<T>& lhs, const TVector3<T>& rhs);
 
 	/**
 	* Calculates the cross product of two vectors.
@@ -104,7 +104,7 @@ public:
 	* @param rhs - Right operand
 	* @return The cross product vector.
 	*/
-	static Vector3<T> Cross(const Vector3<T>& lhs, const Vector3<T>& rhs);
+	static TVector3<T> Cross(const TVector3<T>& lhs, const TVector3<T>& rhs);
 
 public:
 	T x; /* X coordinate of the vector */
@@ -112,8 +112,8 @@ public:
 	T z; /* Z coordinate of the vector */
 };
 
-using Vector3i = Vector3<int32_t>;	/* Vector type for integers */
-using Vector3f = Vector3<float>; /* Vector type for floats */
+using Vector3i = TVector3<int32_t>;	/* Vector type for integers */
+using Vector3f = TVector3<float>; /* Vector type for floats */
 
 
 /////////////////////////////////////////////////////
@@ -122,13 +122,13 @@ using Vector3f = Vector3<float>; /* Vector type for floats */
 
 
 template <typename T>
-inline Vector3<T>::Vector3(T X, T Y, T Z)
+inline TVector3<T>::TVector3(T X, T Y, T Z)
 	: x(X), y(Y), z(Z) {}
 
 
 template <typename T>
 template <typename U>
-inline Vector3<T>& Vector3<T>::operator*=(const U& Scalar)
+inline TVector3<T>& TVector3<T>::operator*=(const U& Scalar)
 {
 	x *= Scalar;
 	y *= Scalar;
@@ -139,7 +139,7 @@ inline Vector3<T>& Vector3<T>::operator*=(const U& Scalar)
 
 template <typename T>
 template <typename U>
-Vector3<T>& Vector3<T>::operator/=(const U& Scalar)
+TVector3<T>& TVector3<T>::operator/=(const U& Scalar)
 {
 	x /= Scalar;
 	y /= Scalar;
@@ -149,7 +149,7 @@ Vector3<T>& Vector3<T>::operator/=(const U& Scalar)
 }
 
 template <typename T>
-inline Vector3<T>& Vector3<T>::operator+=(const Vector3<T>& rhs)
+inline TVector3<T>& TVector3<T>::operator+=(const TVector3<T>& rhs)
 {
 	x += rhs.x;
 	y += rhs.y;
@@ -159,7 +159,7 @@ inline Vector3<T>& Vector3<T>::operator+=(const Vector3<T>& rhs)
 }
 
 template <typename T>
-inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& rhs)
+inline TVector3<T>& TVector3<T>::operator-=(const TVector3<T>& rhs)
 {
 	x -= rhs.x;
 	y -= rhs.y;
@@ -169,7 +169,7 @@ inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& rhs)
 }
 
 template <typename T>
-inline bool Vector3<T>::operator==(const Vector3<T>& Rhs) const
+inline bool TVector3<T>::operator==(const TVector3<T>& Rhs) const
 {
 	for (size_t i = 0; i < 3; i++)
 		if ((*this)[i] != Rhs[i])
@@ -179,7 +179,7 @@ inline bool Vector3<T>::operator==(const Vector3<T>& Rhs) const
 }
 
 template <typename T>
-inline bool Vector3<T>::operator!=(const Vector3<T>& Rhs) const
+inline bool TVector3<T>::operator!=(const TVector3<T>& Rhs) const
 {
 	for (size_t i = 0; i < 3; i++)
 		if ((*this)[i] != Rhs[i])
@@ -189,7 +189,7 @@ inline bool Vector3<T>::operator!=(const Vector3<T>& Rhs) const
 }
 
 template <typename T>
-T& Vector3<T>::operator[](std::size_t idx)
+T& TVector3<T>::operator[](std::size_t idx)
 {
 	switch (idx)
 	{
@@ -200,12 +200,12 @@ T& Vector3<T>::operator[](std::size_t idx)
 	case 2:
 		return z;
 	default:
-		throw std::out_of_range("Vector3 subscript out of range.");
+		throw std::out_of_range("TVector3 subscript out of range.");
 	};
 }
 
 template <typename T>
-const T& Vector3<T>::operator[](std::size_t idx) const
+const T& TVector3<T>::operator[](std::size_t idx) const
 {
 	switch (idx)
 	{
@@ -216,31 +216,31 @@ const T& Vector3<T>::operator[](std::size_t idx) const
 	case 2:
 		return z;
 	default:
-		throw std::out_of_range("Vector3 subscript out of range.");
+		throw std::out_of_range("TVector3 subscript out of range.");
 	};
 }
 
 template <typename T>
-inline Vector3<T>& Vector3<T>::Normalize()
+inline TVector3<T>& TVector3<T>::Normalize()
 {
 	return *this /= Length();
 }
 
 
 template <typename T>
-inline float Vector3<T>::Length() const
+inline float TVector3<T>::Length() const
 {
 	return std::sqrt(x*x + y*y + z*z);
 }
 
 template <typename T>
-Vector3<T> Vector3<T>::Reflect(const Vector3<T>& Normal) const
+TVector3<T> TVector3<T>::Reflect(const TVector3<T>& Normal) const
 {
 	return 2 * Dot(*this, Normal) * Normal - *this;
 }
 
 template <typename T>
-void Vector3<T>::Print()
+void TVector3<T>::Print()
 {
 	if (typeid(T) == typeid(float))
 		printf("X: %.3f Y: %.3f Z: %.3f", x, y, z);
@@ -249,15 +249,15 @@ void Vector3<T>::Print()
 }
 
 template <typename T>
-inline T Vector3<T>::Dot(const Vector3<T>& lhs, const Vector3<T>& rhs)
+inline T TVector3<T>::Dot(const TVector3<T>& lhs, const TVector3<T>& rhs)
 {
 	return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 template <typename T>
-inline Vector3<T> Vector3<T>::Cross(const Vector3<T>& lhs, const Vector3<T>& rhs)
+inline TVector3<T> TVector3<T>::Cross(const TVector3<T>& lhs, const TVector3<T>& rhs)
 {
-	return Vector3<T>(	(lhs.y * rhs.z) - (lhs.z * rhs.y),
+	return TVector3<T>(	(lhs.y * rhs.z) - (lhs.z * rhs.y),
 						(lhs.z * rhs.x) - (lhs.x * rhs.z),
 						(lhs.x * rhs.y) - (lhs.y * rhs.x));
 }
@@ -273,9 +273,9 @@ template <typename T>
 * @param rhs - Right operand
 * @return Addition of the two vectors.
 */
-inline Vector3<T> operator+(const Vector3<T>& lhs, const Vector3<T>& rhs)
+inline TVector3<T> operator+(const TVector3<T>& lhs, const TVector3<T>& rhs)
 {
-	return Vector3<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+	return TVector3<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
 }
 
 template <typename T>
@@ -285,9 +285,9 @@ template <typename T>
 * @param rhs - Right operand
 * @return Difference of the two vectors.
 */
-inline Vector3<T> operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
+inline TVector3<T> operator-(const TVector3<T>& lhs, const TVector3<T>& rhs)
 {
-	return Vector3<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+	return TVector3<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
 template <typename T>
@@ -296,9 +296,9 @@ template <typename T>
 * @param lhs - Left operand
 * @return The negated vector.
 */
-inline Vector3<T> operator-(const Vector3<T>& lhs)
+inline TVector3<T> operator-(const TVector3<T>& lhs)
 {
-	return Vector3<T>(-lhs.x, -lhs.y, -lhs.z);
+	return TVector3<T>(-lhs.x, -lhs.y, -lhs.z);
 }
 
 template <typename T, typename U>
@@ -308,9 +308,9 @@ template <typename T, typename U>
 * @param Scalar - Right operand (scalar)
 * @return Memberwise multiplied vector
 */
-inline Vector3<T> operator*(const Vector3<T>& Vec, const U& Scalar)
+inline TVector3<T> operator*(const TVector3<T>& Vec, const U& Scalar)
 {
-	return Vector3<T>(Vec.x * Scalar, Vec.y * Scalar, Vec.z * Scalar);
+	return TVector3<T>(Vec.x * Scalar, Vec.y * Scalar, Vec.z * Scalar);
 }
 
 template <typename T, typename U>
@@ -320,7 +320,7 @@ template <typename T, typename U>
 * @param vector - Right operand (vector)
 * @return Memberwise multiplied vector
 */
-inline Vector3<T> operator*(const U& Scalar, const Vector3<T>& Vector)
+inline TVector3<T> operator*(const U& Scalar, const TVector3<T>& Vector)
 {
 	return Vector * Scalar;
 }
@@ -332,7 +332,7 @@ template <typename T, typename U>
 * @param Scalar - Unit to divide by.
 * @return Memberwise divided vector
 */
-inline Vector3<T> operator/(const Vector3<T>& Vec, const U& Scalar)
+inline TVector3<T> operator/(const TVector3<T>& Vec, const U& Scalar)
 {
-	return Vector3<T>(Vec.x / Scalar, Vec.y / Scalar, Vec.z / Scalar);
+	return TVector3<T>(Vec.x / Scalar, Vec.y / Scalar, Vec.z / Scalar);
 }

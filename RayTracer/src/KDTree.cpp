@@ -10,7 +10,7 @@ KDTree::KDTree()
 }
 
 
-void KDTree::buildTree(const std::vector<std::unique_ptr<Primitive>>& Primitives, uint32_t depth)
+void KDTree::buildTree(const std::vector<std::unique_ptr<IPrimitive>>& Primitives, uint32_t depth)
 {
 	for (const auto& Primitive : Primitives)
 		mRoot.PrimitiveList.push_back(Primitive.get());
@@ -27,20 +27,20 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 		return;
 
 	uint32_t dividingAxis = currentNode.axis;
-	std::vector<Primitive*>& currentPrimitives = currentNode.PrimitiveList;
+	std::vector<IPrimitive*>& currentPrimitives = currentNode.PrimitiveList;
 
-	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const Primitive* lhs, const Primitive* rhs) -> bool
+	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const IPrimitive* lhs, const IPrimitive* rhs) -> bool
 	{
 		return lhs->getBoundingBox().GetCenter()[dividingAxis] < rhs->getBoundingBox().GetCenter()[dividingAxis];
 	});
 
 	size_t PrimitiveListSize = currentNode.PrimitiveList.size();
 	size_t medianPrimitiveIndex = PrimitiveListSize / 2;
-	Primitive* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
+	IPrimitive* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
 	float medianAxisValue = medianPrimitive->getBoundingBox().GetCenter()[dividingAxis];
 	currentNode.splitValue = medianAxisValue;
 
-	std::vector<Primitive*> straddlingPrimitives;
+	std::vector<IPrimitive*> straddlingPrimitives;
 	straddlingPrimitives.push_back(medianPrimitive);
 	currentNode.child[0] = std::unique_ptr<KDNode>(new KDNode());
 	currentNode.child[1] = std::unique_ptr<KDNode>(new KDNode());
@@ -79,19 +79,19 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 	buildTreeHelper(*currentNode.child[1], depth - 1);
 }
 
-bool KDTree::IsIntersectingRay(Ray ray, float* tValueOut, Intersection* intersectionOut)
+bool KDTree::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
 {
 	return visitNodesAgainstRay(&mRoot, ray, tValueOut, intersectionOut);
 }
 
-bool KDTree::visitNodesAgainstRay(KDNode* currentNode, Ray ray, float* tValueOut, Intersection* intersectionOut)
+bool KDTree::visitNodesAgainstRay(KDNode* currentNode, FRay ray, float* tValueOut, FIntersection* intersectionOut)
 {
 	if (currentNode == nullptr)
 		return false;
 
 	bool isIntersecting = false;
 
-	for (Primitive* primitive : currentNode->PrimitiveList)
+	for (IPrimitive* primitive : currentNode->PrimitiveList)
 		isIntersecting |= primitive->IsIntersectingRay(ray, tValueOut, intersectionOut);
 
 	// check which child to traverse first from axis split

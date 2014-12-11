@@ -6,12 +6,12 @@ class Primitive;
 * Struct for describing the properties of an intersection 
 * with a primative at a point
 */
-struct Intersection
+struct FIntersection
 {
 	/**
 	* Default Constructor 
 	*/
-	inline Intersection()
+	inline FIntersection()
 		: object(nullptr)
 		, point()
 		, normal()
@@ -25,7 +25,7 @@ struct Intersection
 	* @param IntersectionPoint Point of intersection
 	* @param SurfaceNormal Normal at the intersection of the object
 	*/
-	inline Intersection(Primitive& IntersectedObject, Vector3f IntersectionPoint, Vector3f SurfaceNormal)
+	inline FIntersection(IPrimitive& IntersectedObject, Vector3f IntersectionPoint, Vector3f SurfaceNormal)
 		: object(&IntersectedObject)
 		, point(IntersectionPoint)
 		, normal(SurfaceNormal)
@@ -33,7 +33,7 @@ struct Intersection
 	}
 
 		
-	Primitive* object;				/* The primative of the intersection */
+	IPrimitive* object;				/* The primative of the intersection */
 	Vector3f point;				/* Point on the surface of the geometry */
 	Vector3f normal;			/* Surface normal at the point on the geometry */
 };

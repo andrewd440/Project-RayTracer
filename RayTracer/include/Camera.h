@@ -11,7 +11,7 @@
 * Represents a camera in the scene.
 * Used to generate rays from a viewpoint through pixels on the screen.
 */
-class Camera
+class FCamera
 {
 public:
 	/**
@@ -23,7 +23,7 @@ public:
 	* @param FOV The distance of the camera from the screen
 	* @param OutputResolution Size of the screen (in pixels)
 	*/
-	Camera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution);
+	FCamera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vector3f& UpDirection, float FOV, const Vector2i& OutputResolution);
 
 	/**
 	* Generates a ray from the viewpoint through a screen pixel.
@@ -31,7 +31,7 @@ public:
 	* @param Y - y coordinate of the pixel
 	* @return The generated ray in world coordinates
 	*/
-	Ray GenerateRay(int32_t X, int32_t Y) const;
+	FRay GenerateRay(int32_t X, int32_t Y) const;
 
 	/**
 	* Retrieves the horizontal FOV of the camera.

@@ -7,7 +7,7 @@
 /**
 * Represents the lighting material for a specific surface 
 */
-struct Material
+struct FMaterial
 {
 	/**
 	* Constructs a Material with a specular, diffuse, ambient, and glossiness.
@@ -17,7 +17,7 @@ struct Material
 	* @param Glossiness - The glossiness of the surface
 	* @param Reflectivity - The reflectiveness of the surface [0-1]
 	*/
-	Material(Color Specular, Color Diffuse, Color Ambient, float Glossiness, float Reflectivity)
+	FMaterial(FColor Specular, FColor Diffuse, FColor Ambient, float Glossiness, float Reflectivity)
 		: specularColor(Specular)
 		, diffuseColor(Diffuse)
 		, ambientColor(Ambient)
@@ -28,9 +28,9 @@ struct Material
 		assert(reflectivity <= 1 && reflectivity >= 0);
 	}
 
-	Color specularColor;
-	Color diffuseColor;
-	Color ambientColor;
+	FColor specularColor;
+	FColor diffuseColor;
+	FColor ambientColor;
 	float glossiness;
 	float reflectivity;
 };

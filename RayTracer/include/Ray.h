@@ -5,7 +5,7 @@
 /**
 * Class for representing a ray in 3D space.
 */
-struct Ray
+struct FRay
 {
 	/**
 	* Constructs a ray from an origin point that points in a 
@@ -13,7 +13,7 @@ struct Ray
 	* @param OriginiPoint - The origin of the ray
 	* @param DirectionVector - A direction for the ray
 	*/
-	inline Ray(Vector3f OriginPoint, Vector3f DirectionVector)
+	inline FRay(Vector3f OriginPoint, Vector3f DirectionVector)
 		: origin(OriginPoint)
 		, direction(DirectionVector)
 	{
