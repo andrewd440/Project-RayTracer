@@ -20,6 +20,10 @@ FRay FDirectionalLight::GetRayToLight(const Vector3f& SurfacePoint) const
 	return FRay(SurfacePoint, -mLightDirection);
 }
 
+std::vector<FRay> FDirectionalLight::GetRayToLightSamples(const Vector3f& SurfacePoint, int NumSamples) const
+{
+	return std::vector<FRay>();
+}
 
 void FDirectionalLight::setLightDirection(const Vector3f& LightDirection)
 {

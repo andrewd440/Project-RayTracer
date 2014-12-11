@@ -236,7 +236,7 @@ inline FMatrix4::FMatrix4()
 
 inline FMatrix4::FMatrix4(const Vector3f& XBasis, const Vector3f& YBasis, const Vector3f& ZBasis)
 {
-	for (int col = 0; col < 4; col++)
+	for (int col = 0; col < 3; col++)
 	{
 		M[0][col] = XBasis[col];
 		M[1][col] = YBasis[col];

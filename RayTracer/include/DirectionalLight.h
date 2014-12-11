@@ -25,6 +25,15 @@ public:
 	FRay GetRayToLight(const Vector3f& SurfacePoint) const override;
 
 	/**
+	* Generate a list of sample rays from a given point to an area light source.
+	* Used to take shadow samples for generating soft shadows.
+	* @param SurfacePoint The destination point for the light
+	* @param NumSamples The number of sample to produce
+	* @return A list of sample rays from the surface point to the light position.
+	*/
+	std::vector<FRay> GetRayToLightSamples(const Vector3f& SurfacePoint, int NumSamples) const override;
+
+	/**
 	* Sets the direction of the light.
  	* @param LightDirection - The direction (Normalized) of the light
 	*/

@@ -67,6 +67,15 @@ private:
 	bool isInShadow(const FRay& LightRay);
 
 	/**
+	* Computes the factor of a light that is visible to a surface point.
+	* @param Light to check against
+	* @param SurfacePoint to test
+	* @return Value between 0-1 for the factor of light that is visible to the surface 
+	*
+	*/
+	float ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint) const;
+
+	/**
 	* Computes a mirror reflection from a light direction and a reflection normal
 	* @param ViewerDirection - Direction of the viewer
 	* @param SurfaceNormal - Normal to be reflected across

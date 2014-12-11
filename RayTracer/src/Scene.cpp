@@ -16,7 +16,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(1000, 600);
+	const Vector2i OUTPUT_RESOLUTION(2000, 1100);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ void FScene::buildScene(std::istream& in)
 				throwSceneConfigError("PointLight");
 			in >> position.x >> position.y >> position.z;
 
-			mLights.push_back(LightPtr(new FPointLight(color, position, 10, 35))); ///////////////////////////////////////CHANGE TO FILE INPUT
+			mLights.push_back(LightPtr(new FPointLight(color, position, 4, 10, 35))); ///////////////////////////////////////CHANGE TO FILE INPUT
 		}
 		else if (string == "Plane")
 		{
@@ -163,7 +163,7 @@ void FScene::buildScene(std::istream& in)
 		in >> string;
 	}
 	
-	mLights.push_back(LightPtr(new FPointLight(FColor(1.0f, 1.0f, 1.0f), Vector3f(-5.0f, 10, -8), 10, 35)));
+	mLights.push_back(LightPtr(new FPointLight(FColor(1.0f, 1.0f, 1.0f), Vector3f(-5.0f, 10, -8), 4, 10, 35)));
 
 	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.2f, .8f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
 	IPrimitive* cube = mPrimitives.back().get();
@@ -231,7 +231,11 @@ FColor FScene::traceRay(const FRay& cameraRay, int32_t depth)
 			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
-			if (isInShadow(rayToLight))
+			/*if (isInShadow(rayToLight))
+				continue;*/
+
+			const float ShadeFactor = ComputeShadeFactor(*light, surfacePoint);
+			if (ShadeFactor <= 0.0)
 				continue;
 
 			// Get dot product of surface normal and h for specular lighting
@@ -249,6 +253,7 @@ FColor FScene::traceRay(const FRay& cameraRay, int32_t depth)
 
 			// Add diffuse and specular contributions to total
 			outputColor += specularColor + diffuseColor;
+			outputColor *= ShadeFactor;
 
 			// Add mirror reflection contributions
 			Vector3f mirrorReflection = -cameraRay.direction.Reflect(surfaceNormal);
@@ -257,7 +262,7 @@ FColor FScene::traceRay(const FRay& cameraRay, int32_t depth)
 		}
 
 		// return computed color totals with ambient contribution
-		return outputColor + (mGlobalAmbient * surfaceMaterial.ambientColor);
+		return  outputColor + (mGlobalAmbient * surfaceMaterial.ambientColor);
 	}
 	else
 		return mBackgroundColor;
@@ -306,6 +311,27 @@ bool FScene::isInShadow(const FRay& lightRay)
 
 	return false;
 	
+}
+
+float FScene::ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint) const
+{
+	const float FactorSize = 1.0f / 16.0f;
+	float ShadeFactor = 1.0f;
+
+	for (const FRay& ShadowSample : Light.GetRayToLightSamples(SurfacePoint, 16))
+	{
+		for (const auto& Primitive : mPrimitives)
+		{
+			// If the object is not the reference one and intersects the light
+			if (Primitive->IsIntersectingRay(ShadowSample))
+			{
+				ShadeFactor -= FactorSize;
+				break;
+			}
+		}
+	}
+
+	return ShadeFactor;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

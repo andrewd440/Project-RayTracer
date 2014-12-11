@@ -3,6 +3,8 @@
 #include "Vector3.h"
 #include "Ray.h"
 
+#include <vector>
+
 /* Base class of all scene lights */
 class ILight
 {
@@ -26,6 +28,15 @@ public:
 	* @return A ray from the surface point to the light position.
 	*/
 	virtual FRay GetRayToLight(const Vector3f& SurfacePoint) const = 0;
+
+	/**
+	* Generate a list of sample rays from a given point to an area light source.
+	* Used to take shadow samples for generating soft shadows.
+	* @param SurfacePoint The destination point for the light
+	* @param NumSamples The number of sample to produce
+	* @return A list of sample rays from the surface point to the light position.
+	*/
+	virtual std::vector<FRay> GetRayToLightSamples(const Vector3f& SurfacePoint, int NumSamples) const = 0;
 
 	/**
 	* Retrieves the color intensity of the light at a point.

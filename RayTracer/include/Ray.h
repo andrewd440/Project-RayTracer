@@ -13,7 +13,7 @@ struct FRay
 	* @param OriginiPoint - The origin of the ray
 	* @param DirectionVector - A direction for the ray
 	*/
-	inline FRay(Vector3f OriginPoint, Vector3f DirectionVector)
+	inline FRay(Vector3f OriginPoint = Vector3f(), Vector3f DirectionVector = Vector3f())
 		: origin(OriginPoint)
 		, direction(DirectionVector)
 	{
