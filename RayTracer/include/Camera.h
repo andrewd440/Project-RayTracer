@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include "Vector2.h"
 #include "Vector3.h"
@@ -32,6 +33,16 @@ public:
 	* @return The generated ray in world coordinates
 	*/
 	FRay GenerateRay(int32_t X, int32_t Y) const;
+
+	/**
+	* Generates a list of sample rays from the viewpoint 
+	* through a random selection of points within a screen pixel.
+	* @param X coordinate of the pixel
+	* @param Y coordinate of the pixel
+	* @param NumberOfSamples to take.
+	* @return The generated list of rays in world coordinates
+	*/
+	std::vector<FRay> GenerateSampleRays(int32_t X, int32_t Y, uint16_t NumberOfSamples) const;
 
 	/**
 	* Retrieves the horizontal FOV of the camera.

@@ -26,14 +26,14 @@ public:
 	FScene();
 
 	// Don't allow copies of a scene
-	FScene& operator=(const FScene& copy) = delete;
+	FScene& operator=(const FScene& Copy) = delete;
 
 	/**
 	* Builds the scene. 
 	* Add the camera, lights, and geometry to the scene.
 	* @param SceneConfig - Scene setup file stream
 	*/
-	void buildScene(std::istream& SceneConfig);
+	void BuildScene(std::istream& SceneConfig);
 
 	/**
 	* Traces a ray into the scene and computes the resulting color
@@ -42,12 +42,12 @@ public:
 	*						on the screen.
 	* @return The resulting color for the source pixel.
 	*/
-	FColor traceRay(const FRay& CameraRay, int32_t depth);
+	FColor TraceRay(const FRay& CameraRay, int32_t Depth);
 
 	/**
 	* Renders the scene to an image.
 	*/
-	void renderScene();
+	void RenderScene();
 
 private:
 	/**
@@ -56,7 +56,7 @@ private:
 	* @param ViewerDirection - The Normalized direction of the viewer
 	* @return Normalized direction vector for the specular reflection 
 	*/
-	Vector3f computeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection);
+	Vector3f ComputeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection);
 
 	/**
 	* Checks if a light ray is blocked by another object.
@@ -64,7 +64,7 @@ private:
 	* @return True if the point is in a shadow
 	*
 	*/
-	bool isInShadow(const FRay& LightRay);
+	bool IsInShadow(const FRay& LightRay);
 
 	/**
 	* Computes the factor of a light that is visible to a surface point.
@@ -81,7 +81,7 @@ private:
 	* @param SurfaceNormal - Normal to be reflected across
 	* @return A direction vector for the mirror reflection
 	*/
-	Vector3f computeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const;
+	Vector3f ComputeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const;
 
 	/**
 	* Reads in properties and creates a Material from an input stream 
@@ -93,7 +93,7 @@ private:
 	*					Reflectivity: -
 	* @return A Material with the given properties.
 	*/
-	FMaterial readMaterial(std::istream& Input);
+	FMaterial ReadMaterial(std::istream& Input);
 
 	/**
 	* Reads in a model from a file of vertices and faces. Applies a translation
@@ -102,7 +102,7 @@ private:
 	* @param Translation - 3D translation values.
 	* @param MaterialProperties - Model lighting material.
 	*/
-	void readModel(std::string Filename, Vector3f Translation, FMaterial MaterialProperties);
+	void ReadModel(std::string Filename, Vector3f Translation, FMaterial MaterialProperties);
 
 private:
 	FImage mOutputImage; /* Output image for the rendered scene */
@@ -112,4 +112,6 @@ private:
 	FColor mBackgroundColor; /* Background color for the scene */
 	FColor mGlobalAmbient; /* Color used for global ambient lighting */
 	KDTree mKDTree;
+
+	uint16_t mNumberOfShadowSamples; /* Number of samples to use when generating shadows */
 };

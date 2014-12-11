@@ -16,14 +16,14 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(2000, 1100);
+	const Vector2i OUTPUT_RESOLUTION(1000, 600);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void throwSceneConfigError(const std::string& objectType)
+void throwSceneConfigError(const std::string& ObjectType)
 {
-	std::cout << "...Error in scene config file for a " << objectType << std::endl;
+	std::cout << "...Error in scene config file for a " << ObjectType << std::endl;
 	throw std::runtime_error("Scene config error.");
 }
 
@@ -31,18 +31,19 @@ void throwSceneConfigError(const std::string& objectType)
 FScene::FScene()
 	: mOutputImage("RenderedScene2", OUTPUT_RESOLUTION)
 	, mBackgroundColor(FColor::Black)
-	, mGlobalAmbient(100, 100, 100)
+	, mGlobalAmbient(0.2f, 0.2f, 0.2f)
 	, mCamera(Vector3f(0, 6, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
+	, mNumberOfShadowSamples(16)
 {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void FScene::buildScene(std::istream& in)
+void FScene::BuildScene(std::istream& in)
 {
 	std::string string;
 	in >> string;
@@ -119,7 +120,7 @@ void FScene::buildScene(std::istream& in)
 				throwSceneConfigError("Plane");
 			in >> point.x >> point.y >> point.z;
 
-			FMaterial material(readMaterial(in));
+			FMaterial material(ReadMaterial(in));
 
 			mPrimitives.push_back(PrimitivePtr(new FPlane(material, direction, point)));
 		}
@@ -137,7 +138,7 @@ void FScene::buildScene(std::istream& in)
 				throwSceneConfigError("Sphere");
 			in >> radius;
 			
-			FMaterial material(readMaterial(in));
+			FMaterial material(ReadMaterial(in));
 
 			mPrimitives.push_back(PrimitivePtr(new FSphere(center, radius, material)));
 		}
@@ -156,14 +157,15 @@ void FScene::buildScene(std::istream& in)
 				throwSceneConfigError("Model");
 			in >> translation.x >> translation.y >> translation.z;
 
-			FMaterial material(readMaterial(in));
+			FMaterial material(ReadMaterial(in));
 
-			readModel(filename, translation, material);
+			ReadModel(filename, translation, material);
 		}
 		in >> string;
 	}
 	
-	mLights.push_back(LightPtr(new FPointLight(FColor(1.0f, 1.0f, 1.0f), Vector3f(-5.0f, 10, -8), 4, 10, 35)));
+	mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(5.0f, 10, -17.5f), 1, 5, 35)));
+	mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.4f, 0.4f, 0.4f), Vector3f(1.0f, -1.0f, -2.0f))));
 
 	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.2f, .8f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
 	IPrimitive* cube = mPrimitives.back().get();
@@ -185,84 +187,85 @@ void FScene::buildScene(std::istream& in)
 	cube = mPrimitives.back().get();
 	cube->mTransform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
 
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(0.0f, -1.5f, -17.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
+	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(0.0f, -0.9f, -17.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
 
 	mKDTree.buildTree(mPrimitives, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-FColor FScene::traceRay(const FRay& cameraRay, int32_t depth)
+FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 {
-	if (depth < 1)
+	if (Depth < 1)
 		return mBackgroundColor;
 
-	float maxTValue(std::numeric_limits<float>::max());
-	FIntersection closestIntersection;
+	float MaxTValue(std::numeric_limits<float>::max());
+	FIntersection ClosestIntersection;
 
 	
 	 //For performs difference tests
-	for (const auto& primitive : mPrimitives)
-		primitive->IsIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
+	for (const auto& Primitive : mPrimitives)
+		Primitive->IsIntersectingRay(CameraRay, &MaxTValue, &ClosestIntersection);
 		
 	//mKDTree.IsIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 
 	// If an object was intersected
-	if (closestIntersection.object)
+	if (ClosestIntersection.object)
 	{
-		FColor outputColor;
+		FColor OutputColor;
 
 		// Get the surface material, point, and normal
-		const FMaterial& surfaceMaterial(closestIntersection.object->getMaterial());
-		const Vector3f& surfacePoint(closestIntersection.point);
-		const Vector3f& surfaceNormal(closestIntersection.normal);
+		const FMaterial& SurfaceMaterial(ClosestIntersection.object->getMaterial());
+		const Vector3f& SurfacePoint(ClosestIntersection.point);
+		const Vector3f& SurfaceNormal(ClosestIntersection.normal);
 
 		for (const auto& light : mLights)
 		{
-			const FColor lightColor = light->GetIntesityAt(surfacePoint);
+			FColor LightColor = light->GetIntesityAt(SurfacePoint);
 
 			// if the light intesity is 0, skip this light
-			if (lightColor == FColor::Black)
+			if (LightColor == FColor::Black)
 				continue;
 
 			// Get direction of light and compute h reflection
-			const FRay& rayToLight(light->GetRayToLight(surfacePoint));
-			const Vector3f& lightDirection(rayToLight.direction);
-			const Vector3f& h = computeBlinnSpecularReflection(rayToLight.direction, -cameraRay.direction);
+			const FRay& RayToLight(light->GetRayToLight(SurfacePoint));
+			const Vector3f& LightDirection(RayToLight.direction);
+			const Vector3f& H = ComputeBlinnSpecularReflection(RayToLight.direction, -CameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
-			/*if (isInShadow(rayToLight))
-				continue;*/
+			//if (IsInShadow(RayToLight))
+			//	continue;
 
-			const float ShadeFactor = ComputeShadeFactor(*light, surfacePoint);
+			const float ShadeFactor = ComputeShadeFactor(*light, SurfacePoint);
 			if (ShadeFactor <= 0.0)
 				continue;
 
+			LightColor *= ShadeFactor;
+
 			// Get dot product of surface normal and h for specular lighting
-			float specularFactor = std::max(Vector3f::Dot(surfaceNormal, h), 0.f);
+			float SpecularFactor = std::max(Vector3f::Dot(SurfaceNormal, H), 0.f);
 
 			// Add glossiness expononent
-			specularFactor = pow(specularFactor, surfaceMaterial.glossiness);
+			SpecularFactor = pow(SpecularFactor, SurfaceMaterial.glossiness);
 
 			// Get dot product of surface normal and light direction for diffuse lighting
-			float diffuseFactor = std::max(Vector3f::Dot(surfaceNormal, lightDirection), 0.f);
+			float DiffuseFactor = std::max(Vector3f::Dot(SurfaceNormal, LightDirection), 0.f);
 
 			// Combine material color and light color for diffuse and specular
-			FColor specularColor(lightColor * surfaceMaterial.specularColor * specularFactor);
-			FColor diffuseColor(lightColor  * surfaceMaterial.diffuseColor * diffuseFactor);
+			FColor specularColor(LightColor * SurfaceMaterial.specularColor * SpecularFactor);
+			FColor diffuseColor(LightColor  * SurfaceMaterial.diffuseColor * DiffuseFactor);
 
 			// Add diffuse and specular contributions to total
-			outputColor += specularColor + diffuseColor;
-			outputColor *= ShadeFactor;
+			OutputColor += specularColor + diffuseColor;
 
 			// Add mirror reflection contributions
-			Vector3f mirrorReflection = -cameraRay.direction.Reflect(surfaceNormal);
-			FRay reflectionRay(surfacePoint, mirrorReflection);
-			outputColor += traceRay(reflectionRay, depth - 1) * outputColor * surfaceMaterial.reflectivity;
+			Vector3f mirrorReflection = -CameraRay.direction.Reflect(SurfaceNormal);
+			FRay reflectionRay(SurfacePoint, mirrorReflection);
+			OutputColor += TraceRay(reflectionRay, Depth - 1) * OutputColor * SurfaceMaterial.reflectivity;
 		}
 
 		// return computed color totals with ambient contribution
-		return  outputColor + (mGlobalAmbient * surfaceMaterial.ambientColor);
+		return  OutputColor + (mGlobalAmbient * SurfaceMaterial.ambientColor);
 	}
 	else
 		return mBackgroundColor;
@@ -270,15 +273,15 @@ FColor FScene::traceRay(const FRay& cameraRay, int32_t depth)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void FScene::renderScene()
+void FScene::RenderScene()
 {
 	for (int y = 0; y < OUTPUT_RESOLUTION.y; y++)
 	{
 		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
 		{
-			FRay ray = mCamera.GenerateRay(x, y);
-			FColor pixelColor = traceRay(ray,5);
-			mOutputImage.setPixel(x, y, pixelColor);
+			FRay Ray = mCamera.GenerateRay(x, y);
+			FColor PixelColor = TraceRay(Ray, 5);
+			mOutputImage.setPixel(x, y, PixelColor);
 		}
 	}
 
@@ -287,25 +290,26 @@ void FScene::renderScene()
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Vector3f FScene::computeBlinnSpecularReflection(const Vector3f& lightDirection, const Vector3f& viewerDirection)
+Vector3f FScene::ComputeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection)
 {
-	Vector3f reflection(lightDirection + viewerDirection);
-	reflection.Normalize();
-	return reflection;
+	// use half-way vector
+	Vector3f Reflection(LightDirection + ViewerDirection);
+	Reflection.Normalize();
+	return Reflection;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-bool FScene::isInShadow(const FRay& lightRay)
+bool FScene::IsInShadow(const FRay& LightRay)
 {
-	//return mKDTree.IsIntersectingRay(lightRay);
+	//return mKDTree.IsIntersectingRay(LightRay);
 
 	
 	// For performance tests
 	for (const auto& Primitive : mPrimitives)
 	{
-		// If the object is not the reference one and intersects the light
-		if (Primitive->IsIntersectingRay(lightRay))
+		// If the intersects the light
+		if (Primitive->IsIntersectingRay(LightRay))
 			return true;
 	}
 
@@ -315,10 +319,10 @@ bool FScene::isInShadow(const FRay& lightRay)
 
 float FScene::ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint) const
 {
-	const float FactorSize = 1.0f / 16.0f;
+	const float FactorSize = 1.0f / mNumberOfShadowSamples;
 	float ShadeFactor = 1.0f;
 
-	for (const FRay& ShadowSample : Light.GetRayToLightSamples(SurfacePoint, 16))
+	for (const FRay& ShadowSample : Light.GetRayToLightSamples(SurfacePoint, mNumberOfShadowSamples))
 	{
 		for (const auto& Primitive : mPrimitives)
 		{
@@ -336,17 +340,17 @@ float FScene::ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoi
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Vector3f FScene::computeMirriorReflection(const Vector3f& viewerDirection, const Vector3f& surfaceNormal) const
+Vector3f FScene::ComputeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const
 {
-	float viewerDotNormal = Vector3f::Dot(surfaceNormal, viewerDirection);
-	Vector3f reflectionDirection(2 * (viewerDotNormal) * surfaceNormal - viewerDirection);
-	reflectionDirection.Normalize();
-	return reflectionDirection;
+	float ViewerDotNormal = Vector3f::Dot(SurfaceNormal, ViewerDirection);
+	Vector3f ReflectionDirection(2 * (ViewerDotNormal)* SurfaceNormal - ViewerDirection);
+	ReflectionDirection.Normalize();
+	return ReflectionDirection;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-FMaterial FScene::readMaterial(std::istream& input)
+FMaterial FScene::ReadMaterial(std::istream& input)
 {
 	FColor specular, diffuse, ambient;
 	float specualarExponent, reflectivity;
@@ -381,7 +385,7 @@ FMaterial FScene::readMaterial(std::istream& input)
 	return FMaterial(specular, diffuse, ambient, specualarExponent, reflectivity);
 }
 
-void FScene::readModel(std::string filename, Vector3f translation, FMaterial material)
+void FScene::ReadModel(std::string filename, Vector3f translation, FMaterial material)
 {
 	std::filebuf modelBuffer;
 	if (modelBuffer.open(filename, std::ios::in))

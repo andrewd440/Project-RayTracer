@@ -26,6 +26,11 @@ FRay FCamera::GenerateRay(int32_t X, int32_t Y) const
 	return mViewTransform.TransformRay(pixelRay);
 }
 
+std::vector<FRay> FCamera::GenerateSampleRays(int32_t X, int32_t Y, uint16_t NumberOfSamples) const
+{
+
+}
+
 float FCamera::GetFOV() const
 {
 	return mFieldOfView;

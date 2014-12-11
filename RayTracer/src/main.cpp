@@ -21,8 +21,8 @@ int main()
 	{
 		std::istream configStream(&fb);
 		FScene scene;
-		scene.buildScene(configStream);
-		scene.renderScene();
+		scene.BuildScene(configStream);
+		scene.RenderScene();
 	}
 	fb.close();
 	t2 = clock();
