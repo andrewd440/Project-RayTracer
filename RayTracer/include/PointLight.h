@@ -23,7 +23,7 @@ public:
 	* @param surfacePoint - The destination point for the light
 	* @return A ray from the light source pointing to the given surface point.
 	*/
-	Ray GetRayToLight(const Vector3f& surfacePoint);
+	Ray GetRayToLight(const Vector3f& surfacePoint) const override;
 
 	/**
 	* Sets the position of the light.
@@ -42,7 +42,7 @@ public:
 	* @param Position Point to check intensity at.
 	* @return The color of the light.
 	*/
-	virtual Color GetIntesityAt(Vector3f Position) const;
+	Color GetIntesityAt(Vector3f Position) const override;
 
 private:
 	Vector3f mPosition;

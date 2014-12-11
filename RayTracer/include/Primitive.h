@@ -26,7 +26,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	virtual bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) = 0;
+	virtual bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const = 0;
 
 	/**
 	* Set the material properties for the Primitives' surface.

@@ -23,10 +23,17 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	virtual bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const override;
 
 private:
+	/**
+	* Constructs intersection info at a given point of the cube.
+	*/
 	void ConstructIntersection(const Vector3f& IntersectionPoint, Intersection* IntersectionOut);
-	virtual void ConstructAABB();
+
+	/**
+	* Construct AABB for KD-tree
+	*/
+	void ConstructAABB() override;
 };
 

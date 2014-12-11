@@ -17,7 +17,7 @@ Ray Camera::GenerateRay(int32_t X, int32_t Y) const
 	const float v = mAspectRatio - (2 * mAspectRatio * (Y + 0.5f)) / mOutputResolution.y;
 
 	// Compute direction of ray in world space
-	Vector3f rayDirection = Vector3f(u, v, -mDistanceFromScreenPlane);
+	Vector3f rayDirection = Vector3f(-u, v, -mDistanceFromScreenPlane);
 	rayDirection.Normalize();
 
 	Ray pixelRay(Vector3f(), rayDirection);

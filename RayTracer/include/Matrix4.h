@@ -216,10 +216,10 @@ inline Matrix4 operator*(Matrix4 Lhs, const Matrix4& Rhs)
 
 inline Matrix4::Matrix4()
 	: Matrix4({ 
-	1, 0, 0, 0,
-	0, 1, 0, 0,
-	0, 0, 1, 0,
-	0, 0, 0, 1 })
+	1.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 1.0f })
 {}
 
 inline Matrix4::Matrix4(const std::initializer_list<float>& Mat)
@@ -566,7 +566,7 @@ inline Matrix4 Matrix4::GetInverseAffine() const
 	Matrix4 result;
 	const Vector3f& translateVector(GetOrigin());
 
-	// swap row/col in 3x3 portion
+	// transpose 3x3 portion
 	for (int row = 0; row < 3; row++)
 	{
 		for (int col = 0; col < 3; col++)
@@ -575,7 +575,10 @@ inline Matrix4 Matrix4::GetInverseAffine() const
 		}
 	}
 
-	result.SetOrigin(-result.TransformPosition(translateVector));
+	Vector3f inverseTranslate;
+	inverseTranslate = -result.TransformPosition(translateVector);
+
+	result.SetOrigin(inverseTranslate);
 	return result;
 }
 
@@ -598,7 +601,7 @@ struct LookAtMatrix : public Matrix4
 
 inline LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocation, const Vector3f& UpDirection)
 {
-	Vector3f N = (LookLocation - Eye).Normalize();
+	Vector3f N = -(LookLocation - Eye).Normalize();
 	Vector3f U = Vector3f::Cross(N, UpDirection).Normalize();
 	Vector3f V = Vector3f::Cross(U, N).Normalize();
 
@@ -606,13 +609,13 @@ inline LookAtMatrix::LookAtMatrix(const Vector3f& Eye, const Vector3f& LookLocat
 	{
 		M[0][col] = U[col];
 		M[1][col] = V[col];
-		M[2][col] = -N[col];
+		M[2][col] = N[col];
 		M[3][col] = 0.0f;
 	}
 
 	M[0][3] = -Vector3f::Dot(Eye, U);
 	M[1][3] = -Vector3f::Dot(Eye, V);
-	M[2][3] = -Vector3f::Dot(Eye, -N);
+	M[2][3] = -Vector3f::Dot(Eye, N);
 	M[3][3] = 1.0f;
 }
 

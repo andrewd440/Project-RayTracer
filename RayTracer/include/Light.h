@@ -25,7 +25,7 @@ public:
 	* @param SurfacePoint - The destination point for the light
 	* @return A ray from the surface point to the light position.
 	*/
-	virtual Ray GetRayToLight(const Vector3f& SurfacePoint) = 0;
+	virtual Ray GetRayToLight(const Vector3f& SurfacePoint) const = 0;
 
 	/**
 	* Retrieves the color intensity of the light at a point.

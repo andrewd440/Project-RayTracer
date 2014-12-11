@@ -22,7 +22,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the plane.
 	*/
-	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const override;
 
 
 private:
@@ -33,7 +33,7 @@ private:
 	*/
 	void ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
 
-	void ConstructAABB();
+	void ConstructAABB() override;
 
 private:
 	Vector3f mNormal;

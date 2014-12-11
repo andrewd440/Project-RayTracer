@@ -5,64 +5,11 @@ Camera
 	Position: 10 0 0
 	FOV: 75
 
-PointLight
-	Color: .5 1 1
-	Position: 1 5 -12
-
-PointLight
-	Color: 1 .5 1
-	Position: -10 1 -25
-
 Plane
 	Direction: 0 1 0
 	Point: 0 -4 0
 	Specular: .5 .5 .5
 	Diffuse: .5 .5 .5
 	Ambient: .1 .1 .1
-	SpecularExponent: 12
-	Reflectivity: .3
-
-Sphere
-	Center: 5 -2 -15
-	Radius: 2
-	Specular: .9 .7 .7
-	Diffuse: 1 .5 .5
-	Ambient: .1 .1 .1
 	SpecularExponent: 32
 	Reflectivity: .7
-
-Sphere
-	Center: 0 -2 -15
-	Radius: 2
-	Specular: 0 .7 .7
-	Diffuse: 0 .5 .5
-	Ambient: .1 .1 .1
-	SpecularExponent: 24
-	Reflectivity: .3
-
-Sphere
-	Center: -5 -2 -15
-	Radius: 2
-	Specular: .9 .5 .5
-	Diffuse: .2 .8 .25
-	Ambient: .1 .1 .1
-	SpecularExponent: 64
-	Reflectivity: .9
-
-Sphere
-	Center: -3 -1 -20
-	Radius: 1
-	Specular: .9 .5 .5
-	Diffuse: .2 .8 .25
-	Ambient: .1 .1 .1
-	SpecularExponent: 64
-	Reflectivity: .9
-
-Sphere
-	Center: -2 2 -25
-	Radius: 3
-	Specular: .9 .5 .5
-	Diffuse: .2 .8 .25
-	Ambient: .1 .1 .1
-	SpecularExponent: 64
-	Reflectivity: .9

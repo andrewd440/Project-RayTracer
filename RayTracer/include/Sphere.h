@@ -26,7 +26,7 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the sphere.
 	*/
-	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr);
+	bool IsIntersectingRay(Ray Ray, float* tValueOut = nullptr, Intersection* IntersectionOut = nullptr) const override;
 
 	/**
 	* Retrieves the center point of the sphere.
@@ -60,7 +60,7 @@ private:
 	*/
 	void ConstructIntersection(Vector3f IntersectionPoint, Intersection& IntersectionOut);
 
-	void ConstructAABB();
+	void ConstructAABB() override;
 
 private:
 	float mRadius; /* Length of the radius */

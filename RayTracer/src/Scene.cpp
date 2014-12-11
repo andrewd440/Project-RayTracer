@@ -29,10 +29,10 @@ void throwSceneConfigError(const std::string& objectType)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 Scene::Scene()
-	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
+	: mOutputImage("RenderedScene2", OUTPUT_RESOLUTION)
 	, mBackgroundColor(Color::Black)
 	, mGlobalAmbient(100, 100, 100)
-	, mCamera(Vector3f(0, 0, 0), Vector3f(0, 0, -1), Vector3f(0, 1, 0), 65, OUTPUT_RESOLUTION)
+	, mCamera(Vector3f(0, 6, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
@@ -103,7 +103,7 @@ void Scene::buildScene(std::istream& in)
 				throwSceneConfigError("PointLight");
 			in >> position.x >> position.y >> position.z;
 
-			mLights.push_back(LightPtr(new PointLight(color, position, 2, 25))); ///////////////////////////////////////CHANGE TO FILE INPUT
+			mLights.push_back(LightPtr(new PointLight(color, position, 10, 35))); ///////////////////////////////////////CHANGE TO FILE INPUT
 		}
 		else if (string == "Plane")
 		{
@@ -162,32 +162,30 @@ void Scene::buildScene(std::istream& in)
 		}
 		in >> string;
 	}
+	
+	mLights.push_back(LightPtr(new PointLight(Color(1.0f, 1.0f, 1.0f), Vector3f(-5.0f, 10, -8), 10, 35)));
 
-	mPrimitives.push_back(PrimitivePtr(new Triangle(Vector3f(-10, 3, -15), Vector3f(-5, 0, -15), Vector3f(-5, 4, -15), Material(Color(.9, .7, .7), Color(1, .5, .5), Color(.1, .1, .1), 32, .7))));
-	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(4, 2, -15), Material(Color(.2, .7, .7), Color(.2, .8, .8), Color(.1, .1, .1), 64, .9))));
-
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(-5.0f, -3.5f, -22.0f), Material(Color(.2f, .7f, .7f), Color(.2f, .8f, .8f), Color(.1f, .1f, .1f), 64, .9f))));
 	Primitive* cube = mPrimitives.back().get();
-	cube->mTransform.Rotate(Matrix4::Axis::X, 15.0f);
-	cube->mTransform.Rotate(Matrix4::Axis::Y, -35.0f);
-	cube->mTransform.Rotate(Matrix4::Axis::Z, 10.0f);
-	cube->mTransform.Scale(Vector3f(2, 2, .5f));
+	cube->mTransform.Scale(0.5);
 
-	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(-3, 2, -15), Material(Color(.9, .7, .9), Color(1, .5, 1), Color(.1, .1, .1), 12, .1))));
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(-5.0f, -3.5f, -13.0f), Material(Color(.2f, .7f, .7f), Color(.5f, 1.0f, .5f), Color(.1f, .1f, .1f), 64, .9f))));
 	cube = mPrimitives.back().get();
-	cube->mTransform.Rotate(Matrix4::Axis::X, 15.0f);
-	cube->mTransform.Rotate(Matrix4::Axis::Y, 45.0f);
+	cube->mTransform.Scale(0.5f);
 
-	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(0, 4, -15), Material(Color(.2, .7, .7), Color(.2, .8, .8), Color(.1, .1, .1), 64, .9))));
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(5.0f, -3.5f, -22.0f), Material(Color(.2f, .7f, .7f), Color(.1f, .3f, .8f), Color(.1f, .1f, .1f), 64, .9f))));
 	cube = mPrimitives.back().get();
-	cube->mTransform.Rotate(Matrix4::Axis::X, 45.0f);
-	cube->mTransform.Rotate(Matrix4::Axis::Y, 45.0f);
-	cube->mTransform.Scale(0.25f);
+	cube->mTransform.Scale(0.5f);
 
-	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(-1, 4, -15), Material(Color(.9, .7, .9), Color(1, .5, 1), Color(.1, .1, .1), 12, .1))));
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(5.0f, -3.5f, -13.0f), Material(Color(.2f, .7f, .7f), Color(.8f, .2f, .8f), Color(.1f, .1f, .1f), 64, .9f))));
 	cube = mPrimitives.back().get();
-	cube->mTransform.Rotate(Matrix4::Axis::X, 45.0f);
-	cube->mTransform.Rotate(Matrix4::Axis::Y, 45.0f);
-	cube->mTransform.Scale(0.25f);
+	cube->mTransform.Scale(0.5f);
+
+	mPrimitives.push_back(PrimitivePtr(new Cube(Vector3f(0.0f, -2.9f, -17.5f), Material(Color::White, Color::White, Color(.1f, .1f, .1f), 64, .9f))));
+	cube = mPrimitives.back().get();
+	cube->mTransform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
+
+	mPrimitives.push_back(PrimitivePtr(new Sphere(Vector3f(0.0f, -1.5f, -17.5f), 2.0f, Material(Color(.2f, .7f, .7f), Color(1.0f, .4f, .1f), Color(.1f, .1f, .1f), 64, .9f))));
 
 	mKDTree.buildTree(mPrimitives, 10);
 }

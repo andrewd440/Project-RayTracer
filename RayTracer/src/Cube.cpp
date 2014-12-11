@@ -17,14 +17,11 @@ bool Cube::IsIntersectingRay(Ray Ray, float* tValueOut, Intersection* Intersecti
 	* Test checks AABB slabs against ray for concurrent intersection with each slab
 	**/
 
-	// bring ray into object space
-	Ray = mTransform.GetInverse().TransformRay(Ray);
-
 	float tMin = 0.0f;
 	float tMax = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
 
-	const Vector3f boxMin(Vector3f(-1, -1, 1));
-	const Vector3f boxMax(Vector3f(1, 1, -1));
+	const Vector3f boxMin(mTransform.TransformPosition(Vector3f(-1, -1, 1)));
+	const Vector3f boxMax(mTransform.TransformPosition(Vector3f(1, 1, -1)));
 
 	const Vector3f& rayD = Ray.direction;
 	const Vector3f& rayO = Ray.origin;
@@ -74,36 +71,37 @@ void Cube::ConstructIntersection(const Vector3f& IntersectionPoint, Intersection
 	int intersectionAxis = 0;
 	int intersectionSide = 0;
 
+	const Matrix4& modelInverse = mTransform.GetInverse();
+
+	const Vector3f intersectionInObjectSpace = modelInverse.TransformPosition(IntersectionPoint);
+
 	// get the intersection plane
 	for (int i = 0; i < 3; i++)
 	{
 		// get axis with largest length
-		if (abs(IntersectionPoint[i]) > largestSide)
+		if (abs(intersectionInObjectSpace[i]) > largestSide)
 		{
-			largestSide = abs(IntersectionPoint[i]);
-			intersectionSide = (IntersectionPoint[i] < 0.0f) ? -1 : 1;
+			largestSide = abs(intersectionInObjectSpace[i]);
+			intersectionSide = (intersectionInObjectSpace[i] < 0.0f) ? -1 : 1;
 			intersectionAxis = i;
 		}
 	}
 
 	Vector3f normal;
 	normal[intersectionAxis] = (float)intersectionSide;
-	normal = mTransform.TransformDirection(normal).Normalize();
+	normal = modelInverse.TransformDirection(normal).Normalize();
 
 	IntersectionOut->normal = normal;
 	IntersectionOut->object = this;
 
 	// make sure point not inside of the object
-	IntersectionOut->point = mTransform.TransformPosition(IntersectionPoint) + (normal * _EPSILON);
+	IntersectionOut->point = IntersectionPoint + (normal * _EPSILON);
 }
 
 void Cube::ConstructAABB()
 {
 	Vector3f max(1, 1, -1);
-	max = mTransform.TransformPosition(max);
-
 	Vector3f min(-1, -1, 1);
-	min = mTransform.TransformPosition(min);
 
 	setBoundingBox(AABB{min, max});
 }

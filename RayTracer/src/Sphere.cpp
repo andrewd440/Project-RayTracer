@@ -85,9 +85,8 @@ void Sphere::SetRadius(const float& radius)
 void Sphere::ConstructAABB()
 {
 	AABB boundingBox;
-	Vector3f center = mTransform.GetOrigin();
-	boundingBox.max = Vector3f(center.x + mRadius, center.y + mRadius, center.z + mRadius);
-	boundingBox.min = Vector3f(center.x - mRadius, center.y - mRadius, center.z - mRadius);
+	boundingBox.max = Vector3f(mRadius, mRadius, -mRadius);
+	boundingBox.min = Vector3f(-mRadius, -mRadius, mRadius);
 
 	setBoundingBox(boundingBox);
 }
