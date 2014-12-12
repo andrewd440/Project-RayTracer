@@ -114,4 +114,5 @@ private:
 	KDTree mKDTree;
 
 	uint16_t mNumberOfShadowSamples; /* Number of samples to use when generating shadows */
+	uint8_t mSuperSamplingLevel; /* The number of rays generated per pixel is squared this number */
 };

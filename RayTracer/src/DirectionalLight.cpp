@@ -2,13 +2,11 @@
 #include "Matrix4.h"
 
 #include <cstdlib>
-#include <ctime>
 
 FDirectionalLight::FDirectionalLight()
 	: ILight()
 	, mLightDirection(0,-1,0)
 {
-	std::srand(time(nullptr));
 }
 
 FDirectionalLight::FDirectionalLight(FColor LightColor, Vector3f LightDirection)

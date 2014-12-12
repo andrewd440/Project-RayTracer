@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <istream>
+#include <cstdlib>
 #include <time.h>
 #include "Matrix4.h"
 
@@ -14,6 +15,7 @@
 
 int main()
 {
+	std::srand(time(nullptr));
 	clock_t t1, t2;
 	t1 = clock();
 	std::filebuf fb;

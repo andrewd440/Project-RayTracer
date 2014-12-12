@@ -39,10 +39,10 @@ public:
 	* through a random selection of points within a screen pixel.
 	* @param X coordinate of the pixel
 	* @param Y coordinate of the pixel
-	* @param NumberOfSamples to take.
+	* @param SamplingLevel This number squared is the number of samples taken.
 	* @return The generated list of rays in world coordinates
 	*/
-	std::vector<FRay> GenerateSampleRays(int32_t X, int32_t Y, uint16_t NumberOfSamples) const;
+	std::vector<FRay> GenerateSampleRays(int32_t X, int32_t Y, uint16_t SamplingLevel) const;
 
 	/**
 	* Retrieves the horizontal FOV of the camera.

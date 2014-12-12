@@ -2,7 +2,6 @@
 #include "Matrix4.h"
 
 #include <cstdlib>
-#include <ctime>
 
 FPointLight::FPointLight(FColor LightColor, Vector3f LightPosition, float SizeRadius, float MinDistance, float MaxDistance)
 	: ILight(LightColor)
@@ -11,7 +10,6 @@ FPointLight::FPointLight(FColor LightColor, Vector3f LightPosition, float SizeRa
 	, mMinRange(MinDistance)
 	, mMaxRange(MaxDistance)
 {
-	std::srand(time(nullptr));
 }
 
 FRay FPointLight::GetRayToLight(const Vector3f& SurfacePoint) const

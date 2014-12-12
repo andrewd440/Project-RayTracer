@@ -43,6 +43,13 @@ public:
 	FColor& operator*=(const float& scalar);
 
 	/**
+	* Performs component-wise division with a scalar.
+	* @param scalar - Unit to divide by
+	* @return The resulting color
+	*/
+	FColor& operator/=(const float& scalar);
+
+	/**
 	* Checks for color equality.
 	*/
 	bool operator==(const FColor& rhs) const;
@@ -61,6 +68,11 @@ public:
 	* Overload of subscript operators for R = 0, G = 1, B = 2.
 	*/
 	const float& operator[](std::size_t idx) const;
+
+	/**
+	* Clamps all color components larger than 1.0.
+	*/
+	FColor& Clamp();
 
 	float r;
 	float g;
@@ -92,9 +104,9 @@ inline FColor::FColor(float R, float G, float B)
 
 inline FColor& FColor::operator+=(const FColor& rhs)
 {
-	r = std::min(r + rhs.r, 1.f);
-	g = std::min(g + rhs.g, 1.f);
-	b = std::min(b + rhs.b, 1.f);
+	r += rhs.r;
+	g += rhs.g;
+	b += rhs.b;
 
 	return *this;
 }
@@ -111,9 +123,18 @@ inline FColor& FColor::operator*=(const FColor& rhs)
 
 inline FColor& FColor::operator*=(const float& scalar)
 {
-	r = std::min(r * scalar, 1.f);
-	g = std::min(g * scalar, 1.f);
-	b = std::min(b * scalar, 1.f);
+	r *= scalar;
+	g *= scalar;
+	b *= scalar;
+
+	return *this;
+}
+
+inline FColor& FColor::operator /= (const float& scalar)
+{
+	r /= scalar;
+	g /= scalar;
+	b /= scalar;
 
 	return *this;
 }
@@ -159,6 +180,15 @@ inline const float& FColor::operator[](std::size_t idx) const
 	default:
 		throw std::out_of_range("FColor subscript out of range.");
 	}
+}
+
+inline FColor& FColor::Clamp()
+{
+	r = std::min(r, 1.f);
+	g = std::min(g, 1.f);
+	b = std::min(b, 1.f);
+
+	return *this;
 }
 
 /////////////////////////////////////////////////////////////////////

@@ -306,3 +306,15 @@ inline TVector2<T> operator/(const TVector2<T>& Vec, const U& Scalar)
 {
 	return Vector2<T>(Vec.x / Scalar, Vec.y / Scalar);
 }
+
+template <typename T, typename U>
+/**
+* Performs vector division.
+* @param Scalar - Unit to divide.
+* @param Vec - Vector to divide by.
+* @return Memberwise divided vector
+*/
+inline TVector2<T> operator/(const U& Scalar, const TVector2<T>& Vec)
+{
+	return Vector2<T>(Scalar / Vec.x, Scalar / Vec.y);
+}

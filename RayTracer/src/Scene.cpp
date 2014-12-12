@@ -16,7 +16,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(1000, 600);
+	const Vector2i OUTPUT_RESOLUTION(2100, 1100);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,8 @@ FScene::FScene()
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
-	, mNumberOfShadowSamples(16)
+	, mNumberOfShadowSamples(64)
+	, mSuperSamplingLevel(3)
 {
 
 }
@@ -164,8 +165,10 @@ void FScene::BuildScene(std::istream& in)
 		in >> string;
 	}
 	
+	mLights.push_back(LightPtr(new FPointLight(FColor(0.7f, 0.1f, 0.5f), Vector3f(-3.0f, 5.0f, -10.0f), 1, 2, 15)));
 	mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(5.0f, 10, -17.5f), 1, 5, 35)));
-	mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.4f, 0.4f, 0.4f), Vector3f(1.0f, -1.0f, -2.0f))));
+	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.4f, 0.4f, 0.4f), Vector3f(1.0f, -1.0f, -2.0f))));
+
 
 	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.2f, .8f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
 	IPrimitive* cube = mPrimitives.back().get();
@@ -188,6 +191,9 @@ void FScene::BuildScene(std::istream& in)
 	cube->mTransform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
 
 	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(0.0f, -0.9f, -17.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
+
+	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(6.0f, 0.0f, -20.0f), 2.0f, FMaterial(FColor(.2f, .7f, .3f), FColor(0.0f, .8f, .3f), FColor(.1f, .1f, .1f), 128, .9f))));
+	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.1f, .5f, .9f), FColor(0.0f, .4f, .8f), FColor(.1f, .1f, .1f), 128, .9f))));
 
 	mKDTree.buildTree(mPrimitives, 10);
 }
@@ -279,9 +285,14 @@ void FScene::RenderScene()
 	{
 		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
 		{
-			FRay Ray = mCamera.GenerateRay(x, y);
-			FColor PixelColor = TraceRay(Ray, 5);
-			mOutputImage.setPixel(x, y, PixelColor);
+			FColor PixelColor;
+			for (const FRay& PixelRay : mCamera.GenerateSampleRays(x, y, mSuperSamplingLevel))
+			{
+				PixelColor += TraceRay(PixelRay, 5);
+			}
+			PixelColor /= (mSuperSamplingLevel * mSuperSamplingLevel); // average the result of all samples
+
+			mOutputImage.setPixel(x, y, PixelColor.Clamp());
 		}
 	}
 
@@ -304,7 +315,6 @@ bool FScene::IsInShadow(const FRay& LightRay)
 {
 	//return mKDTree.IsIntersectingRay(LightRay);
 
-	
 	// For performance tests
 	for (const auto& Primitive : mPrimitives)
 	{
