@@ -13,6 +13,8 @@
 #include "Vector2.h"
 #include "Scene.h"
 
+#include "Mesh.h"
+
 int main()
 {
 	std::srand(time(nullptr));

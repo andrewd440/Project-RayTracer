@@ -8,6 +8,7 @@
 #include "Triangle.h"
 #include "Ray.h"
 #include "Cube.h"
+#include "Mesh.h"
 
 #include <iostream>
 #include <algorithm>
@@ -16,7 +17,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(2100, 1100);
+	const Vector2i OUTPUT_RESOLUTION(1000, 600);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,12 +33,12 @@ FScene::FScene()
 	: mOutputImage("RenderedScene2", OUTPUT_RESOLUTION)
 	, mBackgroundColor(FColor::Black)
 	, mGlobalAmbient(0.2f, 0.2f, 0.2f)
-	, mCamera(Vector3f(0, 6, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
+	, mCamera(Vector3f(0, 5, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
-	, mNumberOfShadowSamples(64)
-	, mSuperSamplingLevel(3)
+	, mNumberOfShadowSamples(1)
+	, mSuperSamplingLevel(1)
 {
 
 }
@@ -165,37 +166,39 @@ void FScene::BuildScene(std::istream& in)
 		in >> string;
 	}
 	
-	mLights.push_back(LightPtr(new FPointLight(FColor(0.7f, 0.1f, 0.5f), Vector3f(-3.0f, 5.0f, -10.0f), 1, 2, 15)));
-	mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(5.0f, 10, -17.5f), 1, 5, 35)));
+	//mLights.push_back(LightPtr(new FPointLight(FColor(0.7f, 0.1f, 0.5f), Vector3f(-3.0f, 5.0f, -10.0f), 1, 2, 15)));
+	//mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(5.0f, 10, -17.5f), 1, 5, 35)));
 	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.4f, 0.4f, 0.4f), Vector3f(1.0f, -1.0f, -2.0f))));
 
+	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-3.0f, 10.0f, 5.0f), 1, 5, 25)));
+	mPrimitives.push_back(PrimitivePtr(new FMesh("Models/BoxMan.obj")));
 
-	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.2f, .8f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
-	IPrimitive* cube = mPrimitives.back().get();
-	cube->mTransform.Scale(0.5);
+	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.2f, .8f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//IPrimitive* cube = mPrimitives.back().get();
+	//cube->Transform.Scale(0.5);
 
-	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
-	cube = mPrimitives.back().get();
-	cube->mTransform.Scale(0.5f);
+	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//cube = mPrimitives.back().get();
+	//cube->Transform.Scale(0.5f);
 
-	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.1f, .3f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
-	cube = mPrimitives.back().get();
-	cube->mTransform.Scale(0.5f);
+	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.1f, .3f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//cube = mPrimitives.back().get();
+	//cube->Transform.Scale(0.5f);
 
-	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(5.0f, -3.5f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.8f, .2f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
-	cube = mPrimitives.back().get();
-	cube->mTransform.Scale(0.5f);
+	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(5.0f, -3.5f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.8f, .2f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//cube = mPrimitives.back().get();
+	//cube->Transform.Scale(0.5f);
 
-	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(0.0f, -2.9f, -17.5f), FMaterial(FColor::White, FColor::White, FColor(.1f, .1f, .1f), 64, .9f))));
-	cube = mPrimitives.back().get();
-	cube->mTransform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
+	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(0.0f, -2.9f, -17.5f), FMaterial(FColor::White, FColor::White, FColor(.1f, .1f, .1f), 64, .9f))));
+	//cube = mPrimitives.back().get();
+	//cube->Transform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
 
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(0.0f, -0.9f, -17.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(0.0f, -0.9f, -17.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
 
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(6.0f, 0.0f, -20.0f), 2.0f, FMaterial(FColor(.2f, .7f, .3f), FColor(0.0f, .8f, .3f), FColor(.1f, .1f, .1f), 128, .9f))));
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.1f, .5f, .9f), FColor(0.0f, .4f, .8f), FColor(.1f, .1f, .1f), 128, .9f))));
+	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(6.0f, 0.0f, -20.0f), 2.0f, FMaterial(FColor(.2f, .7f, .3f), FColor(0.0f, .8f, .3f), FColor(.1f, .1f, .1f), 128, .9f))));
+	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.1f, .5f, .9f), FColor(0.0f, .4f, .8f), FColor(.1f, .1f, .1f), 128, .9f))));
 
-	mKDTree.buildTree(mPrimitives, 10);
+	//mKDTree.buildTree(mPrimitives, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,14 +242,18 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 			const Vector3f& H = ComputeBlinnSpecularReflection(RayToLight.direction, -CameraRay.direction);
 
 			// If an object is in the way of the light, skip lighting for that light
-			//if (IsInShadow(RayToLight))
-			//	continue;
+			if (mNumberOfShadowSamples > 1)
+			{
+				const float ShadeFactor = ComputeShadeFactor(*light, SurfacePoint);
+				if (ShadeFactor <= 0.0)
+					continue;
 
-			const float ShadeFactor = ComputeShadeFactor(*light, SurfacePoint);
-			if (ShadeFactor <= 0.0)
+				LightColor *= ShadeFactor;
+			}
+			else if (IsInShadow(RayToLight))
+			{
 				continue;
-
-			LightColor *= ShadeFactor;
+			}
 
 			// Get dot product of surface normal and h for specular lighting
 			float SpecularFactor = std::max(Vector3f::Dot(SurfaceNormal, H), 0.f);
@@ -281,19 +288,33 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 
 void FScene::RenderScene()
 {
+	const float InvTotalPixels = 100.0f / (OUTPUT_RESOLUTION.x * OUTPUT_RESOLUTION.y);
 	for (int y = 0; y < OUTPUT_RESOLUTION.y; y++)
 	{
 		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
 		{
 			FColor PixelColor;
-			for (const FRay& PixelRay : mCamera.GenerateSampleRays(x, y, mSuperSamplingLevel))
+
+			if (mSuperSamplingLevel > 1)
 			{
-				PixelColor += TraceRay(PixelRay, 5);
+				for (const FRay& PixelRay : mCamera.GenerateSampleRays(x, y, mSuperSamplingLevel))
+				{
+					PixelColor += TraceRay(PixelRay, 5);
+				}
+
+				PixelColor /= (float)(mSuperSamplingLevel * mSuperSamplingLevel); // average the result of all samples
 			}
-			PixelColor /= (mSuperSamplingLevel * mSuperSamplingLevel); // average the result of all samples
+			else
+			{
+				const FRay& PixelRay = mCamera.GenerateRay(x, y);
+				PixelColor = TraceRay(PixelRay, 5);
+			}
 
 			mOutputImage.setPixel(x, y, PixelColor.Clamp());
 		}
+
+		if (y % 20 == 0)
+			std::cout << (y * OUTPUT_RESOLUTION.x) * InvTotalPixels << "% Complete" << std::endl;
 	}
 
 	mOutputImage.writeImage();

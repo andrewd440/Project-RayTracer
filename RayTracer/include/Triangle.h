@@ -1,11 +1,31 @@
 #pragma once
-#include "Primitive.h"
+#include "Drawable.h"
 #include "Vector3.h"
 
-class FTriangle : public IPrimitive
+class FTriangle : public IDrawable
 {
 public:
-	FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, const FMaterial& LightingMaterial);
+	/* Default constructor */
+	FTriangle();
+
+	/**
+	* Constructs a triangle from three vertices, normal is computed on construction.
+	* @param V0 First vertex
+	* @param V1 Second vertex
+	* @param V2 Third vertex
+	* @param LightingMaterial for the triangle.
+	*/
+	FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, const FMaterial& LightingMaterial = FMaterial());
+
+	/**
+	* Constructs a triangle from three vertices, a normal, and lighting material.
+	* @param V0 First vertex
+	* @param V1 Second vertex
+	* @param V2 Third vertex
+	* @param Normal of the triangle
+	* @param LightingMaterial for the triangle.
+	*/
+	FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, Vector3f Normal, const FMaterial& LightingMaterial = FMaterial());
 	
 	/**
 	* Checks if a ray intersects the triangle.

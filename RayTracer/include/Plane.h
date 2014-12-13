@@ -1,8 +1,8 @@
 #pragma once
-#include "Primitive.h"
+#include "Drawable.h"
 
 /* Represents a plane in 3D space. */
-class FPlane : public IPrimitive
+class FPlane : public IDrawable
 {
 public:
 	/**

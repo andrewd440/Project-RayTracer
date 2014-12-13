@@ -10,7 +10,7 @@ KDTree::KDTree()
 }
 
 
-void KDTree::buildTree(const std::vector<std::unique_ptr<IPrimitive>>& Primitives, uint32_t depth)
+void KDTree::buildTree(const std::vector<std::unique_ptr<IDrawable>>& Primitives, uint32_t depth)
 {
 	for (const auto& Primitive : Primitives)
 		mRoot.PrimitiveList.push_back(Primitive.get());
@@ -27,20 +27,20 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 		return;
 
 	uint32_t dividingAxis = currentNode.axis;
-	std::vector<IPrimitive*>& currentPrimitives = currentNode.PrimitiveList;
+	std::vector<IDrawable*>& currentPrimitives = currentNode.PrimitiveList;
 
-	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const IPrimitive* lhs, const IPrimitive* rhs) -> bool
+	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const IDrawable* lhs, const IDrawable* rhs) -> bool
 	{
 		return lhs->getBoundingBox().GetCenter()[dividingAxis] < rhs->getBoundingBox().GetCenter()[dividingAxis];
 	});
 
 	size_t PrimitiveListSize = currentNode.PrimitiveList.size();
 	size_t medianPrimitiveIndex = PrimitiveListSize / 2;
-	IPrimitive* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
+	IDrawable* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
 	float medianAxisValue = medianPrimitive->getBoundingBox().GetCenter()[dividingAxis];
 	currentNode.splitValue = medianAxisValue;
 
-	std::vector<IPrimitive*> straddlingPrimitives;
+	std::vector<IDrawable*> straddlingPrimitives;
 	straddlingPrimitives.push_back(medianPrimitive);
 	currentNode.child[0] = std::unique_ptr<KDNode>(new KDNode());
 	currentNode.child[1] = std::unique_ptr<KDNode>(new KDNode());
@@ -49,8 +49,8 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 	for (int i = medianPrimitiveIndex - 1; i >= 0; i--)
 	{
 		const AABB& currentBBox = currentPrimitives[i]->getBoundingBox();
-		float axisRange = std::abs(currentBBox.min[dividingAxis] - currentBBox.max[dividingAxis]);
-		float dividedRange = std::abs(currentBBox.min[dividingAxis] - medianAxisValue);
+		float axisRange = std::abs(currentBBox.Min[dividingAxis] - currentBBox.Max[dividingAxis]);
+		float dividedRange = std::abs(currentBBox.Min[dividingAxis] - medianAxisValue);
 		if (axisRange > dividedRange)
 			straddlingPrimitives.push_back(currentPrimitives[i]);
 		else
@@ -62,8 +62,8 @@ void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
 	for (size_t i = medianPrimitiveIndex + 1; i < PrimitiveListSize; i++)
 	{
 		const AABB& currentBBox = currentPrimitives[i]->getBoundingBox();
-		float axisRange = currentBBox.max[dividingAxis] - currentBBox.min[dividingAxis];
-		float dividedRange = currentBBox.max[dividingAxis] - medianAxisValue;
+		float axisRange = currentBBox.Max[dividingAxis] - currentBBox.Min[dividingAxis];
+		float dividedRange = currentBBox.Max[dividingAxis] - medianAxisValue;
 		if (axisRange > dividedRange)
 			straddlingPrimitives.push_back(currentPrimitives[i]);
 		else
@@ -91,7 +91,7 @@ bool KDTree::visitNodesAgainstRay(KDNode* currentNode, FRay ray, float* tValueOu
 
 	bool isIntersecting = false;
 
-	for (IPrimitive* primitive : currentNode->PrimitiveList)
+	for (IDrawable* primitive : currentNode->PrimitiveList)
 		isIntersecting |= primitive->IsIntersectingRay(ray, tValueOut, intersectionOut);
 
 	// check which child to traverse first from axis split

@@ -1,41 +1,41 @@
-#include "Primitive.h"
+#include "Drawable.h"
 
-IPrimitive::IPrimitive(const FMaterial& LightingMaterial)
+IDrawable::IDrawable(const FMaterial& LightingMaterial)
 	: mMaterial(LightingMaterial)
-	, mTransform()
+	, Transform()
 {
 
 }
 
-void IPrimitive::setMaterial(const FMaterial& NewMaterial)
+void IDrawable::setMaterial(const FMaterial& NewMaterial)
 { 
 	mMaterial = NewMaterial; 
 }
 
-FMaterial IPrimitive::getMaterial() const
+FMaterial IDrawable::getMaterial() const
 { 
 	return mMaterial; 
 }
 
-AABB IPrimitive::getBoundingBox() const
+AABB IDrawable::getBoundingBox() const
 {
 	AABB transformedBox = mBoundingBox;
-	transformedBox.max = mTransform.TransformPosition(transformedBox.max);
-	transformedBox.min = mTransform.TransformPosition(transformedBox.min);
+	transformedBox.Max = Transform.TransformPosition(transformedBox.Max);
+	transformedBox.Min = Transform.TransformPosition(transformedBox.Min);
 	return transformedBox;
 }
 
-FMatrix4 IPrimitive::GetTransform() const
-{
-	return mTransform;
-}
+//FMatrix4 IPrimitive::GetTransform() const
+//{
+//	return mTransform;
+//}
+//
+//void IPrimitive::SetTransform(const FMatrix4& NewTransform)
+//{
+//	mTransform = NewTransform;
+//}
 
-void IPrimitive::SetTransform(const FMatrix4& NewTransform)
-{
-	mTransform = NewTransform;
-}
-
-void IPrimitive::setBoundingBox(AABB boundingBox)
+void IDrawable::setBoundingBox(AABB boundingBox)
 {
 	mBoundingBox = boundingBox;
 }

@@ -1,23 +1,23 @@
 #pragma once
-#include "Ray.h"
+
+#include "Object.h"
 #include "Material.h"
 #include "AABB.h"
 #include "Matrix4.h"
 
-struct FIntersection;
 
 /**
 * Abstract class for all Primitives.
 */
-class IPrimitive
+class IDrawable : public IObject
 {
 public:
-	explicit IPrimitive(const FMaterial& LightingMaterial);
+	explicit IDrawable(const FMaterial& LightingMaterial = FMaterial());
 
-	virtual ~IPrimitive(){};
+	virtual ~IDrawable(){};
 
 	/**
-	* Checks if a ray intersects the Primitive.
+	* Checks if a ray intersects the primitive.
 	* If the intersection succeeds, the intersection properties and t value are output through
 	* an optional t value and intersection pointer.
 	* @param Ray - the ray to check for intersection
@@ -45,18 +45,18 @@ public:
 	*/
 	AABB getBoundingBox() const;
 
-	/**
-	* Gets the model transform for the object.
-	*/
-	FMatrix4 GetTransform() const;
+	///**
+	//* Gets the model transform for the object.
+	//*/
+	//FMatrix4 GetTransform() const;
 
-	/**
-	* Sets the model transform for the object.
-	*/
-	void SetTransform(const FMatrix4& NewTransform);
+	///**
+	//* Sets the model transform for the object.
+	//*/
+	//void SetTransform(const FMatrix4& NewTransform);
 
 public:
-	FMatrix4 mTransform; /* Object space transform */
+	FMatrix4 Transform; /* Object space transform */
 
 protected:
 	/**
@@ -73,6 +73,6 @@ private:
 
 private:
 	FMaterial mMaterial; /* Lighting material properties for the Primitive */
-	AABB mBoundingBox; /* AABB for KD-tree */
+	AABB mBoundingBox; /* Bounding volume */
 };
 

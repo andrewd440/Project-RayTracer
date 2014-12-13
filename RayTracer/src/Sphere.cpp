@@ -3,17 +3,17 @@
 #include "Camera.h"
 
 FSphere::FSphere(Vector3f Center, float Radius, FMaterial LightingMaterial)
-	: IPrimitive(LightingMaterial)
+	: IDrawable(LightingMaterial)
 	, mRadius(Radius)
 {
-	mTransform.SetOrigin(Center);
+	Transform.SetOrigin(Center);
 	ConstructAABB();
 }
 
 bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
 { 
 	// bring ray into object space
-	ray = mTransform.GetInverseAffine().TransformRay(ray);
+	ray = Transform.GetInverseAffine().TransformRay(ray);
 	const Vector3f rayDirection = ray.direction;
 	const Vector3f rayOrigin = ray.origin;
 
@@ -35,7 +35,7 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 
 	// If t is negative, the ray started inside the sphere, reject the collision for now
 	// Avoid really small values of t to prevent shadow errors
-	if (smallestTValue < .01f)
+	if (smallestTValue < _EPSILON)
 		return false;
 
 	// Only modify t parameter if this intersection's t value is smaller, so we always
@@ -46,7 +46,7 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 
 		// Construct intersection in world space with t solution
 		Vector3f intersection = rayOrigin + smallestTValue * rayDirection;
-		intersection = mTransform.TransformPosition(intersection);
+		intersection = Transform.TransformPosition(intersection);
 
 		ConstructIntersection(intersection, *intersectionOut);
 	}
@@ -64,12 +64,12 @@ void FSphere::ConstructIntersection(Vector3f IntersectionPoint, FIntersection& I
 
 Vector3f FSphere::GetCenter() const
 {
-	return mTransform.GetOrigin();
+	return Transform.GetOrigin();
 }
 
 void FSphere::SetCenter(const Vector3f& CenterPoint)
 {
-	mTransform.SetOrigin(CenterPoint);
+	Transform.SetOrigin(CenterPoint);
 }
 
 float FSphere::GetRadius() const
@@ -84,9 +84,5 @@ void FSphere::SetRadius(const float& radius)
 
 void FSphere::ConstructAABB()
 {
-	AABB boundingBox;
-	boundingBox.max = Vector3f(mRadius, mRadius, -mRadius);
-	boundingBox.min = Vector3f(-mRadius, -mRadius, mRadius);
-
-	setBoundingBox(boundingBox);
+	setBoundingBox(AABB(Vector3f(-mRadius, -mRadius, mRadius), Vector3f(mRadius, mRadius, -mRadius)));
 }

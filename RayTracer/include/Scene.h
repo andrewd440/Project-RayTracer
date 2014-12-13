@@ -4,7 +4,7 @@
 #include "Image.h"
 #include "KDTree.h"
 #include "Light.h"
-#include "Primitive.h"
+#include "Drawable.h"
 
 #include <vector>
 #include <memory>
@@ -17,7 +17,7 @@
 class FScene
 {
 public:
-	using PrimitivePtr = std::unique_ptr<IPrimitive>;
+	using PrimitivePtr = std::unique_ptr<IDrawable>;
 	using LightPtr = std::unique_ptr<ILight>;
 
 	/**

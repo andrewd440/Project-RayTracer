@@ -1,6 +1,6 @@
 #pragma once
 
-class Primitive;
+class IDrawable;
 
 /**
 * Struct for describing the properties of an intersection 
@@ -25,7 +25,7 @@ struct FIntersection
 	* @param IntersectionPoint Point of intersection
 	* @param SurfaceNormal Normal at the intersection of the object
 	*/
-	inline FIntersection(IPrimitive& IntersectedObject, Vector3f IntersectionPoint, Vector3f SurfaceNormal)
+	inline FIntersection(IDrawable& IntersectedObject, Vector3f IntersectionPoint, Vector3f SurfaceNormal)
 		: object(&IntersectedObject)
 		, point(IntersectionPoint)
 		, normal(SurfaceNormal)
@@ -33,7 +33,7 @@ struct FIntersection
 	}
 
 		
-	IPrimitive* object;				/* The primative of the intersection */
+	IDrawable* object;				/* The primative of the intersection */
 	Vector3f point;				/* Point on the surface of the geometry */
 	Vector3f normal;			/* Surface normal at the point on the geometry */
 };

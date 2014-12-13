@@ -3,7 +3,7 @@
 #include "Camera.h"
 
 FPlane::FPlane(const FMaterial& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane)
-	: IPrimitive(LightingMaterial)
+	: IDrawable(LightingMaterial)
 	, mNormal(PlaneNormal)
 	, mDistanceFromOrigin()
 {
@@ -44,14 +44,14 @@ void FPlane::ConstructAABB()
 {
 	AABB boundingBox;
 
-	boundingBox.max.x = std::numeric_limits<float>::max();
-	boundingBox.min.x = -std::numeric_limits<float>::max();
+	boundingBox.Max.x = std::numeric_limits<float>::max();
+	boundingBox.Min.x = -std::numeric_limits<float>::max();
 
-	boundingBox.max.y = 0;
-	boundingBox.min.y = 0;
+	boundingBox.Max.y = 0;
+	boundingBox.Min.y = 0;
 
-	boundingBox.max.z = std::numeric_limits<float>::max();
-	boundingBox.min.z = -std::numeric_limits<float>::max();
+	boundingBox.Max.z = std::numeric_limits<float>::max();
+	boundingBox.Min.z = -std::numeric_limits<float>::max();
 
 	setBoundingBox(boundingBox);
 }

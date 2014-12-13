@@ -4,14 +4,14 @@
 #include <vector>
 #include <memory>
 
-#include "Primitive.h"
+#include "Drawable.h"
 
 struct KDNode
 {
 	std::unique_ptr<KDNode> child[2]; // 0 = near, 1 = far
 	int axis; // x, y, or z splitting axis
 	float splitValue; // value on the splitting axis
-	std::vector<IPrimitive*> PrimitiveList; // linked list of Primitives within this node
+	std::vector<IDrawable*> PrimitiveList; // linked list of Primitives within this node
 };
 
 class KDTree
@@ -19,7 +19,7 @@ class KDTree
 public:
 	KDTree();
 
-	void buildTree(const std::vector<std::unique_ptr<IPrimitive>>& Primitives, uint32_t depth);
+	void buildTree(const std::vector<std::unique_ptr<IDrawable>>& Primitives, uint32_t depth);
 
 	/**
 	* Checks if a ray intersects an object in the kdtree.
