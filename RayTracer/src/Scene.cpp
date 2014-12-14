@@ -17,7 +17,7 @@
 
 namespace
 {
-	const Vector2i OUTPUT_RESOLUTION(1000, 600);
+	const Vector2i OUTPUT_RESOLUTION(2000, 1100);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,17 +30,17 @@ void throwSceneConfigError(const std::string& ObjectType)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 FScene::FScene()
-	: mOutputImage("RenderedScene2", OUTPUT_RESOLUTION)
+	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
 	, mBackgroundColor(FColor::Black)
 	, mGlobalAmbient(0.2f, 0.2f, 0.2f)
-	, mCamera(Vector3f(0, 5, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
+	, mCamera(Vector3f(0, 4, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
-	, mNumberOfShadowSamples(1)
-	, mSuperSamplingLevel(1)
+	, mNumberOfShadowSamples(32)
+	, mSuperSamplingLevel(2)
 {
-
+	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,17 +167,29 @@ void FScene::BuildScene(std::istream& in)
 	}
 	
 	//mLights.push_back(LightPtr(new FPointLight(FColor(0.7f, 0.1f, 0.5f), Vector3f(-3.0f, 5.0f, -10.0f), 1, 2, 15)));
-	//mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(5.0f, 10, -17.5f), 1, 5, 35)));
-	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.4f, 0.4f, 0.4f), Vector3f(1.0f, -1.0f, -2.0f))));
+	mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(2.0f, 7, -10.0f), 1, 10, 35)));
+	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.6f, 0.6f, 0.6f), Vector3f(0.0f, -1.0f, -2.0f))));
 
-	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-3.0f, 10.0f, 5.0f), 1, 5, 25)));
+	mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.2f), Vector3f(0.0f, 1.0f, 0.0f), Vector3f(0, -4, 0))));
+	
+	//PrimitivePtr Triangle(new FTriangle(Vector3f(0.0f, -1.0f, -18.0f), Vector3f(3.0f, 5.0f, -19.0f), Vector3f(6.0f, 1.0f, -15.0f)));
+	//mPrimitives.push_back(std::move(Triangle));
+
+	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-2.0f, -2.0f, -13.5f), FMaterial(FColor::White, FColor::White, FColor(.1f, .1f, .1f), 64, .9f))));
+	//cube = mPrimitives.back().get();
+	//cube->Transform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
+
+	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-1.0f, 6.0f, -10.0f), 1, 10, 35)));
 	mPrimitives.push_back(PrimitivePtr(new FMesh("Models/BoxMan.obj")));
+	mPrimitives.back().get()->Transform.SetOrigin(Vector3f(3, 1, -15));
+	mPrimitives.back().get()->Transform.Rotate(FMatrix4::Axis::Y, 25);
 
-	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -22.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.2f, .8f, .8f), FColor(.1f, .1f, .1f), 64, .9f))));
-	//IPrimitive* cube = mPrimitives.back().get();
+	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, 0.0f, -15.0f), FMaterial(FColor(.9f, .1f, .1f), FColor(.9f, .1f, .1f), FColor(.1f, .1f, .1f), 32, .1f))));
+	IDrawable* cube = mPrimitives.back().get();
+	cube->Transform.Rotate(FMatrix4::Axis::X, 25);
 	//cube->Transform.Scale(0.5);
 
-	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -3.5f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, 3.0f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
 	//cube = mPrimitives.back().get();
 	//cube->Transform.Scale(0.5f);
 
@@ -189,11 +201,7 @@ void FScene::BuildScene(std::istream& in)
 	//cube = mPrimitives.back().get();
 	//cube->Transform.Scale(0.5f);
 
-	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(0.0f, -2.9f, -17.5f), FMaterial(FColor::White, FColor::White, FColor(.1f, .1f, .1f), 64, .9f))));
-	//cube = mPrimitives.back().get();
-	//cube->Transform.Scale(Vector3f(5.0f, 0.05f, 4.5f));
-
-	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(0.0f, -0.9f, -17.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
+	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-4.0f, 1.0f, -12.5f), 1.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
 
 	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(6.0f, 0.0f, -20.0f), 2.0f, FMaterial(FColor(.2f, .7f, .3f), FColor(0.0f, .8f, .3f), FColor(.1f, .1f, .1f), 128, .9f))));
 	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.1f, .5f, .9f), FColor(0.0f, .4f, .8f), FColor(.1f, .1f, .1f), 128, .9f))));
@@ -214,7 +222,9 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 	
 	 //For performs difference tests
 	for (const auto& Primitive : mPrimitives)
+	{
 		Primitive->IsIntersectingRay(CameraRay, &MaxTValue, &ClosestIntersection);
+	}
 		
 	//mKDTree.IsIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
 
@@ -226,7 +236,7 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 		// Get the surface material, point, and normal
 		const FMaterial& SurfaceMaterial(ClosestIntersection.object->getMaterial());
 		const Vector3f& SurfacePoint(ClosestIntersection.point);
-		const Vector3f& SurfaceNormal(ClosestIntersection.normal);
+		Vector3f SurfaceNormal(ClosestIntersection.normal);
 
 		for (const auto& light : mLights)
 		{
@@ -289,6 +299,7 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 void FScene::RenderScene()
 {
 	const float InvTotalPixels = 100.0f / (OUTPUT_RESOLUTION.x * OUTPUT_RESOLUTION.y);
+	const int PercentUpdateRate = OUTPUT_RESOLUTION.y / 20;
 	for (int y = 0; y < OUTPUT_RESOLUTION.y; y++)
 	{
 		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
@@ -313,7 +324,7 @@ void FScene::RenderScene()
 			mOutputImage.setPixel(x, y, PixelColor.Clamp());
 		}
 
-		if (y % 20 == 0)
+		if (y % PercentUpdateRate == 0)
 			std::cout << (y * OUTPUT_RESOLUTION.x) * InvTotalPixels << "% Complete" << std::endl;
 	}
 

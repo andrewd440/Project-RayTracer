@@ -350,6 +350,7 @@ inline Vector3f FMatrix4::TransformDirection(const Vector3f& Direction) const
 	Vector4f vec(Direction);
 	vec.w = 0.0f;
 	vec = TransformVector(vec);
+	vec.Normalize3();
 	return Vector3f(vec.x, vec.y, vec.z);
 }
 

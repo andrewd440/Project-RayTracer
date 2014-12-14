@@ -4,12 +4,3 @@ GlobalAmbientColor: .2 .2 .2
 Camera
 	Position: 10 0 0
 	FOV: 75
-
-Plane
-	Direction: 0 1 0
-	Point: 0 -4 0
-	Specular: .5 .5 .5
-	Diffuse: .5 .5 .5
-	Ambient: .1 .1 .1
-	SpecularExponent: 32
-	Reflectivity: .7

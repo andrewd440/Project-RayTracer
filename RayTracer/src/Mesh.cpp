@@ -1,7 +1,9 @@
 #include "Mesh.h"
+#include "Intersection.h"
 
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 FMesh::FMesh()
 	: IDrawable()
@@ -19,35 +21,59 @@ FMesh::FMesh(const std::string& ModelFilepath)
 
 bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
-	if (tValueOut)
-	{
-		bool Flag;
-		for (FTriangle Triangle : mTriangles)
-		{
-			Flag |= Triangle.IsIntersectingRay(Ray, tValueOut, IntersectionOut);
-		}
+	// check against bounding volume first
+	float NewTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
 
-		return Flag;
-	}
-	else
+	// bring ray into object space for intersection tests
+	Ray = Transform.GetInverse().TransformRay(Ray);
+
+	if (getBoundingBox().IsIntersectingRay(Ray, &NewTValue, IntersectionOut))
 	{
-		for (FTriangle Triangle : mTriangles)
+		// if we have a tValueOut then we are looking for the closest intersection
+		// so we need to find the closest triangle
+		if (tValueOut && NewTValue < *tValueOut)
 		{
-			if (Triangle.IsIntersectingRay(Ray))
-				return true;
+			NewTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
+			bool Flag = false;
+			for (const auto& Triangle : mTriangles)
+			{
+				Flag |= Triangle->IsIntersectingRay(Ray, &NewTValue, IntersectionOut);
+			}
+
+			if (Flag && NewTValue < *tValueOut)
+			{
+				*tValueOut = NewTValue;
+				IntersectionOut->point = Transform.TransformPosition(IntersectionOut->point);
+				IntersectionOut->normal = Transform.TransformDirection(IntersectionOut->normal);
+			}
+
+			return Flag;
+		}
+		// if no tValueOut, then we are just checking for a single intersection
+		else
+		{
+			for (const auto& Triangle : mTriangles)
+			{
+				if (Triangle->IsIntersectingRay(Ray))
+					return true;
+			}
 		}
 	}
 
 	return false;
 }
 
-void FMesh::ConstructAABB()
+void FMesh::ConstructAABB(Vector3f Min, Vector3f Max)
 {
-
+	setBoundingBox(AABB(Min, Max));
 }
 
 void FMesh::ReadModel(const std::string& ModelFilepath)
 {
+	// bounds for bounding box
+	Vector3f MinBounds;
+	Vector3f MaxBounds;
+
 	std::ifstream ModelFile(ModelFilepath.c_str());
 
 	if (ModelFile.fail())
@@ -58,7 +84,7 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 	}
 
 	std::string FileLine;
-	std::vector<Vector3f> vertices;
+	std::vector<Vector3f> Vertices;
 
 	while (getline(ModelFile, FileLine))
 	{
@@ -78,7 +104,10 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 			const std::string ZString = FileLine.substr(0, FileLine.find(' '));
 			const float Z = (float)atof(ZString.c_str());
 
-			vertices.push_back(Vector3f(X, Y, Z));
+			const Vector3f Vertex(X, Y, Z);
+			UpdateBounds(MinBounds, MaxBounds, Vertex);
+
+			Vertices.push_back(Vertex);
 			
 		}
 		// line contains a face
@@ -87,21 +116,24 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 			FileLine = FileLine.substr(2);
 
 			const std::string V0String = FileLine.substr(0, FileLine.find(' '));
-			const Vector3f V0 = vertices[atoi(V0String.c_str()) - 1];
+			const Vector3f V0 = Vertices[atoi(V0String.c_str()) - 1];
 
 			FileLine = FileLine.substr(V0String.length() + 1);
 			const std::string V1String = FileLine.substr(0, FileLine.find(' '));
-			const Vector3f V1 = vertices[atoi(V1String.c_str()) - 1];
+			const Vector3f V1 = Vertices[atoi(V1String.c_str()) - 1];
 
 			FileLine = FileLine.substr(V1String.length() + 1);
 			const std::string V2String = FileLine.substr(0, FileLine.find(' '));
-			const Vector3f V2 = vertices[atoi(V2String.c_str()) - 1];
+			const Vector3f V2 = Vertices[atoi(V2String.c_str()) - 1];
 
-			mTriangles.push_back(FTriangle(V0, V1, V2));
+			// .obj vertex order is clockwise, we use counterclockwise
+			mTriangles.push_back(std::unique_ptr<FTriangle>(new FTriangle(V2, V1, V0)));
 		}
 	}
 
 	ModelFile.close();
+
+	ConstructAABB(MinBounds, MaxBounds);
 }
 
 FMesh::~FMesh()

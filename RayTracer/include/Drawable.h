@@ -69,7 +69,7 @@ private:
 	/**
 	* Each derived class needs to construct their bounding box.
 	*/
-	virtual void ConstructAABB() = 0;
+	virtual void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) = 0;
 
 private:
 	FMaterial mMaterial; /* Lighting material properties for the Primitive */

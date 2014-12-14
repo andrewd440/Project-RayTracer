@@ -19,8 +19,8 @@ FTriangle::FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, const FMaterial& Lig
 	, mV1(V1)
 	, mV2(V2)
 {
-	Vector3f e1 = V1 - V0;
-	Vector3f e2 = V2 - V1;
+	Vector3f e1 = V2 - V0;
+	Vector3f e2 = V1 - V0;
 	mNormal = Vector3f::Cross(e1, e2);
 	mNormal.Normalize();
 	ConstructAABB();
@@ -140,24 +140,23 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	if (tValueOut && t < *tValueOut)
 	{
 		*tValueOut = t;
-		ConstructIntersection(ray.origin + t * ray.direction, *intersectionOut);
+		ConstructIntersection(ray.origin + t * ray.direction, intersectionOut);
 	}
 
 	return true;
 }
 
-void FTriangle::ConstructIntersection(Vector3f intersectionPoint, FIntersection& intersectionOut)
+void FTriangle::ConstructIntersection(Vector3f intersectionPoint, FIntersection* intersectionOut)
 {
-	intersectionOut.object = this;
-	intersectionOut.point = intersectionPoint;
-	intersectionOut.normal = mNormal;
+	intersectionOut->object = this;
+	intersectionOut->point = intersectionPoint + intersectionOut->normal * _EPSILON;
+	intersectionOut->normal = mNormal;
 }
 
-void FTriangle::ConstructAABB()
+void FTriangle::ConstructAABB(Vector3f Min, Vector3f Max)
 {
-	AABB boundingBox;
-	boundingBox.Max = Vector3f(std::max({ mV0.x, mV1.x, mV2.x }), std::max({ mV0.y, mV1.y, mV2.y }), std::max({ mV0.z, mV1.z, mV2.z }));
-	boundingBox.Min = Vector3f(std::min({ mV0.x, mV1.x, mV2.x }), std::min({ mV0.y, mV1.y, mV2.y }), std::min({ mV0.z, mV1.z, mV2.z }));
+	Max = Vector3f(std::max({ mV0.x, mV1.x, mV2.x }), std::max({ mV0.y, mV1.y, mV2.y }), std::max({ mV0.z, mV1.z, mV2.z }));
+	Min = Vector3f(std::min({ mV0.x, mV1.x, mV2.x }), std::min({ mV0.y, mV1.y, mV2.y }), std::min({ mV0.z, mV1.z, mV2.z }));
 
-	setBoundingBox(boundingBox);
+	setBoundingBox(AABB(Min, Max));
 }

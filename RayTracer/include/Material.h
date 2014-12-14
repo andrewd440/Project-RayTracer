@@ -17,7 +17,7 @@ struct FMaterial
 	* @param Glossiness - The glossiness of the surface
 	* @param Reflectivity - The reflectiveness of the surface [0-1]
 	*/
-	FMaterial(FColor Specular = FColor::White, FColor Diffuse = FColor::White, FColor Ambient = FColor(0.1f, 0.1f, 0.1f), float Glossiness = 1, float Reflectivity = 1)
+	FMaterial(FColor Specular = FColor(0.7f, 0.7f, 0.7f), FColor Diffuse = FColor(0.7f, 0.7f, 0.7f), FColor Ambient = FColor(0.1f, 0.1f, 0.1f), float Glossiness = 1.0f, float Reflectivity = 0.0f)
 		: specularColor(Specular)
 		, diffuseColor(Diffuse)
 		, ambientColor(Ambient)

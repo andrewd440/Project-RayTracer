@@ -39,12 +39,12 @@ public:
 	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
 private:
-	void ConstructAABB() override;
+	void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) override;
 
-	/* Reads a .obj model into this object */
+	/* Reads a .obj model into this object and returns an AABB for the model */
 	void ReadModel(const std::string& ModelFilepath);
 
 private:
-	std::vector<FTriangle> mTriangles;
+	std::vector<std::unique_ptr<FTriangle>> mTriangles; /* All triangles in the mesh */
 };
 

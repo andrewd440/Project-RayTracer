@@ -40,18 +40,16 @@ void FPlane::ConstructIntersection(Vector3f IntersectionPoint, FIntersection& In
 	IntersectionOut.point = IntersectionPoint;
 }
 
-void FPlane::ConstructAABB()
+void FPlane::ConstructAABB(Vector3f Min, Vector3f Max)
 {
-	AABB boundingBox;
+	Max.x = std::numeric_limits<float>::max();
+	Min.x = -std::numeric_limits<float>::max();
 
-	boundingBox.Max.x = std::numeric_limits<float>::max();
-	boundingBox.Min.x = -std::numeric_limits<float>::max();
+	Max.y = 0;
+	Min.y = 0;
 
-	boundingBox.Max.y = 0;
-	boundingBox.Min.y = 0;
+	Max.z = std::numeric_limits<float>::max();
+	Min.z = -std::numeric_limits<float>::max();
 
-	boundingBox.Max.z = std::numeric_limits<float>::max();
-	boundingBox.Min.z = -std::numeric_limits<float>::max();
-
-	setBoundingBox(boundingBox);
+	setBoundingBox(AABB(Min, Max));
 }

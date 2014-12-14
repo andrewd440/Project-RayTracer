@@ -19,10 +19,7 @@ FMaterial IDrawable::getMaterial() const
 
 AABB IDrawable::getBoundingBox() const
 {
-	AABB transformedBox = mBoundingBox;
-	transformedBox.Max = Transform.TransformPosition(transformedBox.Max);
-	transformedBox.Min = Transform.TransformPosition(transformedBox.Min);
-	return transformedBox;
+	return mBoundingBox;
 }
 
 //FMatrix4 IPrimitive::GetTransform() const

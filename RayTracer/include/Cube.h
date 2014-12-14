@@ -34,6 +34,6 @@ private:
 	/**
 	* Construct AABB for KD-tree
 	*/
-	void ConstructAABB() override;
+	void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) override;
 };
 

@@ -46,9 +46,9 @@ private:
 	* @param IntersectionPoint - the point of the intersection
 	* @param IntersectionOut - intersection properties will be output through
 	*/
-	void ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut);
+	void ConstructIntersection(Vector3f IntersectionPoint, FIntersection* IntersectionOut);
 
-	void ConstructAABB() override;
+	void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) override;
 
 private:
 	Vector3f mV0;

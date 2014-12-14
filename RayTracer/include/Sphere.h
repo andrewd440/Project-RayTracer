@@ -60,7 +60,7 @@ private:
 	*/
 	void ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut);
 
-	void ConstructAABB() override;
+	void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) override;
 
 private:
 	float mRadius; /* Length of the radius */
