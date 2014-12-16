@@ -11,13 +11,17 @@ struct FMaterial
 {
 	/**
 	* Constructs a Material with a specular, diffuse, ambient, and glossiness.
-	* @param Specular - The specular color
-	* @param Diffuse - The diffuse color
-	* @param Ambient - The ambient color
-	* @param Glossiness - The glossiness of the surface
-	* @param Reflectivity - The reflectiveness of the surface [0-1]
+	* @param Specular - The specular color (default: (0.7, 0.7, 0.7))
+	* @param Diffuse - The diffuse color (default: (0.7, 0.7, 0.7))
+	* @param Ambient - The ambient color (default: (0.1, 0.1, 0.1))
+	* @param Glossiness - The glossiness of the surface (default: 1.0)
+	* @param Reflectivity - The reflectiveness of the surface [0-1] (default: 0.0)
 	*/
-	FMaterial(FColor Specular = FColor(0.7f, 0.7f, 0.7f), FColor Diffuse = FColor(0.7f, 0.7f, 0.7f), FColor Ambient = FColor(0.1f, 0.1f, 0.1f), float Glossiness = 1.0f, float Reflectivity = 0.0f)
+	FMaterial(	FColor Specular = FColor(0.7f, 0.7f, 0.7f), 
+				FColor Diffuse = FColor(0.7f, 0.7f, 0.7f), 
+				FColor Ambient = FColor(0.1f, 0.1f, 0.1f), 
+				float Glossiness = 1.0f, 
+				float Reflectivity = 0.0f)
 		: specularColor(Specular)
 		, diffuseColor(Diffuse)
 		, ambientColor(Ambient)

@@ -110,7 +110,7 @@ struct FMatrix4
 	/**
 	* Transforms a ray.
 	*/
-	FRay TransformRay(const FRay& OldRay) const;
+	FRay TransformRay(FRay Ray) const;
 
 	/**
 	* Retrieve an axis vector from the matrix.
@@ -350,7 +350,6 @@ inline Vector3f FMatrix4::TransformDirection(const Vector3f& Direction) const
 	Vector4f vec(Direction);
 	vec.w = 0.0f;
 	vec = TransformVector(vec);
-	vec.Normalize3();
 	return Vector3f(vec.x, vec.y, vec.z);
 }
 
@@ -370,9 +369,11 @@ inline Vector4f FMatrix4::TransformVector(const Vector4f& Vector) const
 	return transformed;
 }
 
-inline FRay FMatrix4::TransformRay(const FRay& OldRay) const
+inline FRay FMatrix4::TransformRay(FRay Ray) const
 {
-	return FRay(TransformPosition(OldRay.origin), TransformDirection(OldRay.direction));
+	Ray.origin = TransformPosition(Ray.origin);
+	Ray.direction = TransformDirection(Ray.direction);
+	return Ray;
 }
 
 inline Vector3f FMatrix4::GetAxis(FMatrix4::Axis Axis) const

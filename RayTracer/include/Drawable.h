@@ -12,6 +12,10 @@
 class IDrawable : public IObject
 {
 public:
+	/**
+	* Default constructor.
+	* Constructs a drawable object with an optional lighting material.
+	*/
 	explicit IDrawable(const FMaterial& LightingMaterial = FMaterial());
 
 	virtual ~IDrawable(){};
@@ -32,28 +36,18 @@ public:
 	* Set the material properties for the Primitives' surface.
 	* @param NewMaterial - The material for the Primitive
 	*/
-	void setMaterial(const FMaterial& NewMaterial);
+	virtual void SetMaterial(const FMaterial& NewMaterial);
 
 	/**
 	* Retrieves the material for the Primitive.
 	* @return The material
 	*/
-	FMaterial getMaterial() const;
+	FMaterial GetMaterial() const;
 
 	/**
 	* Retrieves the bounding box for the Primitive.
 	*/
-	AABB getBoundingBox() const;
-
-	///**
-	//* Gets the model transform for the object.
-	//*/
-	//FMatrix4 GetTransform() const;
-
-	///**
-	//* Sets the model transform for the object.
-	//*/
-	//void SetTransform(const FMatrix4& NewTransform);
+	AABB GetBoundingBox() const;
 
 public:
 	FMatrix4 Transform; /* Object space transform */
@@ -63,7 +57,7 @@ protected:
 	* Sets the bounding box for the Primitive.
 	* @param boundingBox - AABB for the Primitive
 	*/
-	void setBoundingBox(AABB boundingBox);
+	void SetBoundingBox(AABB boundingBox);
 
 private:
 	/**

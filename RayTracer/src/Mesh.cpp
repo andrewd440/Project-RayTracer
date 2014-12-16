@@ -5,17 +5,17 @@
 #include <fstream>
 #include <limits>
 
-FMesh::FMesh()
+FMesh::FMesh(const FMaterial& Material)
 	: IDrawable()
 	, mTriangles()
 {
 }
 
-FMesh::FMesh(const std::string& ModelFilepath)
+FMesh::FMesh(const std::string& ModelFilepath, const FMaterial& Material)
 	: IDrawable(FMaterial())
 	, mTriangles()
 {
-	ReadModel(ModelFilepath);
+	ReadModel(ModelFilepath, Material);
 }
 
 
@@ -27,7 +27,7 @@ bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	// bring ray into object space for intersection tests
 	Ray = Transform.GetInverse().TransformRay(Ray);
 
-	if (getBoundingBox().IsIntersectingRay(Ray, &NewTValue, IntersectionOut))
+	if (GetBoundingBox().IsIntersectingRay(Ray, &NewTValue, IntersectionOut))
 	{
 		// if we have a tValueOut then we are looking for the closest intersection
 		// so we need to find the closest triangle
@@ -63,12 +63,18 @@ bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	return false;
 }
 
-void FMesh::ConstructAABB(Vector3f Min, Vector3f Max)
+void FMesh::SetMaterial(const FMaterial& Material)
 {
-	setBoundingBox(AABB(Min, Max));
+	for (auto& Triangle : mTriangles)
+		Triangle->SetMaterial(Material);
 }
 
-void FMesh::ReadModel(const std::string& ModelFilepath)
+void FMesh::ConstructAABB(Vector3f Min, Vector3f Max)
+{
+	SetBoundingBox(AABB(Min, Max));
+}
+
+void FMesh::ReadModel(const std::string& ModelFilepath, const FMaterial& Material)
 {
 	// bounds for bounding box
 	Vector3f MinBounds;
@@ -127,7 +133,7 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 			const Vector3f V2 = Vertices[atoi(V2String.c_str()) - 1];
 
 			// .obj vertex order is clockwise, we use counterclockwise
-			mTriangles.push_back(std::unique_ptr<FTriangle>(new FTriangle(V2, V1, V0)));
+			mTriangles.push_back(std::unique_ptr<FTriangle>(new FTriangle(V2, V1, V0, Material)));
 		}
 	}
 

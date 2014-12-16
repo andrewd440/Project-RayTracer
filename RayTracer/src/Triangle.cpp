@@ -158,5 +158,5 @@ void FTriangle::ConstructAABB(Vector3f Min, Vector3f Max)
 	Max = Vector3f(std::max({ mV0.x, mV1.x, mV2.x }), std::max({ mV0.y, mV1.y, mV2.y }), std::max({ mV0.z, mV1.z, mV2.z }));
 	Min = Vector3f(std::min({ mV0.x, mV1.x, mV2.x }), std::min({ mV0.y, mV1.y, mV2.y }), std::min({ mV0.z, mV1.z, mV2.z }));
 
-	setBoundingBox(AABB(Min, Max));
+	SetBoundingBox(AABB(Min, Max));
 }

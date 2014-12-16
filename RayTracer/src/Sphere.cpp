@@ -84,5 +84,5 @@ void FSphere::SetRadius(const float& radius)
 
 void FSphere::ConstructAABB(Vector3f Min, Vector3f Max)
 {
-	setBoundingBox(AABB(Vector3f(-mRadius, -mRadius, -mRadius), Vector3f(mRadius, mRadius, mRadius)));
+	SetBoundingBox(AABB(Vector3f(-mRadius, -mRadius, -mRadius), Vector3f(mRadius, mRadius, mRadius)));
 }

@@ -15,14 +15,14 @@ public:
 	/**
 	* Default constructor. Creates an empty mesh.
 	*/
-	FMesh();
+	FMesh(const FMaterial& Material = FMaterial());
 
 	/**
 	* Creates a triangle mesh from vertices and faces in a
 	* .obj file.
 	* @param ModelFilepath The file path of the model.
 	*/
-	FMesh(const std::string& ModelFilepath);
+	FMesh(const std::string& ModelFilepath, const FMaterial& Material = FMaterial());
 
 	~FMesh();
 
@@ -38,11 +38,13 @@ public:
 	*/
 	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
+	void SetMaterial(const FMaterial& Material) override;
+
 private:
 	void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) override;
 
 	/* Reads a .obj model into this object and returns an AABB for the model */
-	void ReadModel(const std::string& ModelFilepath);
+	void ReadModel(const std::string& ModelFilepath, const FMaterial& Material = FMaterial());
 
 private:
 	std::vector<std::unique_ptr<FTriangle>> mTriangles; /* All triangles in the mesh */

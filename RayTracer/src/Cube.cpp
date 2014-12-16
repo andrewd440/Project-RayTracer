@@ -18,7 +18,7 @@ bool FCube::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 
 	// compute intersection in object space
 	Ray = Transform.GetInverse().TransformRay(Ray);
-	const bool IsIntersecting = getBoundingBox().IsIntersectingRay(Ray, tValueOut, IntersectionOut);
+	const bool IsIntersecting = GetBoundingBox().IsIntersectingRay(Ray, tValueOut, IntersectionOut);
 
 	// Ray intersects all slabs, return nearest t value if less than tValueOut
 	if (IsIntersecting && tValueOut && OriginalT > *tValueOut)
@@ -69,7 +69,7 @@ void FCube::ConstructAABB(Vector3f Min, Vector3f Max)
 	Min = Vector3f(-1, -1, -1);
 	Max = Vector3f(1, 1, 1);
 
-	setBoundingBox(AABB{ Min, Max });
+	SetBoundingBox(AABB{ Min, Max });
 }
 
 FCube::~FCube()

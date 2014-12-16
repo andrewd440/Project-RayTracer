@@ -51,5 +51,5 @@ void FPlane::ConstructAABB(Vector3f Min, Vector3f Max)
 	Max.z = std::numeric_limits<float>::max();
 	Min.z = -std::numeric_limits<float>::max();
 
-	setBoundingBox(AABB(Min, Max));
+	SetBoundingBox(AABB(Min, Max));
 }

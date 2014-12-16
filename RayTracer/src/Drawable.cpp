@@ -7,17 +7,17 @@ IDrawable::IDrawable(const FMaterial& LightingMaterial)
 
 }
 
-void IDrawable::setMaterial(const FMaterial& NewMaterial)
+void IDrawable::SetMaterial(const FMaterial& NewMaterial)
 { 
 	mMaterial = NewMaterial; 
 }
 
-FMaterial IDrawable::getMaterial() const
+FMaterial IDrawable::GetMaterial() const
 { 
 	return mMaterial; 
 }
 
-AABB IDrawable::getBoundingBox() const
+AABB IDrawable::GetBoundingBox() const
 {
 	return mBoundingBox;
 }
@@ -32,7 +32,7 @@ AABB IDrawable::getBoundingBox() const
 //	mTransform = NewTransform;
 //}
 
-void IDrawable::setBoundingBox(AABB boundingBox)
+void IDrawable::SetBoundingBox(AABB boundingBox)
 {
 	mBoundingBox = boundingBox;
 }
