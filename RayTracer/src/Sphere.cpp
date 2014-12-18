@@ -6,14 +6,14 @@ FSphere::FSphere(Vector3f Center, float Radius, FMaterial LightingMaterial)
 	: IDrawable(LightingMaterial)
 	, mRadius(Radius)
 {
-	Transform.SetOrigin(Center);
+	SetOrigin(Center);
 	ConstructAABB();
 }
 
 bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
 { 
 	// bring ray into object space
-	ray = Transform.GetInverseAffine().TransformRay(ray);
+	ray = GetWorldInvTransform().TransformRay(ray);
 	const Vector3f rayDirection = ray.direction;
 	const Vector3f rayOrigin = ray.origin;
 
@@ -46,7 +46,7 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 
 		// Construct intersection in world space with t solution
 		Vector3f intersection = rayOrigin + smallestTValue * rayDirection;
-		intersection = Transform.TransformPosition(intersection);
+		intersection = GetWorldTransform().TransformPosition(intersection);
 
 		ConstructIntersection(intersection, *intersectionOut);
 	}
@@ -55,21 +55,16 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 		
 }
 
+FMaterial FSphere::GetMaterial(Vector3f SurfacePoint)
+{
+	return mMaterial;
+}
+
 void FSphere::ConstructIntersection(Vector3f IntersectionPoint, FIntersection& IntersectionOut)
 {
-	IntersectionOut.normal = (IntersectionPoint - GetCenter()).Normalize();
+	IntersectionOut.normal = (IntersectionPoint - GetOrigin()).Normalize();
 	IntersectionOut.point = IntersectionPoint;
 	IntersectionOut.object = this;
-}
-
-Vector3f FSphere::GetCenter() const
-{
-	return Transform.GetOrigin();
-}
-
-void FSphere::SetCenter(const Vector3f& CenterPoint)
-{
-	Transform.SetOrigin(CenterPoint);
 }
 
 float FSphere::GetRadius() const

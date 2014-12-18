@@ -1,6 +1,7 @@
 #pragma once
 #include "Drawable.h"
 #include "Triangle.h"
+#include "Texture.h"
 
 #include <vector>
 #include <memory>
@@ -24,6 +25,14 @@ public:
 	*/
 	FMesh(const std::string& ModelFilepath, const FMaterial& Material = FMaterial());
 
+	/**
+	* Creates a texture mapped triangle mesh from vertices and faces in a
+	* .obj file.
+	* @param ModelFilepath The file path of the model.
+	* @param Texture for the model.
+	*/
+	FMesh(const std::string& ModelFilepath, FTexture& Texture);
+
 	~FMesh();
 
 	/**
@@ -40,11 +49,17 @@ public:
 
 	void SetMaterial(const FMaterial& Material) override;
 
+	/**
+	* Retrieves the default material for the mesh.
+	* @return The material
+	*/
+	FMaterial GetMaterial(Vector3f SurfacePoint) override;
+
 private:
 	void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) override;
 
 	/* Reads a .obj model into this object and returns an AABB for the model */
-	void ReadModel(const std::string& ModelFilepath, const FMaterial& Material = FMaterial());
+	void ReadModel(const std::string& ModelFilepath);
 
 private:
 	std::vector<std::unique_ptr<FTriangle>> mTriangles; /* All triangles in the mesh */

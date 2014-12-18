@@ -5,6 +5,7 @@
 #include "AABB.h"
 #include "Matrix4.h"
 
+class FTexture;
 
 /**
 * Abstract class for all Primitives.
@@ -33,24 +34,83 @@ public:
 	virtual bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) = 0;
 
 	/**
-	* Set the material properties for the Primitives' surface.
+	* Set the default material properties for the Primitives' surface.
 	* @param NewMaterial - The material for the Primitive
 	*/
 	virtual void SetMaterial(const FMaterial& NewMaterial);
 
 	/**
-	* Retrieves the material for the Primitive.
+	* Retrieves the material for the Primitive at a point in world space.
 	* @return The material
 	*/
-	FMaterial GetMaterial() const;
+	virtual FMaterial GetMaterial(Vector3f SurfacePoint) = 0;
 
 	/**
 	* Retrieves the bounding box for the Primitive.
 	*/
 	AABB GetBoundingBox() const;
 
-public:
-	FMatrix4 Transform; /* Object space transform */
+	/**
+	* Retrieves the diffuse texture on the current object.
+	*/
+	FTexture* GetTexture() const;
+
+	/**
+	* Sets a diffuse texture on the current object.
+	*/
+	void SetTexture(FTexture* Texture);
+
+	/**
+	* Sets the parent transform for this object.
+	*/
+	void SetParent(IDrawable& Parent);
+
+	/**
+	* Gets the inverse transform of the object.
+	*/
+	FMatrix4 GetInvTransform() const;
+
+	/**
+	* Gets the world inverse transform of the object. Includes
+	* parent transforms, if any.
+	*/
+	FMatrix4 GetWorldInvTransform() const;
+
+	/**
+	* Gets the transform of the object.
+	*/
+	FMatrix4 GetTransform() const;
+
+	/**
+	* Gets the world transform of the object. Includes
+	* parent transforms, if any.
+	*/
+	FMatrix4 GetWorldTransform() const;
+
+	/**
+	* Sets the transform for the object.
+	*/
+	void SetTransform(const FMatrix4& Transform);
+
+	/**
+	* Rotate the object about an axis.
+	*/
+	void Rotate(EAxis Axis, float Degrees);
+
+	/**
+	* Scale the object about an axis.
+	*/
+	void Scale(EAxis Axis, float Scale);
+
+	/**
+	* Set the origin of the object.
+	*/
+	void SetOrigin(const Vector3f& Origin);
+
+	/**
+	* Get the origin of the object.
+	*/
+	Vector3f GetOrigin() const;
 
 protected:
 	/**
@@ -59,6 +119,11 @@ protected:
 	*/
 	void SetBoundingBox(AABB boundingBox);
 
+protected:
+	FMaterial mMaterial;			/* Lighting material properties for the Primitive */
+	FTexture* mDiffuseTexture;		/* Mapped diffise texture for the object */
+	IDrawable* mParentObject;		/* Parent of this object */
+
 private:
 	/**
 	* Each derived class needs to construct their bounding box.
@@ -66,7 +131,8 @@ private:
 	virtual void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) = 0;
 
 private:
-	FMaterial mMaterial; /* Lighting material properties for the Primitive */
-	AABB mBoundingBox; /* Bounding volume */
+	AABB mBoundingBox;				/* Bounding volume */
+	FMatrix4 mTransform;			/* Object space transform */
+	FMatrix4 mInvTransform;			/* Inverse transform of this object, takes object from world to object space */
 };
 

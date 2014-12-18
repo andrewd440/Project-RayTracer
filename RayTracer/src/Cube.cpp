@@ -7,7 +7,7 @@
 FCube::FCube(Vector3f Center, FMaterial LightingMaterial)
 	: IDrawable(LightingMaterial)
 {
-	Transform.SetOrigin(Center);
+	SetOrigin(Center);
 	ConstructAABB();
 }
 
@@ -17,14 +17,14 @@ bool FCube::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	const float OriginalT = (tValueOut) ? *tValueOut : 0;
 
 	// compute intersection in object space
-	Ray = Transform.GetInverse().TransformRay(Ray);
+	Ray = GetWorldInvTransform().TransformRay(Ray);
 	const bool IsIntersecting = GetBoundingBox().IsIntersectingRay(Ray, tValueOut, IntersectionOut);
 
 	// Ray intersects all slabs, return nearest t value if less than tValueOut
 	if (IsIntersecting && tValueOut && OriginalT > *tValueOut)
 	{
 		// get intersection point in world space
-		Vector3f IntersectionPoint = Transform.TransformPosition(Ray.origin + *tValueOut * Ray.direction);
+		Vector3f IntersectionPoint = GetWorldTransform().TransformPosition(Ray.origin + *tValueOut * Ray.direction);
 		ConstructIntersection(IntersectionPoint, IntersectionOut);
 	}
 
@@ -37,7 +37,7 @@ void FCube::ConstructIntersection(const Vector3f& IntersectionPoint, FIntersecti
 	int IntersectionAxis = 0;
 	int IntersectionSide = 0;
 
-	const FMatrix4& ModelInverse = Transform.GetInverse();
+	const FMatrix4& ModelInverse = GetWorldInvTransform();
 
 	const Vector3f IntersectionInObjectSpace = ModelInverse.TransformPosition(IntersectionPoint);
 
@@ -70,6 +70,11 @@ void FCube::ConstructAABB(Vector3f Min, Vector3f Max)
 	Max = Vector3f(1, 1, 1);
 
 	SetBoundingBox(AABB{ Min, Max });
+}
+
+FMaterial FCube::GetMaterial(Vector3f SurfacePoint)
+{
+	return mMaterial;
 }
 
 FCube::~FCube()

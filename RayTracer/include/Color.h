@@ -22,6 +22,13 @@ public:
 	FColor(float R, float G, float B);
 
 	/**
+	* Copy assignment
+	* @param rhs - FColor to be copied
+	* @return The resulting color
+	*/
+	FColor& operator=(const FColor& rhs) = default;
+
+	/**
 	* Performs component-wise addition of colors.
 	* @param rhs - FColor to be added
 	* @return The resulting color
@@ -100,7 +107,6 @@ inline FColor::FColor(float R, float G, float B)
 {
 
 }
-
 
 inline FColor& FColor::operator+=(const FColor& rhs)
 {

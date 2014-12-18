@@ -1,5 +1,6 @@
 #pragma once
 #include "Drawable.h"
+#include "Vector2.h"
 #include "Vector3.h"
 
 class FTriangle : public IDrawable
@@ -39,6 +40,19 @@ public:
 	*/
 	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
+	/**
+	* Retrieves the material for the triangle.
+	* @return The material
+	*/
+	FMaterial GetMaterial(Vector3f SurfacePoint) override;
+
+	/**
+	* Set the UV texture coordinates for each vertex in the triangle.
+	* @param UV0 First vertex UV
+	* @param UV1 Second vertex UV
+	* @param UV2 Third vertex UV
+	*/
+	void SetUVCoordinates(const Vector2f& UV0, const Vector2f& UV1, const Vector2f& UV2);
 
 private:
 	/**
@@ -55,5 +69,9 @@ private:
 	Vector3f mV1;
 	Vector3f mV2;
 	Vector3f mNormal;
+
+	Vector2f mUV0;
+	Vector2f mUV1;
+	Vector2f mUV2;
 };
 

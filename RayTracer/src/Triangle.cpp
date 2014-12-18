@@ -1,5 +1,6 @@
 #include "Triangle.h"
 #include "Intersection.h"
+#include "Texture.h"
 
 #include <cmath>
 
@@ -9,6 +10,9 @@ FTriangle::FTriangle()
 	, mV1()
 	, mV2()
 	, mNormal()
+	, mUV0()
+	, mUV1()
+	, mUV2()
 {
 
 }
@@ -18,6 +22,9 @@ FTriangle::FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, const FMaterial& Lig
 	, mV0(V0)
 	, mV1(V1)
 	, mV2(V2)
+	, mUV0()
+	, mUV1()
+	, mUV2()
 {
 	Vector3f e1 = V2 - V0;
 	Vector3f e2 = V1 - V0;
@@ -32,6 +39,9 @@ FTriangle::FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, Vector3f Normal, con
 	, mV1(V1)
 	, mV2(V2)
 	, mNormal(Normal)
+	, mUV0()
+	, mUV1()
+	, mUV2()
 {
 
 }
@@ -144,6 +154,32 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	}
 
 	return true;
+}
+
+FMaterial FTriangle::GetMaterial(Vector3f SurfacePoint)
+{
+	// bring the point into object space
+	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint);
+	
+	// if no texture, return default material
+	if (!mDiffuseTexture)
+		return mMaterial;
+
+	float B[3];
+	ComputeBarycentric(mV0, mV1, mV2, SurfacePoint, B);
+
+	const Vector2f& UV = B[0] * mUV0 + B[1] * mUV1 + B[2] * mUV2;
+
+	mMaterial.diffuseColor = mDiffuseTexture->GetSample(UV.x, UV.y);
+	
+	return mMaterial;
+}
+
+void FTriangle::SetUVCoordinates(const Vector2f& UV0, const Vector2f& UV1, const Vector2f& UV2)
+{
+	mUV0 = UV0;
+	mUV1 = UV1;
+	mUV2 = UV2;
 }
 
 void FTriangle::ConstructIntersection(Vector3f intersectionPoint, FIntersection* intersectionOut)

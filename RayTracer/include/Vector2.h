@@ -245,7 +245,7 @@ template <typename T>
 */
 inline TVector2<T> operator+(const TVector2<T>& lhs, const TVector2<T>& rhs)
 {
-	return Vector2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
+	return TVector2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
 template <typename T>
@@ -257,7 +257,7 @@ template <typename T>
 */
 inline TVector2<T> operator-(const TVector2<T>& lhs, const TVector2<T>& rhs)
 {
-	return Vector2<T>(lhs.x - rhs.x, lhs.y - rhs.y);
+	return TVector2<T>(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
 template <typename T>
@@ -268,7 +268,7 @@ template <typename T>
 */
 inline TVector2<T> operator-(const TVector2<T>& lhs)
 {
-	return Vector2<T>(-lhs.x, -lhs.y);
+	return TVector2<T>(-lhs.x, -lhs.y);
 }
 
 template <typename T, typename U>
@@ -280,7 +280,7 @@ template <typename T, typename U>
 */
 inline TVector2<T> operator*(const TVector2<T>& Vec, const U& Scalar)
 {
-	return Vector2<T>(Vec.x * Scalar, Vec.y * Scalar);
+	return TVector2<T>(Vec.x * Scalar, Vec.y * Scalar);
 }
 
 template <typename T, typename U>
@@ -292,7 +292,7 @@ template <typename T, typename U>
 */
 inline TVector2<T> operator*(const U& Scalar, const TVector2<T>& Vec)
 {
-	return Vector2<T>(Vec.x * Scalar, Vec.y * Scalar);
+	return TVector2<T>(Vec.x * Scalar, Vec.y * Scalar);
 }
 
 template <typename T, typename U>
@@ -304,7 +304,7 @@ template <typename T, typename U>
 */
 inline TVector2<T> operator/(const TVector2<T>& Vec, const U& Scalar)
 {
-	return Vector2<T>(Vec.x / Scalar, Vec.y / Scalar);
+	return TVector2<T>(Vec.x / Scalar, Vec.y / Scalar);
 }
 
 template <typename T, typename U>
@@ -316,5 +316,5 @@ template <typename T, typename U>
 */
 inline TVector2<T> operator/(const U& Scalar, const TVector2<T>& Vec)
 {
-	return Vector2<T>(Scalar / Vec.x, Scalar / Vec.y);
+	return TVector2<T>(Scalar / Vec.x, Scalar / Vec.y);
 }

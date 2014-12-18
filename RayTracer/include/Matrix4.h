@@ -15,13 +15,6 @@
 */
 struct FMatrix4
 {
-	enum class Axis
-	{
-		X,
-		Y,
-		Z
-	};
-
 	/** 
 	* Each row in the matrix is a vector.
 	*/
@@ -115,12 +108,12 @@ struct FMatrix4
 	/**
 	* Retrieve an axis vector from the matrix.
 	*/
-	Vector3f GetAxis(FMatrix4::Axis Axis) const;
+	Vector3f GetAxis(EAxis Axis) const;
 
 	/**
 	* Sets a basis vector in the matrix.
 	*/
-	void SetAxis(FMatrix4::Axis Axis, const Vector3f& Basis);
+	void SetAxis(EAxis Axis, const Vector3f& Basis);
 
 	/**
 	* Gets the world origin of the matrix. (translation vector)
@@ -137,7 +130,7 @@ struct FMatrix4
 	* @param Axis to rotate around.
 	* @param Degrees to rotate by.
 	*/
-	void Rotate(Axis Axis, float Degrees);
+	void Rotate(EAxis Axis, float Degrees);
 
 	/**
 	* Sets a uniform scale from origin.
@@ -150,7 +143,7 @@ struct FMatrix4
 	* @param Axis to scale by.
 	* @param Scale Value to scale by.
 	*/
-	void Scale(Axis Axis, float Scale);
+	void Scale(EAxis Axis, float Scale);
 
 	/**
 	* Sets the scale about each axis from a vector.
@@ -376,31 +369,31 @@ inline FRay FMatrix4::TransformRay(FRay Ray) const
 	return Ray;
 }
 
-inline Vector3f FMatrix4::GetAxis(FMatrix4::Axis Axis) const
+inline Vector3f FMatrix4::GetAxis(EAxis Axis) const
 {
 	switch (Axis)
 	{
-	case Axis::X:
+	case EAxis::X:
 		return Vector3f(M[0][0], M[1][0], M[2][0]);
-	case Axis::Y:
+	case EAxis::Y:
 		return Vector3f(M[0][1], M[1][1], M[2][1]);
-	case Axis::Z:
+	case EAxis::Z:
 		return Vector3f(M[0][2], M[1][2], M[2][2]);
 	}
 }
 
-inline void FMatrix4::SetAxis(FMatrix4::Axis Axis, const Vector3f& Basis)
+inline void FMatrix4::SetAxis(EAxis Axis, const Vector3f& Basis)
 {
 	int col = -1;
 	switch (Axis)
 	{
-		case Axis::X:
+	case EAxis::X:
 			col = 0;
 			break;
-		case Axis::Y:
+	case EAxis::Y:
 			col = 1;
 			break;
-		case Axis::Z:
+	case EAxis::Z:
 			col = 2;
 			break;
 		default:
@@ -410,28 +403,28 @@ inline void FMatrix4::SetAxis(FMatrix4::Axis Axis, const Vector3f& Basis)
 	M[0][col] = Basis.x; M[1][col] = Basis.y; M[2][col] = Basis.z;
 }
 
-inline void FMatrix4::Rotate(Axis Axis, float Degrees)
+inline void FMatrix4::Rotate(EAxis Axis, float Degrees)
 {
 	float radians = (float)(_PI * Degrees / 180.0f);
 	FMatrix4 rotationMat;
 
 	switch (Axis)
 	{
-	case Axis::X:
+	case EAxis::X:
 		rotationMat = FMatrix4{ 
 			1.0f,			0.0f,					0.0f,					0.0f,
 			0.0f,			(float)cos(radians),	(float)-sin(radians),	0.0f,
 			0.0f,			(float)sin(radians),	(float)cos(radians),	0.0f,
 			0.0f,			 0.0f,					0.0f,					1.0f };
 		break;
-	case Axis::Y:
+	case EAxis::Y:
 		rotationMat = FMatrix4{
 			(float)cos(radians),	0.0f,	(float)sin(radians),	0.0f,
 			0.0f,					1.0f,	0.0f,					0.0f,
 			(float)-sin(radians),	0.0f,	(float)cos(radians),	0.0f,
 			0.0f,					0.0f,	0.0f,					1.0f };
 		break;
-	case Axis::Z:
+	case EAxis::Z:
 		rotationMat = FMatrix4{
 			(float)cos(radians),	(float)-sin(radians),	0.0f,	0.0f,
 			(float)sin(radians),	(float)cos(radians),	0.0f,	0.0f,
@@ -455,18 +448,18 @@ inline void FMatrix4::Scale(float Scale)
 	FMatrix4::Scale(Vector3f(Scale, Scale, Scale));
 }
 
-inline void FMatrix4::Scale(Axis Axis, float Scale)
+inline void FMatrix4::Scale(EAxis Axis, float Scale)
 {
 	int intAxis = -1;
 	switch (Axis)
 	{
-	case Axis::X:
+	case EAxis::X:
 		intAxis = 0;
 		break;
-	case Axis::Y:
+	case EAxis::Y:
 		intAxis = 1;
 		break;
-	case Axis::Z:
+	case EAxis::Z:
 		intAxis = 2;
 		break;
 	default:

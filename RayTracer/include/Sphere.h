@@ -29,18 +29,6 @@ public:
 	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
 	/**
-	* Retrieves the center point of the sphere.
-	* @reture 3D coordinates of the center of the sphere
-	*/
-	Vector3f GetCenter() const;
-
-	/**
-	* Sets the center point of the sphere.
-	* @param CenterPoint - 3D position of the sphere's center
-	*/
-	void SetCenter(const Vector3f& CenterPoint);
-
-	/**
 	* Retrieves the radius of the sphere.
 	* @return The length of the radius
 	*/
@@ -51,6 +39,12 @@ public:
 	* @param Radius - length of the radius
 	*/
 	void SetRadius(const float& Radius);
+
+	/**
+	* Retrieves the material for the sphere.
+	* @return The material
+	*/
+	FMaterial GetMaterial(Vector3f SurfacePoint) override;
 
 private:
 	/**

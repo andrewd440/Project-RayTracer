@@ -24,6 +24,11 @@ public:
 	*/
 	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
 
+	/**
+	* Retrieves the material for the plane.
+	* @return The material
+	*/
+	FMaterial GetMaterial(Vector3f SurfacePoint) override;
 
 private:
 	/**

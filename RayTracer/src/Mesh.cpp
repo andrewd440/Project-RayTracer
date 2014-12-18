@@ -6,18 +6,25 @@
 #include <limits>
 
 FMesh::FMesh(const FMaterial& Material)
-	: IDrawable()
+	: IDrawable(Material)
 	, mTriangles()
 {
 }
 
 FMesh::FMesh(const std::string& ModelFilepath, const FMaterial& Material)
+	: IDrawable(Material)
+	, mTriangles()
+{
+	ReadModel(ModelFilepath);
+}
+
+FMesh::FMesh(const std::string& ModelFilepath, FTexture& Texture)
 	: IDrawable(FMaterial())
 	, mTriangles()
 {
-	ReadModel(ModelFilepath, Material);
+	mDiffuseTexture = &Texture;
+	ReadModel(ModelFilepath);
 }
-
 
 bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
@@ -25,7 +32,7 @@ bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	float NewTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
 
 	// bring ray into object space for intersection tests
-	Ray = Transform.GetInverse().TransformRay(Ray);
+	Ray = GetWorldInvTransform().TransformRay(Ray);
 
 	if (GetBoundingBox().IsIntersectingRay(Ray, &NewTValue, IntersectionOut))
 	{
@@ -43,8 +50,8 @@ bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 			if (Flag && NewTValue < *tValueOut)
 			{
 				*tValueOut = NewTValue;
-				IntersectionOut->point = Transform.TransformPosition(IntersectionOut->point);
-				IntersectionOut->normal = Transform.TransformDirection(IntersectionOut->normal);
+				IntersectionOut->point = GetWorldTransform().TransformPosition(IntersectionOut->point);
+				IntersectionOut->normal = GetWorldTransform().TransformDirection(IntersectionOut->normal);
 			}
 
 			return Flag;
@@ -63,6 +70,13 @@ bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	return false;
 }
 
+FMaterial FMesh::GetMaterial(Vector3f SurfacePoint)
+{
+	// remove compiler warning
+	SurfacePoint;
+	return mMaterial;
+}
+
 void FMesh::SetMaterial(const FMaterial& Material)
 {
 	for (auto& Triangle : mTriangles)
@@ -74,7 +88,7 @@ void FMesh::ConstructAABB(Vector3f Min, Vector3f Max)
 	SetBoundingBox(AABB(Min, Max));
 }
 
-void FMesh::ReadModel(const std::string& ModelFilepath, const FMaterial& Material)
+void FMesh::ReadModel(const std::string& ModelFilepath)
 {
 	// bounds for bounding box
 	Vector3f MinBounds;
@@ -91,6 +105,7 @@ void FMesh::ReadModel(const std::string& ModelFilepath, const FMaterial& Materia
 
 	std::string FileLine;
 	std::vector<Vector3f> Vertices;
+	std::vector<Vector2f> UVs;
 
 	while (getline(ModelFile, FileLine))
 	{
@@ -121,19 +136,48 @@ void FMesh::ReadModel(const std::string& ModelFilepath, const FMaterial& Materia
 		{
 			FileLine = FileLine.substr(2);
 
-			const std::string V0String = FileLine.substr(0, FileLine.find(' '));
-			const Vector3f V0 = Vertices[atoi(V0String.c_str()) - 1];
+			Vector3f FaceVerts[3];
 
-			FileLine = FileLine.substr(V0String.length() + 1);
-			const std::string V1String = FileLine.substr(0, FileLine.find(' '));
-			const Vector3f V1 = Vertices[atoi(V1String.c_str()) - 1];
+			bool HasUVs = false;
+			Vector2f FaceUVs[3];
 
-			FileLine = FileLine.substr(V1String.length() + 1);
-			const std::string V2String = FileLine.substr(0, FileLine.find(' '));
-			const Vector3f V2 = Vertices[atoi(V2String.c_str()) - 1];
+			// get attributes for each vertex
+			for (int i = 0; i < 3; i++)
+			{
+				std::string DataString = FileLine.substr(0, FileLine.find(' '));
+				std::string VertexString = DataString.substr(0, DataString.find('/'));
+				FaceVerts[i] = Vertices[atoi(VertexString.c_str()) - 1];
 
+				if (HasUVs || VertexString.length() != DataString.length())
+				{
+					HasUVs = true;
+					std::string UVString = DataString.substr(VertexString.length() + 1);
+					UVString = UVString.substr(0, UVString.find('/'));
+					FaceUVs[i] = UVs[atoi(UVString.c_str()) - 1];
+				}
+
+				if (i < 2)
+					FileLine = FileLine.substr(DataString.length() + 1);
+			}
+			
 			// .obj vertex order is clockwise, we use counterclockwise
-			mTriangles.push_back(std::unique_ptr<FTriangle>(new FTriangle(V2, V1, V0, Material)));
+			std::unique_ptr<FTriangle> Triangle(new FTriangle(FaceVerts[2], FaceVerts[1], FaceVerts[0], mMaterial));
+			Triangle->SetTexture(mDiffuseTexture);
+			Triangle->SetParent(*this);
+
+			if (HasUVs)
+				Triangle->SetUVCoordinates(FaceUVs[2], FaceUVs[1], FaceUVs[0]);
+
+			mTriangles.push_back(std::move(Triangle));
+		}
+		// line contains a UV
+		else if (FileLine[0] == 'v' && FileLine[1] == 't' && FileLine[2] == ' ')
+		{
+			FileLine = FileLine.substr(3);
+
+			const std::string UString = FileLine.substr(0, FileLine.find(' '));
+			const std::string VString = FileLine.substr(UString.length() + 1, FileLine.find(' '));
+			UVs.push_back(Vector2f((float)atof(UString.c_str()), (float)atof(VString.c_str())));
 		}
 	}
 
