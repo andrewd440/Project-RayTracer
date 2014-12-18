@@ -162,7 +162,7 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 			
 			// .obj vertex order is clockwise, we use counterclockwise
 			std::unique_ptr<FTriangle> Triangle(new FTriangle(FaceVerts[2], FaceVerts[1], FaceVerts[0], mMaterial));
-			Triangle->SetTexture(mDiffuseTexture);
+			Triangle->SetTexture(*mDiffuseTexture);
 			Triangle->SetParent(*this);
 
 			if (HasUVs)

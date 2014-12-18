@@ -17,11 +17,7 @@
 #include <string>
 #include <limits>
 
-namespace
-{
-	const Vector2i OUTPUT_RESOLUTION(500, 300);
-}
-
+static const Vector2i OutputResolution(500, 300);
 static std::vector<FTexture> TextureHolder;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,10 +30,10 @@ void throwSceneConfigError(const std::string& ObjectType)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 FScene::FScene()
-	: mOutputImage("RenderedScene", OUTPUT_RESOLUTION)
+	: mOutputImage("RenderedScene", OutputResolution)
 	, mBackgroundColor(FColor::Black)
 	, mGlobalAmbient(0.2f, 0.2f, 0.2f)
-	, mCamera(Vector3f(0, 4, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OUTPUT_RESOLUTION)
+	, mCamera(Vector3f(0, 4, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OutputResolution)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
@@ -170,7 +166,7 @@ void FScene::BuildScene(std::istream& in)
 		in >> string;
 	}
 	
-	mLights.push_back(LightPtr(new FPointLight(FColor(0.6f, 0.1f, 0.4f), Vector3f(3.0f, 10.0f, -20.0f), 2, 2, 20)));
+	//mLights.push_back(LightPtr(new FPointLight(FColor(0.6f, 0.1f, 0.4f), Vector3f(3.0f, 10.0f, -20.0f), 2, 2, 20)));
 	//mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(2.0f, 7, -10.0f), 1, 10, 35)));
 	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.6f, 0.6f, 0.6f), Vector3f(0.0f, -1.0f, -2.0f))));
 
@@ -183,12 +179,13 @@ void FScene::BuildScene(std::istream& in)
 	
 	//std::unique_ptr<FTriangle> Triangle(new FTriangle(Vector3f(-15.0f, 7.0f, -18.0f), Vector3f(15.0f, 8.0f, -18.0f), Vector3f(-15.0f, -11.0f, -18.0f)));
 	TextureHolder.push_back(FTexture("Textures/Danbotexture.tga"));
+	TextureHolder.push_back(FTexture("Textures/Bricks.tga"));
 	//Triangle->SetTexture(&TextureHolder[0]);
 	//Triangle->SetMaterial(FMaterial(FColor(0.0f, .0f, .0f), FColor(.1f, .1f, .1f), FColor(.1f, .1f, .1f), 12, 0.1f));
 	//Triangle->SetUVCoordinates(Vector2f(0.0f, 0.0f), Vector2f(1.0f, 0.0f), Vector2f(0.0f, 1.0f));
 	//mPrimitives.push_back(std::move(Triangle));
 
-	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-2.0f, 4.0f, -10.0f), 1, 10, 35)));
+	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-0.0f, 14.0f, -10.0f), 1, 10, 35)));
 	mPrimitives.push_back(PrimitivePtr(new FMesh("Models/BoxMan.obj", TextureHolder[0])));
 	Drawable = mPrimitives.back().get();
 	Drawable->SetMaterial(FMaterial(FColor(.1f, .1f, .1f), FColor(.1f, .1f, .1f), FColor(.1f, .1f, .1f), 12, 0.2f));
@@ -204,7 +201,7 @@ void FScene::BuildScene(std::istream& in)
 	//Drawable->Transform.Rotate(FMatrix4::Axis::X, 25);
 	//Drawable->Transform.Scale(Vector3f(3,.5,2));
 	
-	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -2.0f, -11.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
+	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -2.0f, -7.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
 	//cube = mPrimitives.back().get();
 	//cube->Transform.Scale(0.5f);
 
@@ -218,8 +215,11 @@ void FScene::BuildScene(std::istream& in)
 
 	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-4.0f, 1.0f, -12.5f), 1.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
 
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(6.0f, 0.0f, -20.0f), 2.0f, FMaterial(FColor(.2f, .7f, .3f), FColor(0.0f, .8f, .3f), FColor(.1f, .1f, .1f), 128, .9f))));
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 1.0f, FMaterial(FColor(.1f, .5f, .9f), FColor(0.0f, .4f, .8f), FColor(.1f, .1f, .1f), 128, .9f))));
+	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(5.0f, 2.0f, -12.0f), 2.0f, FMaterial(FColor(0.0f, 0.0f, 0.0f), FColor(0.5f, .1f, .1f), FColor(.1f, .1f, .1f), 0, 0.0f))));
+	Drawable = mPrimitives.back().get();
+	Drawable->SetTexture(TextureHolder[1]);
+
+	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 1.0f, FMaterial(FColor(.8f, .3f, .1f), FColor(0.7f, .3f, .1f), FColor(.1f, .1f, .1f), 128, .8f))));
 
 	//mKDTree.buildTree(mPrimitives, 10);
 }
@@ -313,13 +313,13 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 
 void FScene::RenderScene()
 {
-	const float InvTotalPixels = 100.0f / (OUTPUT_RESOLUTION.x * OUTPUT_RESOLUTION.y);
-	const int PercentUpdateRate = OUTPUT_RESOLUTION.y / 20;
+	const float InvTotalPixels = 100.0f / (OutputResolution.x * OutputResolution.y);
+	const int PercentUpdateRate = OutputResolution.y / 20;
 	int UpdateInterval = 0;
 
-	for (int y = 0; y < OUTPUT_RESOLUTION.y; y++)
+	for (int y = 0; y < OutputResolution.y; y++)
 	{
-		for (int x = 0; x < OUTPUT_RESOLUTION.x; x++)
+		for (int x = 0; x < OutputResolution.x; x++)
 		{
 			FColor PixelColor;
 
@@ -347,7 +347,7 @@ void FScene::RenderScene()
 		if (UpdateInterval >= PercentUpdateRate)
 		{
 			UpdateInterval = 0;
-			std::cout << (y * OUTPUT_RESOLUTION.x) * InvTotalPixels << "% Complete" << std::endl;
+			std::cout << (y * OutputResolution.x) * InvTotalPixels << "% Complete" << std::endl;
 		}
 	}
 

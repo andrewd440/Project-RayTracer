@@ -58,7 +58,7 @@ public:
 	/**
 	* Sets a diffuse texture on the current object.
 	*/
-	void SetTexture(FTexture* Texture);
+	void SetTexture(FTexture& Texture);
 
 	/**
 	* Sets the parent transform for this object.

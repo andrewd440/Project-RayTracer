@@ -26,9 +26,9 @@ FTexture* IDrawable::GetTexture() const
 	return mDiffuseTexture;
 }
 
-void IDrawable::SetTexture(FTexture* Texture)
+void IDrawable::SetTexture(FTexture& Texture)
 {
-	mDiffuseTexture = Texture;
+	mDiffuseTexture = &Texture;
 }
 
 void IDrawable::SetBoundingBox(AABB boundingBox)

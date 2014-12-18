@@ -1,6 +1,7 @@
 #include "Sphere.h"
 #include "Intersection.h"
 #include "Camera.h"
+#include "Texture.h"
 
 FSphere::FSphere(Vector3f Center, float Radius, FMaterial LightingMaterial)
 	: IDrawable(LightingMaterial)
@@ -57,6 +58,31 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 
 FMaterial FSphere::GetMaterial(Vector3f SurfacePoint)
 {
+	if (!mDiffuseTexture)
+		return mMaterial;
+
+	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint).Normalize();
+	const Vector3f Vn(0.0f, 1.0f, 0.0f); // points to north pole
+	const Vector3f Ve(0.0f, 0.0f, 1.0f); // points to equator
+
+	const float& Phi = acosf(-Vector3f::Dot(Vn, SurfacePoint)); // get latitude
+	const float& V = Phi * 	mRadius / _PI;
+
+	const float& Theta = (acosf(Vector3f::Dot(SurfacePoint, Ve) / sinf(Phi))) / (2 * _PI);
+	float U;
+
+	if (Vector3f::Dot(Vector3f::Cross(Vn, Ve), SurfacePoint) > 0)
+	{
+		U = Theta * mRadius;
+	}
+	else
+	{
+		U = (1 - Theta) * mRadius;
+	}
+
+	const FColor Diffuse = mDiffuseTexture->GetSample(U, V);
+	mMaterial.diffuseColor = Diffuse;
+	
 	return mMaterial;
 }
 
