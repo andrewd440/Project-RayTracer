@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cmath>S
 
 FTexture::FTexture(const std::string& Filename)
 {
@@ -39,7 +40,18 @@ FColor FTexture::GetPixel(uint32_t X, uint32_t Y) const
 
 FColor FTexture::GetSample(float U, float V) const
 {
-	return GetPixel(uint32_t(U * mWidth) % mWidth, uint32_t(V * mHeight) % mHeight);
+	// use bilinear filtering for texel sample
+	float If, Jf;
+
+	const float& Alpha = modf(uint32_t(U * mWidth) % mWidth - 0.5f, &If);
+	const float& Beta = modf(uint32_t(V * mHeight) % mHeight - 0.5f, &Jf);
+	const uint32_t& I = (uint32_t)If;
+	const uint32_t& J = (uint32_t)Jf;
+
+	return (1.0f - Alpha)*(1.0f - Beta) * GetPixel(I, J) +
+		Alpha * (1.0f - Beta) * GetPixel(I + 1, J) +
+		(1.0f - Alpha) * Beta * GetPixel(I, J + 1) +
+		Alpha * Beta * GetPixel(I + 1, J + 1);
 }
 
 /**

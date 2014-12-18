@@ -18,6 +18,7 @@ bool FCube::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 
 	// compute intersection in object space
 	Ray = GetWorldInvTransform().TransformRay(Ray);
+
 	const bool IsIntersecting = GetBoundingBox().IsIntersectingRay(Ray, tValueOut, IntersectionOut);
 
 	// Ray intersects all slabs, return nearest t value if less than tValueOut
@@ -74,6 +75,35 @@ void FCube::ConstructAABB(Vector3f Min, Vector3f Max)
 
 FMaterial FCube::GetMaterial(Vector3f SurfacePoint)
 {
+	const FTextureInfo& DiffuseInfo = mMaterial.GetDiffuseTexture();
+	if (!DiffuseInfo.Texture)
+		return mMaterial;
+
+	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint);
+	const Vector3f& Scale = GetWorldTransform().GetScale();
+
+	float U = 0.0f, V = 0.0f;
+	if (1.0f - abs(SurfacePoint.x) < _EPSILON)
+	{
+		U = Scale.z * (SurfacePoint.z + 1.0f) / 2.0f;
+		V = Scale.y * (SurfacePoint.y + 1.0f) / 2.0f;
+	}
+	else if (1.0f - abs(SurfacePoint.y)< _EPSILON)
+	{
+		U = Scale.x * (SurfacePoint.x + 1.0f) / 2.0f;
+		V = Scale.z * (SurfacePoint.z + 1.0f) / 2.0f;
+	}
+	else
+	{
+		U = Scale.x * (SurfacePoint.x + 1.0f) / 2.0f;
+		V = Scale.y * (SurfacePoint.y + 1.0f) / 2.0f;
+	}
+
+	U *= DiffuseInfo.UAxisScale;
+	V *= DiffuseInfo.VAxisScale;
+
+	mMaterial.SetDiffuse(DiffuseInfo.Texture->GetSample(U, V));
+
 	return mMaterial;
 }
 

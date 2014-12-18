@@ -18,14 +18,6 @@ FMesh::FMesh(const std::string& ModelFilepath, const FMaterial& Material)
 	ReadModel(ModelFilepath);
 }
 
-FMesh::FMesh(const std::string& ModelFilepath, FTexture& Texture)
-	: IDrawable(FMaterial())
-	, mTriangles()
-{
-	mDiffuseTexture = &Texture;
-	ReadModel(ModelFilepath);
-}
-
 bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
 	// check against bounding volume first
@@ -162,7 +154,6 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 			
 			// .obj vertex order is clockwise, we use counterclockwise
 			std::unique_ptr<FTriangle> Triangle(new FTriangle(FaceVerts[2], FaceVerts[1], FaceVerts[0], mMaterial));
-			Triangle->SetTexture(*mDiffuseTexture);
 			Triangle->SetParent(*this);
 
 			if (HasUVs)

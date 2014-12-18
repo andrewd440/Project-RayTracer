@@ -226,6 +226,18 @@ inline FColor operator*(FColor lhs, const float& scalar)
 }
 
 /**
+* Performs scalar multiplication of a color
+* @param scalar - Right operand
+* @param rhs - Left operand
+* @return Resulting color
+*/
+inline FColor operator*(const float& scalar, FColor rhs)
+{
+	rhs *= scalar;
+	return rhs;
+}
+
+/**
 * Performs component-wise addition of colors
 * @param lhs - Left operand
 * @param rhs - Right operand

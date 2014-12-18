@@ -160,17 +160,20 @@ FMaterial FTriangle::GetMaterial(Vector3f SurfacePoint)
 {
 	// bring the point into object space
 	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint);
-	
+	const FTextureInfo& DiffuseInfo = mMaterial.GetDiffuseTexture();
+
 	// if no texture, return default material
-	if (!mDiffuseTexture)
+	if (!DiffuseInfo.Texture)
 		return mMaterial;
 
 	float B[3];
 	ComputeBarycentric(mV0, mV1, mV2, SurfacePoint, B);
 
-	const Vector2f& UV = B[0] * mUV0 + B[1] * mUV1 + B[2] * mUV2;
+	Vector2f UV = B[0] * mUV0 + B[1] * mUV1 + B[2] * mUV2;
+	UV.x *= DiffuseInfo.UAxisScale;
+	UV.y *= DiffuseInfo.VAxisScale;
 
-	mMaterial.diffuseColor = mDiffuseTexture->GetSample(UV.x, UV.y);
+	mMaterial.SetDiffuse(DiffuseInfo.Texture->GetSample(UV.x, UV.y));
 	
 	return mMaterial;
 }

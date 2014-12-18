@@ -25,14 +25,6 @@ public:
 	*/
 	FMesh(const std::string& ModelFilepath, const FMaterial& Material = FMaterial());
 
-	/**
-	* Creates a texture mapped triangle mesh from vertices and faces in a
-	* .obj file.
-	* @param ModelFilepath The file path of the model.
-	* @param Texture for the model.
-	*/
-	FMesh(const std::string& ModelFilepath, FTexture& Texture);
-
 	~FMesh();
 
 	/**

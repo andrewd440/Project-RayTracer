@@ -40,6 +40,12 @@ public:
 	virtual void SetMaterial(const FMaterial& NewMaterial);
 
 	/**
+	* Retrieves the default material for the Primitive.
+	* @return The material
+	*/
+	FMaterial GetMaterial() const;
+
+	/**
 	* Retrieves the material for the Primitive at a point in world space.
 	* @return The material
 	*/
@@ -49,16 +55,6 @@ public:
 	* Retrieves the bounding box for the Primitive.
 	*/
 	AABB GetBoundingBox() const;
-
-	/**
-	* Retrieves the diffuse texture on the current object.
-	*/
-	FTexture* GetTexture() const;
-
-	/**
-	* Sets a diffuse texture on the current object.
-	*/
-	void SetTexture(FTexture& Texture);
 
 	/**
 	* Sets the parent transform for this object.
@@ -121,7 +117,6 @@ protected:
 
 protected:
 	FMaterial mMaterial;			/* Lighting material properties for the Primitive */
-	FTexture* mDiffuseTexture;		/* Mapped diffise texture for the object */
 	IDrawable* mParentObject;		/* Parent of this object */
 
 private:

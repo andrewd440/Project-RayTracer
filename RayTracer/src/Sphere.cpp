@@ -58,7 +58,8 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 
 FMaterial FSphere::GetMaterial(Vector3f SurfacePoint)
 {
-	if (!mDiffuseTexture)
+	const FTextureInfo& DiffuseInfo = mMaterial.GetDiffuseTexture();
+	if (!DiffuseInfo.Texture)
 		return mMaterial;
 
 	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint).Normalize();
@@ -66,22 +67,21 @@ FMaterial FSphere::GetMaterial(Vector3f SurfacePoint)
 	const Vector3f Ve(0.0f, 0.0f, 1.0f); // points to equator
 
 	const float& Phi = acosf(-Vector3f::Dot(Vn, SurfacePoint)); // get latitude
-	const float& V = Phi * 	mRadius / _PI;
+	const float& V = DiffuseInfo.VAxisScale * Phi * mRadius / _PI;
 
 	const float& Theta = (acosf(Vector3f::Dot(SurfacePoint, Ve) / sinf(Phi))) / (2 * _PI);
 	float U;
 
 	if (Vector3f::Dot(Vector3f::Cross(Vn, Ve), SurfacePoint) > 0)
 	{
-		U = Theta * mRadius;
+		U = Theta * mRadius * DiffuseInfo.UAxisScale;
 	}
 	else
 	{
-		U = (1 - Theta) * mRadius;
+		U = (1 - Theta) * mRadius * DiffuseInfo.UAxisScale;
 	}
 
-	const FColor Diffuse = mDiffuseTexture->GetSample(U, V);
-	mMaterial.diffuseColor = Diffuse;
+	mMaterial.SetDiffuse(DiffuseInfo.Texture->GetSample(U, V));
 	
 	return mMaterial;
 }

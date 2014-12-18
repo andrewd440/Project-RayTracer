@@ -3,7 +3,6 @@
 IDrawable::IDrawable(const FMaterial& LightingMaterial)
 	: mTransform()
 	, mMaterial(LightingMaterial)
-	, mDiffuseTexture(nullptr)
 	, mParentObject(nullptr)
 	, mBoundingBox()
 	, mInvTransform()
@@ -16,20 +15,16 @@ void IDrawable::SetMaterial(const FMaterial& NewMaterial)
 	mMaterial = NewMaterial; 
 }
 
+FMaterial IDrawable::GetMaterial() const
+{
+	return mMaterial;
+}
+
 AABB IDrawable::GetBoundingBox() const
 {
 	return mBoundingBox;
 }
 
-FTexture* IDrawable::GetTexture() const
-{
-	return mDiffuseTexture;
-}
-
-void IDrawable::SetTexture(FTexture& Texture)
-{
-	mDiffuseTexture = &Texture;
-}
 
 void IDrawable::SetBoundingBox(AABB boundingBox)
 {

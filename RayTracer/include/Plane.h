@@ -43,5 +43,9 @@ private:
 private:
 	Vector3f mNormal;
 	float mDistanceFromOrigin;
+	
+	// axis for UV coordinate calculations
+	Vector3f mUAxis;
+	Vector3f mVAxis;
 };
 

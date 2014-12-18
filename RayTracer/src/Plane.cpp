@@ -1,12 +1,16 @@
 #include "Plane.h"
 #include "Intersection.h"
 #include "Camera.h"
+#include "Texture.h"
 
 FPlane::FPlane(const FMaterial& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane)
 	: IDrawable(LightingMaterial)
 	, mNormal(PlaneNormal)
 	, mDistanceFromOrigin()
+	, mUAxis(mNormal.y, mNormal.z, -mNormal.x)
+	, mVAxis(Vector3f::Cross(PlaneNormal, mUAxis).Normalize())
 {
+	mUAxis.Normalize();
 	mNormal.Normalize();
 
 	mDistanceFromOrigin = Vector3f::Dot(-PlaneNormal, PointOnPlane);
@@ -38,6 +42,20 @@ bool FPlane::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Inters
 
 FMaterial FPlane::GetMaterial(Vector3f SurfacePoint)
 {
+	const FTextureInfo& DiffuseTextureInfo = mMaterial.GetDiffuseTexture();
+
+	if (!DiffuseTextureInfo.Texture)
+		return mMaterial;
+
+	// bring point into object space
+	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint);
+
+	// calculate how much to point extends on each UAxis and VAxis
+	const float& U = Vector3f::Dot(SurfacePoint, mUAxis) * DiffuseTextureInfo.UAxisScale;
+	const float& V = Vector3f::Dot(SurfacePoint, mVAxis) * DiffuseTextureInfo.VAxisScale;
+
+	mMaterial.SetDiffuse(DiffuseTextureInfo.Texture->GetSample(U, V));
+
 	return mMaterial;
 }
 
