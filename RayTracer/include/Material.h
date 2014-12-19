@@ -21,23 +21,26 @@ class FMaterial
 {
 public:
 	/**
-	* Constructs a Material with a specular, diffuse, ambient, and glossiness.
-	* @param Specular - The specular color (default: (0.7, 0.7, 0.7))
-	* @param Diffuse - The diffuse color (default: (0.7, 0.7, 0.7))
-	* @param Ambient - The ambient color (default: (0.1, 0.1, 0.1))
-	* @param Glossiness - The glossiness of the surface (default: 1.0)
-	* @param Reflectivity - The reflectiveness of the surface [0-1] (default: 0.0)
+	* Constructs a Material with a specular, diffuse, ambient, glossiness, reflectivity, and refractive index.
+	* @param Specular color (default: (0.7, 0.7, 0.7))
+	* @param Diffuse color (default: (0.7, 0.7, 0.7))
+	* @param Ambient color (default: (0.1, 0.1, 0.1))
+	* @param Glossiness of the surface (default: 1.0)
+	* @param Reflectivity of the surface [0-1] (default: 0.0)
+	* @param RefractiveIndex of the surface.
 	*/
 	FMaterial(	FColor Specular = FColor(0.0f, 0.0f, 0.0f), 
 				FColor Diffuse = FColor(0.7f, 0.7f, 0.7f), 
 				FColor Ambient = FColor(0.1f, 0.1f, 0.1f), 
 				float Glossiness = 0.0f, 
-				float Reflectivity = 0.0f)
+				float Reflectivity = 0.0f,
+				float RefractiveIndex = 1.0f)
 		: mSpecularColor(Specular)
 		, mGlossiness(Glossiness)
 		, mDiffuseColor(Diffuse)
 		, mReflectivity(Reflectivity)
 		, mAmbientColor(Ambient)
+		, mRefractiveIndex(RefractiveIndex)
 		, mDiffuseTextureInfo()
 	{
 		// Reflectivity must be between 0 and 1
@@ -94,6 +97,16 @@ public:
 		return mReflectivity;
 	}
 
+	void SetRefractiveIndex(float Refraction)
+	{
+		mRefractiveIndex = Refraction;
+	}
+
+	float GetRefractiveIndex() const
+	{
+		return mRefractiveIndex;
+	}
+
 	void SetDiffuseTexture(const FTextureInfo& DiffuseInfo)
 	{
 		mDiffuseTextureInfo = DiffuseInfo;
@@ -110,6 +123,7 @@ private:
 	FColor mDiffuseColor;
 	float mReflectivity;
 	FColor mAmbientColor;
+	float mRefractiveIndex;
 	FTextureInfo mDiffuseTextureInfo;
 };
 

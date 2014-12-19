@@ -7,12 +7,15 @@
 FCube::FCube(Vector3f Center, FMaterial LightingMaterial)
 	: IDrawable(LightingMaterial)
 {
-	SetOrigin(Center);
+	SetLocalOrigin(Center);
 	ConstructAABB();
 }
 
 bool FCube::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
+	if (!IsEnabled())
+		return false;
+
 	// just use bounding box as intersection test
 	const float OriginalT = (tValueOut) ? *tValueOut : 0;
 

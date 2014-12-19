@@ -56,7 +56,16 @@ private:
 	* @param ViewerDirection - The Normalized direction of the viewer
 	* @return Normalized direction vector for the specular reflection 
 	*/
-	Vector3f ComputeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection);
+	Vector3f ComputeBlinnSpecularReflection(const Vector3f& LightDirection, const Vector3f& ViewerDirection) const;
+
+	/**
+	* Computes the refraction vector of a surface based on Snell's law.
+	* @param LightDirection of incoming light.
+	* @param SurfaceNormal of the refractive surface.
+	* @param RefractiveIndex of the surface.
+	* @param Normalized direction of the refraction vector.
+	*/
+	Vector3f ComputeRefractionVector(const Vector3f& LightDirection, const Vector3f& SurfaceNormal, const float& RefractiveIndex) const;
 
 	/**
 	* Checks if a light ray is blocked by another object.

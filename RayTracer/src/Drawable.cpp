@@ -6,6 +6,7 @@ IDrawable::IDrawable(const FMaterial& LightingMaterial)
 	, mParentObject(nullptr)
 	, mBoundingBox()
 	, mInvTransform()
+	, mIsEnabled(true)
 {
 
 }
@@ -80,13 +81,31 @@ void IDrawable::Scale(EAxis Axis, float Scale)
 	mInvTransform = mTransform.GetInverse();
 }
 
-void IDrawable::SetOrigin(const Vector3f& Origin)
+void IDrawable::SetLocalOrigin(const Vector3f& Origin)
 {
 	mTransform.SetOrigin(Origin);
 	mInvTransform = mTransform.GetInverse();
 }
 
-Vector3f IDrawable::GetOrigin() const
+Vector3f IDrawable::GetLocalOrigin() const
 {
 	return mTransform.GetOrigin();
+}
+
+Vector3f IDrawable::GetWorldOrigin() const
+{
+	if (mParentObject)
+		return mParentObject->GetWorldOrigin() + mTransform.GetOrigin();
+
+	return mTransform.GetOrigin();
+}
+
+bool IDrawable::IsEnabled() const
+{
+	return mIsEnabled;
+}
+
+void IDrawable::SetEnabled(bool IsEnabled)
+{
+	mIsEnabled = IsEnabled;
 }

@@ -48,6 +48,9 @@ FTriangle::FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, Vector3f Normal, con
 
 bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
 {
+	if (!IsEnabled())
+		return false;
+
 	// Ray/Triangle intersection test from 3D Math Primier for Graphics and Game Development
 
 	// Compute gradient, how steep is the ray against the triangle

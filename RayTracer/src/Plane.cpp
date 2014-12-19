@@ -19,6 +19,9 @@ FPlane::FPlane(const FMaterial& LightingMaterial, Vector3f PlaneNormal, Vector3f
 
 bool FPlane::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
+	if (!IsEnabled())
+		return false;
+
 	// bring ray into object space
 	Ray = GetWorldInvTransform().TransformRay(Ray);
 

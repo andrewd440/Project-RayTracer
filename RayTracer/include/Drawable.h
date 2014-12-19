@@ -99,14 +99,33 @@ public:
 	void Scale(EAxis Axis, float Scale);
 
 	/**
-	* Set the origin of the object.
+	* Set the local origin of the object,
+	* in respect of it's parent, if any.
 	*/
-	void SetOrigin(const Vector3f& Origin);
+	void SetLocalOrigin(const Vector3f& Origin);
 
 	/**
-	* Get the origin of the object.
+	* Get the origin of the object, in respect
+	* to it's parent, if any.
 	*/
-	Vector3f GetOrigin() const;
+	Vector3f GetLocalOrigin() const;
+
+	/**
+	* Get the absolute world position of the object.
+	*/
+	Vector3f GetWorldOrigin() const;
+
+	/**
+	* Check if this object is enabled. Disabled objects
+	* do not intersect other objects.
+	*/
+	bool IsEnabled() const;
+
+	/**
+	* Set status of object. Disabled objects do not intersect
+	* other objects.
+	*/
+	void SetEnabled(bool IsEnabled);
 
 protected:
 	/**
@@ -129,5 +148,6 @@ private:
 	AABB mBoundingBox;				/* Bounding volume */
 	FMatrix4 mTransform;			/* Object space transform */
 	FMatrix4 mInvTransform;			/* Inverse transform of this object, takes object from world to object space */
+	bool mIsEnabled;				/* If the object is disabled, no intersections will take place on it */
 };
 

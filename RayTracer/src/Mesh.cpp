@@ -20,6 +20,9 @@ FMesh::FMesh(const std::string& ModelFilepath, const FMaterial& Material)
 
 bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
+	if (!IsEnabled())
+		return false;
+
 	// check against bounding volume first
 	float NewTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
 

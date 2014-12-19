@@ -22,6 +22,15 @@ public:
 	FColor(float R, float G, float B);
 
 	/**
+	* Constructs a color with given r, g, b values.
+	* @param R - Red component
+	* @param G - Green component
+	* @param B - Blue component
+	* @param A - Transparency component
+	*/
+	FColor(float R, float G, float B, float A);
+
+	/**
 	* Copy assignment
 	* @param rhs - FColor to be copied
 	* @return The resulting color
@@ -84,6 +93,7 @@ public:
 	float r;
 	float g;
 	float b;
+	float a;
 
 	static const FColor Red;
 	static const FColor Green;
@@ -97,13 +107,19 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 inline FColor::FColor()
-	: r(0), g(0), b(0)
+	: r(0.0f), g(0.0f), b(0.0f), a(1.0f)
 {
 
 }
 
 inline FColor::FColor(float R, float G, float B)
-	: r(R), g(G), b(B)
+	: r(R), g(G), b(B), a(1.0f)
+{
+
+}
+
+inline FColor::FColor(float R, float G, float B, float A)
+	: r(R), g(G), b(B), a(A)
 {
 
 }
