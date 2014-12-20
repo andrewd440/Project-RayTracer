@@ -27,6 +27,107 @@ AABB IDrawable::GetBoundingBox() const
 }
 
 
+AABB IDrawable::GetWorldAABB() const
+{
+	// AABB transformation from 3D Math Primer for Graphics
+	// and Game Development
+	// Minimize each element of the transform matrix to get
+	// the transformed AABB
+
+	const FMatrix4& WorldTransform(GetWorldTransform());
+	const AABB& Box(mBoundingBox);
+
+	// Start with the object origin
+	Vector3f Min = WorldTransform.GetOrigin();
+	Vector3f Max(Min);
+
+	// First column
+	if (WorldTransform.M[0][0] > 0.0f)
+	{
+		Min.x += WorldTransform.M[0][0] * Box.Min.x; Max.x += WorldTransform.M[0][0] * Box.Max.x;
+	}
+	else
+	{
+		Min.x += WorldTransform.M[0][0] * Box.Max.x; Max.x += WorldTransform.M[0][0] * Box.Min.x;
+	}
+
+	if (WorldTransform.M[1][0] > 0.0f)
+	{
+		Min.y += WorldTransform.M[1][0] * Box.Min.x; Max.y += WorldTransform.M[1][0] * Box.Max.x;
+	}
+	else
+	{
+		Min.y += WorldTransform.M[1][0] * Box.Max.x; Max.y += WorldTransform.M[1][0] * Box.Min.x;
+	}
+
+	if (WorldTransform.M[2][0] > 0.0f)
+	{
+		Min.z += WorldTransform.M[2][0] * Box.Min.x; Max.z += WorldTransform.M[2][0] * Box.Max.x;
+	}
+	else
+	{
+		Min.z += WorldTransform.M[2][0] * Box.Max.x; Max.z += WorldTransform.M[2][0] * Box.Min.x;
+	}
+
+	// Second column
+	if (WorldTransform.M[0][1] > 0.0f)
+	{
+		Min.x += WorldTransform.M[0][1] * Box.Min.y; Max.x += WorldTransform.M[0][1] * Box.Max.y;
+	}
+	else
+	{
+		Min.x += WorldTransform.M[0][1] * Box.Max.y; Max.x += WorldTransform.M[0][1] * Box.Min.y;
+	}
+
+	if (WorldTransform.M[1][1] > 0.0f)
+	{
+		Min.y += WorldTransform.M[1][1] * Box.Min.y; Max.y += WorldTransform.M[1][1] * Box.Max.y;
+	}
+	else
+	{
+		Min.y += WorldTransform.M[1][1] * Box.Max.y; Max.y += WorldTransform.M[1][1] * Box.Min.y;
+	}
+
+	if (WorldTransform.M[2][1] > 0.0f)
+	{
+		Min.z += WorldTransform.M[2][1] * Box.Min.y; Max.z += WorldTransform.M[2][1] * Box.Max.y;
+	}
+	else
+	{
+		Min.z += WorldTransform.M[2][1] * Box.Max.y; Max.z += WorldTransform.M[2][1] * Box.Min.y;
+	}
+
+	// Third column
+	if (WorldTransform.M[0][2] > 0.0f)
+	{
+		Min.x += WorldTransform.M[0][2] * Box.Min.z; Max.x += WorldTransform.M[0][2] * Box.Max.z;
+	}
+	else
+	{
+		Min.x += WorldTransform.M[0][2] * Box.Max.z; Max.x += WorldTransform.M[0][2] * Box.Min.z;
+	}
+
+	if (WorldTransform.M[1][2] > 0.0f)
+	{
+		Min.y += WorldTransform.M[1][2] * Box.Min.z; Max.y += WorldTransform.M[1][2] * Box.Max.z;
+	}
+	else
+	{
+		Min.y += WorldTransform.M[1][2] * Box.Max.z; Max.y += WorldTransform.M[1][2] * Box.Min.z;
+	}
+
+	if (WorldTransform.M[2][2] > 0.0f)
+	{
+		Min.z += WorldTransform.M[2][2] * Box.Min.z; Max.z += WorldTransform.M[2][2] * Box.Max.z;
+	}
+	else
+	{
+		Min.z += WorldTransform.M[2][2] * Box.Max.z; Max.z += WorldTransform.M[2][2] * Box.Min.z;
+	}
+
+	return AABB(Min, Max);
+}
+
 void IDrawable::SetBoundingBox(AABB boundingBox)
 {
 	mBoundingBox = boundingBox;

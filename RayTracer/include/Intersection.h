@@ -33,7 +33,7 @@ struct FIntersection
 	}
 
 		
-	IDrawable* object;				/* The primative of the intersection */
+	IDrawable* object;			/* The object of the intersection */
 	Vector3f point;				/* Point on the surface of the geometry */
 	Vector3f normal;			/* Surface normal at the point on the geometry */
 };

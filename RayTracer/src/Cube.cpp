@@ -22,14 +22,18 @@ bool FCube::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	// compute intersection in object space
 	Ray = GetWorldInvTransform().TransformRay(Ray);
 
-	const bool IsIntersecting = GetBoundingBox().IsIntersectingRay(Ray, tValueOut, IntersectionOut);
+	const bool IsIntersecting = GetBoundingBox().IsIntersectingRay(Ray, tValueOut);
 
 	// Ray intersects all slabs, return nearest t value if less than tValueOut
-	if (IsIntersecting && tValueOut && OriginalT > *tValueOut)
+	if (IsIntersecting && IntersectionOut && tValueOut && OriginalT > *tValueOut)
 	{
 		// get intersection point in world space
 		Vector3f IntersectionPoint = GetWorldTransform().TransformPosition(Ray.origin + *tValueOut * Ray.direction);
 		ConstructIntersection(IntersectionPoint, IntersectionOut);
+	}
+	else if (tValueOut && OriginalT < *tValueOut)
+	{
+		return false;
 	}
 
 	return IsIntersecting;

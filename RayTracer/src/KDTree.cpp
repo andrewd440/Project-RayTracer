@@ -5,108 +5,140 @@
 
 KDTree::KDTree()
 	: mRoot()
+	, mMinObjectsPerNode(1)
 {
 
 }
 
 
-void KDTree::buildTree(const std::vector<std::unique_ptr<IDrawable>>& Primitives, uint32_t depth)
+void KDTree::BuildTree(const std::vector<std::unique_ptr<IDrawable>>& Primitives, uint32_t depth, uint32_t MinObjectsPerNode)
 {
 	for (const auto& Primitive : Primitives)
-		mRoot.PrimitiveList.push_back(Primitive.get());
+		mRoot.ObjectList.push_back(Primitive.get());
 
-	mRoot.axis = 0;
+	mMinObjectsPerNode = MinObjectsPerNode;
+	mRoot.Axis = 0;
 
-	buildTreeHelper(mRoot, depth);
+	BuildTreeHelper(mRoot, depth);
 }
 
 
-void KDTree::buildTreeHelper(KDNode& currentNode, uint32_t depth)
+void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth)
 {
-	if (depth == 0 || currentNode.PrimitiveList.size() <= 1)
+	if (Depth == 0 || CurrentNode.ObjectList.size() <= mMinObjectsPerNode)
 		return;
 
-	uint32_t dividingAxis = currentNode.axis;
-	std::vector<IDrawable*>& currentPrimitives = currentNode.PrimitiveList;
+	const uint32_t& DividingAxis = CurrentNode.Axis;
+	std::vector<IDrawable*>& CurrentObjects = CurrentNode.ObjectList;
 
-	std::sort(currentPrimitives.begin(), currentPrimitives.end(), [dividingAxis](const IDrawable* lhs, const IDrawable* rhs) -> bool
+	// sort all objects by splitting axis
+	std::sort(CurrentObjects.begin(), CurrentObjects.end(), [DividingAxis](const IDrawable* lhs, const IDrawable* rhs) -> bool
 	{
-		return lhs->GetBoundingBox().GetCenter()[dividingAxis] < rhs->GetBoundingBox().GetCenter()[dividingAxis];
+		return lhs->GetWorldAABB().GetCenter()[DividingAxis] < rhs->GetWorldAABB().GetCenter()[DividingAxis];
 	});
 
-	size_t PrimitiveListSize = currentNode.PrimitiveList.size();
-	size_t medianPrimitiveIndex = PrimitiveListSize / 2;
-	IDrawable* medianPrimitive = currentPrimitives[medianPrimitiveIndex];
-	float medianAxisValue = medianPrimitive->GetBoundingBox().GetCenter()[dividingAxis];
-	currentNode.splitValue = medianAxisValue;
+	const size_t PrimitiveListSize = CurrentNode.ObjectList.size();
+	size_t DividingObjectIndex = PrimitiveListSize / 2;
+	IDrawable* DividingObject = CurrentObjects[DividingObjectIndex];
 
-	std::vector<IDrawable*> straddlingPrimitives;
-	straddlingPrimitives.push_back(medianPrimitive);
-	currentNode.child[0] = std::unique_ptr<KDNode>(new KDNode());
-	currentNode.child[1] = std::unique_ptr<KDNode>(new KDNode());
+	AABB DividingAABB = DividingObject->GetWorldAABB();
+	
+	// offset the dividing axis value to just after the median objects AABB
+	float DividingAxisValue = DividingAABB.GetCenter()[DividingAxis] + DividingAABB.GetDeminsions()[DividingAxis] + 0.1f;
+	
+	// Never let a plane oriented on the dividing axis be the dividing object.
+	// If this happens, the partitioning of the objects will create an unbalanced tree
+	// as objects will be divided based on an infinity axis from the plane.
+	//while (DividingAxisValue > 999999.0f)
+	//{
+	//	DividingObject = CurrentObjects[++DividingObjectIndex];
+	//	DividingAABB = DividingObject->GetWorldAABB();
+	//	DividingAxisValue = DividingAABB.GetCenter()[DividingAxis] + DividingAABB.GetDeminsions()[DividingAxis] + 0.1f;
+	//}
+
+	CurrentNode.SplitValue = DividingAxisValue;
+
+	std::vector<IDrawable*> StraddlingPrimitives;
+	CurrentNode.Child[0] = std::unique_ptr<KDNode>(new KDNode());
+	CurrentNode.Child[1] = std::unique_ptr<KDNode>(new KDNode());
 
 	// check for objects straddling the dividing axis, if so, add them to array
-	for (int i = medianPrimitiveIndex - 1; i >= 0; i--)
+	for (int i = DividingObjectIndex; i >= 0; i--)
 	{
-		const AABB& currentBBox = currentPrimitives[i]->GetBoundingBox();
-		float axisRange = std::abs(currentBBox.Min[dividingAxis] - currentBBox.Max[dividingAxis]);
-		float dividedRange = std::abs(currentBBox.Min[dividingAxis] - medianAxisValue);
-		if (axisRange > dividedRange)
-			straddlingPrimitives.push_back(currentPrimitives[i]);
+		const AABB& CurrentBBox = CurrentObjects[i]->GetWorldAABB();
+		const float AxisRange = CurrentBBox.GetDeminsions()[DividingAxis];
+		const float DividedRange = std::abs(CurrentBBox.Min[DividingAxis] - DividingAxisValue);
+		if (AxisRange > DividedRange)
+			StraddlingPrimitives.push_back(CurrentObjects[i]);
 		else
 		{
-			currentNode.child[0]->PrimitiveList.push_back(currentPrimitives[i]);
+			// add non straddling to near child
+			CurrentNode.Child[0]->ObjectList.push_back(CurrentObjects[i]);
 		}
 	}
 
-	for (size_t i = medianPrimitiveIndex + 1; i < PrimitiveListSize; i++)
+	for (size_t i = DividingObjectIndex + 1; i < PrimitiveListSize; i++)
 	{
-		const AABB& currentBBox = currentPrimitives[i]->GetBoundingBox();
-		float axisRange = currentBBox.Max[dividingAxis] - currentBBox.Min[dividingAxis];
-		float dividedRange = currentBBox.Max[dividingAxis] - medianAxisValue;
-		if (axisRange > dividedRange)
-			straddlingPrimitives.push_back(currentPrimitives[i]);
+		const AABB& CurrentBBox = CurrentObjects[i]->GetWorldAABB();
+		float AxisRange = CurrentBBox.GetDeminsions()[DividingAxis];
+		float DividedRange = CurrentBBox.Max[DividingAxis] - DividingAxisValue;
+		if (AxisRange > DividedRange)
+			StraddlingPrimitives.push_back(CurrentObjects[i]);
 		else
 		{
-			currentNode.child[1]->PrimitiveList.push_back(currentPrimitives[i]);
+			// add non straddling to far child
+			CurrentNode.Child[1]->ObjectList.push_back(CurrentObjects[i]);
 		}
 	}
 
-	currentNode.child[0]->axis = currentNode.child[1]->axis = ++dividingAxis % 3;
-	currentNode.PrimitiveList = straddlingPrimitives;
+	CurrentNode.Child[0]->ObjectList.shrink_to_fit();
+	CurrentNode.Child[1]->ObjectList.shrink_to_fit();
 
-	buildTreeHelper(*currentNode.child[0], depth - 1);
-	buildTreeHelper(*currentNode.child[1], depth - 1);
+	// increment axis for children
+	CurrentNode.Child[0]->Axis = CurrentNode.Child[1]->Axis = (DividingAxis + 1) % 3;
+
+	// add all straddling objects to this node
+	CurrentNode.ObjectList.clear();
+	CurrentNode.ObjectList = StraddlingPrimitives;
+
+	BuildTreeHelper(*CurrentNode.Child[0], Depth - 1);
+	BuildTreeHelper(*CurrentNode.Child[1], Depth - 1);
 }
 
-bool KDTree::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
+bool KDTree::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
-	return visitNodesAgainstRay(&mRoot, ray, tValueOut, intersectionOut);
+	return VisitNodesAgainstRay(&mRoot, Ray, tValueOut, IntersectionOut);
 }
 
-bool KDTree::visitNodesAgainstRay(KDNode* currentNode, FRay ray, float* tValueOut, FIntersection* intersectionOut)
+bool KDTree::VisitNodesAgainstRay(KDNode* CurrentNode, FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
-	if (currentNode == nullptr)
+	if (CurrentNode == nullptr)
 		return false;
 
-	bool isIntersecting = false;
+	bool IsIntersecting = false;
 
-	for (IDrawable* primitive : currentNode->PrimitiveList)
-		isIntersecting |= primitive->IsIntersectingRay(ray, tValueOut, intersectionOut);
+	for (IDrawable* primitive : CurrentNode->ObjectList)
+	{
+		IsIntersecting |= primitive->IsIntersectingRay(Ray, tValueOut, IntersectionOut);
+	}
+
+	// if not IntersectionOut, return when a valid intersection is hit
+	if (!IntersectionOut && IsIntersecting)
+		return true;
 
 	// check which child to traverse first from axis split
-	uint32_t axis = currentNode->axis;
-	uint32_t first = ray.origin[axis] > currentNode->splitValue;
+	uint32_t Axis = CurrentNode->Axis;
+	uint32_t FirstChild = Ray.origin[Axis] > CurrentNode->SplitValue;
 
-	if (ray.direction[axis] == 0.0f)
+	if (1.0f - Ray.direction[Axis] < _EPSILON)
 	{
 		// Ray is parallel to the plane, visit only near side
-		isIntersecting |= visitNodesAgainstRay(currentNode->child[first].get(), ray, tValueOut, intersectionOut);
+		IsIntersecting |= VisitNodesAgainstRay(CurrentNode->Child[FirstChild].get(), Ray, tValueOut, IntersectionOut);
 	}
 	else
 	{
 		// Find t value of intersection of ray with split plane
-		float t = (currentNode->splitValue - ray.origin[axis]) / ray.direction[axis];
+		float t = (CurrentNode->SplitValue - Ray.origin[Axis]) / Ray.direction[Axis];
 
 		// Check if ray straddles the splitting plane
 		// If no tValueout is given, make one
@@ -118,16 +150,16 @@ bool KDTree::visitNodesAgainstRay(KDNode* currentNode, FRay ray, float* tValueOu
 
 		if (0.0f <= t && t < maxTValue)
 		{
-			// Check for intersection in the near field
-			isIntersecting |= visitNodesAgainstRay(currentNode->child[first].get(), ray, tValueOut, intersectionOut);
-			isIntersecting |= visitNodesAgainstRay(currentNode->child[first ^ 1].get(), ray, tValueOut, intersectionOut);
+			// Check for intersection in the near field, then far
+			IsIntersecting |= VisitNodesAgainstRay(CurrentNode->Child[FirstChild].get(), Ray, tValueOut, IntersectionOut);
+			IsIntersecting |= VisitNodesAgainstRay(CurrentNode->Child[FirstChild ^ 1].get(), Ray, tValueOut, IntersectionOut);
 		}
 		else
 		{
 			// Just check near side
-			isIntersecting |= visitNodesAgainstRay(currentNode->child[first].get(), ray, tValueOut, intersectionOut);
+			IsIntersecting |= VisitNodesAgainstRay(CurrentNode->Child[FirstChild].get(), Ray, tValueOut, IntersectionOut);
 		}
 	}
 
-	return isIntersecting;
+	return IsIntersecting;
 }

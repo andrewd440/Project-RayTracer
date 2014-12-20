@@ -46,6 +46,12 @@ public:
 	Vector3f getLightDirection() const;
 
 	/**
+	* Get the distance from a world point to this light source.
+	* This is infinite for directional lights.
+	*/
+	float GetDistance(const Vector3f Position) const override;
+
+	/**
 	* Retrieves the color intensity of the light at a point. (default light color for
 	* directional light)
 	* @param Position Point to check intensity at.

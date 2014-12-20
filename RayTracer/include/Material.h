@@ -36,10 +36,10 @@ public:
 				float Reflectivity = 0.0f,
 				float RefractiveIndex = 1.0f)
 		: mSpecularColor(Specular)
-		, mGlossiness(Glossiness)
 		, mDiffuseColor(Diffuse)
-		, mReflectivity(Reflectivity)
 		, mAmbientColor(Ambient)
+		, mGlossiness(Glossiness)
+		, mReflectivity(Reflectivity)
 		, mRefractiveIndex(RefractiveIndex)
 		, mDiffuseTextureInfo()
 	{
@@ -119,10 +119,10 @@ public:
 
 private:
 	FColor mSpecularColor;
-	float mGlossiness;
 	FColor mDiffuseColor;
-	float mReflectivity;
 	FColor mAmbientColor;
+	float mGlossiness;
+	float mReflectivity;
 	float mRefractiveIndex;
 	FTextureInfo mDiffuseTextureInfo;
 };

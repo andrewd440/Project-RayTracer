@@ -17,7 +17,7 @@
 #include <string>
 #include <limits>
 
-static const Vector2i OutputResolution(1000, 600);
+static const Vector2i OutputResolution(1000,600);
 static std::vector<FTexture> TextureHolder;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,9 +31,9 @@ void throwSceneConfigError(const std::string& ObjectType)
 //////////////////////////////////////////////////////////////////////////////////////////////
 FScene::FScene()
 	: mOutputImage("RenderedScene", OutputResolution)
-	, mBackgroundColor(FColor::White)
+	, mBackgroundColor(FColor::Black)
 	, mGlobalAmbient(0.2f, 0.2f, 0.2f)
-	, mCamera(Vector3f(0, 10, 0), Vector3f(0, 0, -15.0f), Vector3f(0, 1, 0), 75, OutputResolution)
+	, mCamera(Vector3f(0, 4, 5), Vector3f(0, 1, -15.0f), Vector3f(0, 1, 0), 75, OutputResolution)
 	, mPrimitives()
 	, mLights()
 	, mKDTree()
@@ -53,9 +53,9 @@ void FScene::BuildScene(std::istream& in)
 	while (in.good())
 	{
 		//if (string == "BackgroundColor:")
-			//in >> mBackgroundColor.r >> mBackgroundColor.g >> mBackgroundColor.b;
+			//in >> mBackgroundColor.R >> mBackgroundColor.G >> mBackgroundColor.B;
 		if (string == "GlobalAmbientColor:")
-			in >> mGlobalAmbient.r >> mGlobalAmbient.g >> mGlobalAmbient.b;
+			in >> mGlobalAmbient.R >> mGlobalAmbient.G >> mGlobalAmbient.B;
 		else if(string == "Camera")
 		{
 			Vector3f position;
@@ -82,7 +82,7 @@ void FScene::BuildScene(std::istream& in)
 			in >> string;
 			if (string != "Color:")
 				throwSceneConfigError("DirectionalLight");
-			in >> color.r >> color.g >> color.b;
+			in >> color.R >> color.G >> color.B;
 
 			in >> string;
 			if (string != "Direction:")
@@ -99,7 +99,7 @@ void FScene::BuildScene(std::istream& in)
 			in >> string;
 			if (string != "Color:")
 				throwSceneConfigError("PointLight");
-			in >> color.r >> color.g >> color.b;
+			in >> color.R >> color.G >> color.B;
 
 			in >> string;
 			if (string != "Position:")
@@ -160,26 +160,24 @@ void FScene::BuildScene(std::istream& in)
 			in >> translation.x >> translation.y >> translation.z;
 
 			FMaterial material(ReadMaterial(in));
-
-			ReadModel(filename, translation, material);
 		}
 		in >> string;
 	}
 
+	TextureHolder.push_back(FTexture("Textures/Checker.tga"));
 	TextureHolder.push_back(FTexture("Textures/Danbotexture.tga"));
 	TextureHolder.push_back(FTexture("Textures/Bricks.tga"));
-	TextureHolder.push_back(FTexture("Textures/RockDiff.tga"));
-	TextureHolder.push_back(FTexture("Textures/Checker.tga"));
+	//TextureHolder.push_back(FTexture("Textures/RockDiff.tga"));
 
-	FTextureInfo BrickPlaneInfo{ &TextureHolder[1], 0.05f, 0.05f };
-	FMaterial BrickPlaneMaterial(FColor(.3f, .1f, .1f), FColor(.8f, .2f, .2f), FColor(.1f, .1f, .1f), 1, 0.0f);
-	BrickPlaneMaterial.SetDiffuseTexture(BrickPlaneInfo);
+	//FTextureInfo BrickPlaneInfo{ &TextureHolder[2], 0.05f, 0.05f };
+	//FMaterial BrickPlaneMaterial(FColor(.3f, .1f, .1f), FColor(.8f, .2f, .2f), FColor(.1f, .1f, .1f), 1, 0.0f);
+	//BrickPlaneMaterial.SetDiffuseTexture(BrickPlaneInfo);
 
-	FTextureInfo TilePlaneInfo{ &TextureHolder[3], 0.25f, 0.25f };
+	FTextureInfo TilePlaneInfo{ &TextureHolder[0], 0.25f, 0.25f };
 	FMaterial TilePlaneMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 128, 0.8f);
 	TilePlaneMaterial.SetDiffuseTexture(TilePlaneInfo);
 
-	FTextureInfo BrickBoxInfo{ &TextureHolder[1], 0.35f, 0.25f };
+	FTextureInfo BrickBoxInfo{ &TextureHolder[2], 0.35f, 0.25f };
 	FMaterial BrickBoxMaterial(FColor(.8f, .8f, .8f), FColor(.0f, .0f, .0f), FColor(.1f, .1f, .1f), 64, 0.0f);
 	BrickBoxMaterial.SetDiffuseTexture(BrickBoxInfo);
 
@@ -187,20 +185,20 @@ void FScene::BuildScene(std::istream& in)
 	FMaterial BrickSphereMaterial(FColor(.8f, .8f, .8f), FColor(.0f, .0f, .0f), FColor(.1f, .1f, .1f), 64, 0.0f);
 	BrickSphereMaterial.SetDiffuseTexture(BrickSphereInfo);
 
-	FTextureInfo BoxManTextInfo{ &TextureHolder[0], 1.0f, 1.0f };
-	FMaterial BoxManMaterial(FMaterial(FColor(.1f, .1f, .1f), FColor(.1f, .1f, .1f), FColor(.1f, .1f, .1f), 12, 0.0f));
+	FTextureInfo BoxManTextInfo{ &TextureHolder[1], 1.0f, 1.0f };
+	FMaterial BoxManMaterial(FMaterial(FColor(.7f, .7f, .7f), FColor(.7f, .7f, .7f), FColor(.1f, .1f, .1f), 12, 0.0f));
 	BoxManMaterial.SetDiffuseTexture(BoxManTextInfo);
 	
 	//mLights.push_back(LightPtr(new FPointLight(FColor(0.6f, 0.1f, 0.4f), Vector3f(3.0f, 10.0f, -20.0f), 2, 2, 20)));
 	//mLights.push_back(LightPtr(new FPointLight(FColor(0.3f, 1.0f, 1.0f), Vector3f(2.0f, 7, -10.0f), 1, 10, 35)));
-	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.6f, 0.6f, 0.6f), Vector3f(-1.0f, -1.0f, -2.0f))));
+	//mLights.push_back(LightPtr(new FDirectionalLight(FColor(0.3f, 0.3f, 0.3f), Vector3f(-1.0f, -1.0f, -2.0f))));
 
 	IDrawable* Drawable;
 	mPrimitives.push_back(PrimitivePtr(new FPlane(TilePlaneMaterial, Vector3f(0.0f, 1.0f, 0.0f), Vector3f(0, -5.0f, 0))));
-	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.2f), Vector3f(0.0f, -1.0f, 0.0f), Vector3f(0, 10.0f, 0))));
-	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.2f), Vector3f(1.0f, 0.0f, 0.0f), Vector3f(-15.0f, 0.0f, 0))));
-	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.2f), Vector3f(-1.0f, 0.0f, 0.0f), Vector3f(15.0f, 0.0f, 0))));
-	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.2f), Vector3f(0.0f, 0.0f, 1.0f), Vector3f(0, 0.0f, -35.0f))));
+	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.1f), Vector3f(0.0f, -1.0f, 0.0f), Vector3f(0, 10.0f, 0))));
+	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.1f), Vector3f(1.0f, 0.0f, 0.0f), Vector3f(-10.0f, 0.0f, 0))));
+	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.8f, .8f, .8f), FColor(.8f, .8f, .8f), FColor(.1f, .1f, .1f), 64, 0.1f), Vector3f(-1.0f, 0.0f, 0.0f), Vector3f(10.0f, 0.0f, 0))));
+	//mPrimitives.push_back(PrimitivePtr(new FPlane(FMaterial(FColor(.9f, .9f, .9f), FColor(.9f, .9f, .9f, 1.0f), FColor(.0f, .0f, .0f), 64, 1.0f), Vector3f(0.0f, 0.0f, 1.0f), Vector3f(0, 0.0f, -35.0f))));
 	
 	//std::unique_ptr<FTriangle> Triangle(new FTriangle(Vector3f(-15.0f, 7.0f, -18.0f), Vector3f(15.0f, 8.0f, -18.0f), Vector3f(-15.0f, -11.0f, -18.0f)));
 	//Triangle->SetTexture(&TextureHolder[0]);
@@ -208,12 +206,13 @@ void FScene::BuildScene(std::istream& in)
 	//Triangle->SetUVCoordinates(Vector2f(0.0f, 0.0f), Vector2f(1.0f, 0.0f), Vector2f(0.0f, 1.0f));
 	//mPrimitives.push_back(std::move(Triangle));
 
-	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-0.0f, 14.0f, -10.0f), 1.5f, 10, 35)));
-	//mPrimitives.push_back(PrimitivePtr(new FMesh("Models/BoxMan.obj", BoxManMaterial)));
-	//FMatrix4 trans;
-	//trans.SetOrigin(Vector3f(1.0f, -2.0f, -24));
-	//trans.Rotate(EAxis::Y, -25);
-	//Drawable->SetTransform(trans);
+	mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(-3.0f, 8.0f, -13.0f), 1, 5, 35)));
+	mPrimitives.push_back(PrimitivePtr(new FMesh("Models/BoxMan.obj", BoxManMaterial)));
+	Drawable = mPrimitives.back().get();
+	FMatrix4 trans;
+	trans.SetOrigin(Vector3f(2.0f, -2.0f, -18));
+	trans.Rotate(EAxis::Y, -25);
+	Drawable->SetTransform(trans);
 	///*mPrimitives.back().get()->Transform.SetOrigin(Vector3f(5, -1.0f, -15));
 	//mPrimitives.back().get()->Transform.Rotate(FMatrix4::Axis::Y, -25);*/
 
@@ -223,31 +222,46 @@ void FScene::BuildScene(std::istream& in)
 	//Drawable->Transform.Scale(Vector3f(3,.5,2));
 	
 	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -2.0f, -15.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.5f, 1.0f, .5f), FColor(.1f, .1f, .1f), 64, .9f))));
-	//cube = mPrimitives.back().get();
-	//cube->Transform.Scale(0.5f);
-
-	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(3.0f, -3.5f, -13.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.1f, .3f, .8f, 0.7f), FColor(.1f, .1f, .1f), 64, .0f))));
 	//Drawable = mPrimitives.back().get();
-	//Drawable->Scale(EAxis::Y, 1.5f);
+	//Drawable->Scale(EAxis::X, 0.5f);
+
+	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-3.0f, -3.5f, -17.0f), FMaterial(FColor(.2f, .7f, .7f), FColor(.1f, .3f, .8f, 0.7f), FColor(.1f, .1f, .1f), 64, .0f))));
+	Drawable = mPrimitives.back().get();
+	Drawable->Scale(EAxis::Y, 1.5f);
 	//Drawable->Scale(EAxis::Z, 1.5f);
 	//Drawable->Scale(EAxis::X, 1.5f);
 
-	//mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(-5.0f, -2.0f, -15.0f), BrickBoxMaterial)));
-	//Drawable = mPrimitives.back().get();
-	//Drawable->Scale(EAxis::Y, 1.5f);
-	//Drawable->Scale(EAxis::Z, 3.25f);
-	//Drawable->Scale(EAxis::X, 0.25f);
+	mPrimitives.push_back(PrimitivePtr(new FCube(Vector3f(0.0f, -2.0f, -35.0f), BrickBoxMaterial)));
+	Drawable = mPrimitives.back().get();
+	Drawable->Scale(EAxis::Y, 1.5f);
+	Drawable->Scale(EAxis::Z, 0.25f);
+	Drawable->Scale(EAxis::X, 30.25f);
 	//Drawable->Rotate(EAxis::Y, -10.0f);
 
-	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-4.0f, 1.0f, -12.5f), 1.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f), FColor(.1f, .1f, .1f), 64, .9f))));
+	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-6.0f, -1.0f, -15.5f), 2.0f, FMaterial(FColor(.2f, .7f, .7f), FColor(1.0f, .4f, .1f, 0.3f), FColor(.1f, .1f, .1f), 64, .1f, 1.33f))));
 
-	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(5.0f, 2.0f, -12.0f), 2.0f, BrickSphereMaterial)));
+	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-2.0f, 4.0f, -20.0f), 1.0f, BrickSphereMaterial)));
+	//Drawable = mPrimitives.back().get();
+	//Drawable->Rotate(EAxis::Y, 25.0f);
 
 	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.8f, .3f, .1f), FColor(0.7f, .3f, .1f, 0.4f), FColor(.1f, .1f, .1f), 128, 0.0f, 1.4f))));
 	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(-1.0f, 0.0f, -15.0f), 3.0f, FMaterial(FColor(0.628f, 0.555f, 0.366f), FColor(0.7516f, 0.606f, 0.226f, 1.0f), FColor(.24725f, .1995f, .0745f), 102.4f, 0.7f, 0.0f))));
-	mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.8f, .3f, .1f), FColor(0.7f, .3f, .1f, 0.4f), FColor(.1f, .1f, .1f), 128, 0.0f, 1.33f))));
+	//mPrimitives.push_back(PrimitivePtr(new FSphere(Vector3f(5.0f, 1.0f, -15.0f), 2.0f, FMaterial(FColor(.8f, .3f, .1f), FColor(0.7f, .3f, .1f, 0.4f), FColor(.1f, .1f, .1f), 128, 0.0f, 1.33f))));
 
-	//mKDTree.buildTree(mPrimitives, 10);
+	//mLights.push_back(LightPtr(new FPointLight(FColor::White, Vector3f(15.0f, 15.0f, -15.0f), .5f, 10, 55)));
+	//for (int x = 0; x < 30; x+=6)
+	//{
+	//	for (int y = 0; y < 20; y+=4)
+	//	{
+	//		for (int z = 0; z < 30; z+=6)
+	//		{
+	//			const Vector3f Position(x - 15, y - 4, z - 30);
+	//			mPrimitives.push_back(PrimitivePtr(new FSphere(Position, 1.0f, FMaterial(FColor(.8f, .3f, .1f), FColor(0.7f, .3f, .1f, 1.0f), FColor(.1f, .1f, .1f), 128, 0.5f, 1.0f))));
+	//		}
+	//	}
+	//}
+
+	mKDTree.BuildTree(mPrimitives, 10, 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,12 +276,12 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 
 	
 	 //For performs difference tests
-	for (const auto& Primitive : mPrimitives)
-	{
-		Primitive->IsIntersectingRay(CameraRay, &MaxTValue, &ClosestIntersection);
-	}
+	//for (const auto& Primitive : mPrimitives)
+	//{
+	//	Primitive->IsIntersectingRay(CameraRay, &MaxTValue, &ClosestIntersection);
+	//}
 		
-	//mKDTree.IsIntersectingRay(cameraRay, &maxTValue, &closestIntersection);
+	mKDTree.IsIntersectingRay(CameraRay, &MaxTValue, &ClosestIntersection);
 
 	// If an object was intersected
 	if (ClosestIntersection.object)
@@ -306,7 +320,7 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 
 				LightColor *= ShadeFactor;
 			}
-			else if (IsInShadow(RayToLight))
+			else if (IsInShadow(RayToLight, light->GetDistance(SurfacePoint)))
 			{
 				continue;
 			}
@@ -327,11 +341,11 @@ FColor FScene::TraceRay(const FRay& CameraRay, int32_t Depth)
 			// Add diffuse and specular contributions to total
 			OutputColor += specularColor + diffuseColor;
 
-			if (SurfaceMaterial.GetDiffuse().a < 1.0f)
+			if (SurfaceMaterial.GetDiffuse().A < 1.0f)
 			{
-				OutputColor *= SurfaceMaterial.GetDiffuse().a;
+				OutputColor *= SurfaceMaterial.GetDiffuse().A;
 				const FRay Refraction(SurfacePoint, ComputeRefractionVector(-CameraRay.direction, SurfaceNormal, SurfaceMaterial.GetRefractiveIndex()));
-				OutputColor += (1 - SurfaceMaterial.GetDiffuse().a) * TraceRay(Refraction, Depth - 1);
+				OutputColor += (1 - SurfaceMaterial.GetDiffuse().A) * TraceRay(Refraction, Depth - 1);
 			}
 
 			// Add mirror reflection contributions
@@ -380,12 +394,11 @@ void FScene::RenderScene()
 				PixelColor = TraceRay(PixelRay, 5);
 			}
 
-			mOutputImage.setPixel(x, y, PixelColor.Clamp());
+			mOutputImage.SetPixel(x, y, PixelColor.Clamp());
 		}
 
 		// Display progress to console
 		UpdateInterval++;
-
 		if (UpdateInterval >= PercentUpdateRate)
 		{
 			UpdateInterval = 0;
@@ -393,7 +406,7 @@ void FScene::RenderScene()
 		}
 	}
 
-	mOutputImage.writeImage();
+	mOutputImage.WriteImage();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -416,40 +429,47 @@ Vector3f FScene::ComputeRefractionVector(const Vector3f& LightDirection, const V
 	return ((InvRefractive * NDotL - std::sqrtf(1 - InvRefractive * InvRefractive * (1 - (NDotL * NDotL)))) * SurfaceNormal - InvRefractive * LightDirection).Normalize();
 }
 
-bool FScene::IsInShadow(const FRay& LightRay)
+bool FScene::IsInShadow(const FRay& LightRay, float MaxDistance)
 {
-	//return mKDTree.IsIntersectingRay(LightRay);
+	return mKDTree.IsIntersectingRay(LightRay, &MaxDistance);
 
 	// For performance tests
-	for (const auto& Primitive : mPrimitives)
-	{
-		// If the intersects the light
-		if (Primitive->IsIntersectingRay(LightRay))
-			return true;
-	}
+	//for (const auto& Primitive : mPrimitives)
+	//{
+	//	// If the intersects the light
+	//	if (Primitive->IsIntersectingRay(LightRay, &MaxDistance))
+	//		return true;
+	//}
 
-	return false;
+	//return false;
 	
 }
 
-float FScene::ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint) const
+float FScene::ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint)
 {
 	const float FactorSize = 1.0f / mNumberOfShadowSamples;
 	float ShadeFactor = 1.0f;
-
+	const float MaxTValue = Light.GetDistance(SurfacePoint);
 	for (FRay ShadowSample : Light.GetRayToLightSamples(SurfacePoint, mNumberOfShadowSamples))
 	{
 		// make sure the ray doesn't start below the surface
-		ShadowSample.origin += ShadowSample.direction * _EPSILON;
-		for (const auto& Primitive : mPrimitives)
+		//ShadowSample.origin += ShadowSample.direction * _EPSILON;
+		//FIntersection Intersection;
+		float tValue = MaxTValue;
+		if (mKDTree.IsIntersectingRay(ShadowSample, &tValue))
 		{
-			// If the object is not the reference one and intersects the light
-			if (Primitive->IsIntersectingRay(ShadowSample))
-			{
-				ShadeFactor -= FactorSize * Primitive->GetMaterial().GetDiffuse().a;
-				break;
-			}
+			ShadeFactor -= FactorSize;
 		}
+
+		//for (const auto& Primitive : mPrimitives)
+		//{
+		//	// If the object is not the reference one and intersects the light
+		//	if (Primitive->IsIntersectingRay(ShadowSample, &MaxTValue))
+		//	{
+		//		ShadeFactor -= FactorSize * Primitive->GetMaterial().GetDiffuse().a;
+		//		break;
+		//	}
+		//}
 	}
 
 	return ShadeFactor;
@@ -477,17 +497,17 @@ FMaterial FScene::ReadMaterial(std::istream& input)
 	input >> materialProperty;
 	if (materialProperty != "Specular:")
 		throwSceneConfigError("Material");
-	input >> specular.r >> specular.g >> specular.b;
+	input >> specular.R >> specular.G >> specular.B;
 
 	input >> materialProperty;
 	if (materialProperty != "Diffuse:")
 		throwSceneConfigError("Material");
-	input >> diffuse.r >> diffuse.g >> diffuse.b;
+	input >> diffuse.R >> diffuse.G >> diffuse.B;
 
 	input >> materialProperty;
 	if (materialProperty != "Ambient:")
 		throwSceneConfigError("Material");
-	input >> ambient.r >> ambient.g >> ambient.b;
+	input >> ambient.R >> ambient.G >> ambient.B;
 
 	input >> materialProperty;
 	if (materialProperty != "SpecularExponent:")
@@ -500,51 +520,4 @@ FMaterial FScene::ReadMaterial(std::istream& input)
 	input >> reflectivity;
 
 	return FMaterial(specular, diffuse, ambient, specualarExponent, reflectivity);
-}
-
-void FScene::ReadModel(std::string filename, Vector3f translation, FMaterial material)
-{
-	std::filebuf modelBuffer;
-	if (modelBuffer.open(filename, std::ios::in))
-	{
-		std::istream in(&modelBuffer);
-
-		std::string string;
-		std::size_t vertexIndex;
-		Vector3f vertex;
-		std::vector<Vector3f> vertices;
-
-		// Vertex indices for each face
-		std::size_t faceV0, faceV1, faceV2;
-
-		in >> string;
-
-		while (in.good())
-		{
-			if (string == "Vertex")
-			{
-				in >> vertexIndex;
-				in >> vertex.x >> vertex.y >> vertex.z;
-				vertex *= 2;
-				vertex += translation;
-				vertices.push_back(vertex);
-			}
-			else if (string == "Face")
-			{
-				// pull out face number
-				in >> string;
-
-				// Get vertices' indices
-				in >> faceV0;
-				in >> faceV1;
-				in >> faceV2;
-
-				mPrimitives.push_back(PrimitivePtr(new FTriangle(vertices[faceV0-1], vertices[faceV1-1], vertices[faceV2-1], material)));
-			}
-
-			in >> string;
-		}
-	}
-
-	modelBuffer.close();
 }

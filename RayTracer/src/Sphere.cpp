@@ -22,20 +22,20 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 	const Vector3f rayOrigin = ray.origin;
 
 	// Coefficients for quandratic equation
-	const float b = Vector3f::Dot(rayOrigin, rayDirection);
-	const float c = Vector3f::Dot(rayOrigin, rayOrigin) - mRadius * mRadius;
+	const float B = Vector3f::Dot(rayOrigin, rayDirection);
+	const float C = Vector3f::Dot(rayOrigin, rayOrigin) - mRadius * mRadius;
 
 	// If the ray origin is outside the sphere and direction is pointing away from sphere
-	if (c > 0 && b > 0) 
+	if (C > 0 && B > 0) 
 		return false;
 
-	const float discriminate = (b * b) - c;
+	const float discriminate = (B * B) - C;
 
 	// If discriminate is less than zero, there is no real roots (no intersection)
 	if (discriminate < 0)
 		return false;
 
-	float smallestTValue = -b - sqrtf(discriminate);
+	float smallestTValue = -B - sqrtf(discriminate);
 
 	// If t is negative, the ray started inside the sphere, reject the collision for now
 	// Avoid really small values of t to prevent shadow errors
@@ -44,15 +44,23 @@ bool FSphere::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* inter
 
 	// Only modify t parameter if this intersection's t value is smaller, so we always
 	// have the closest intersection
-	if (tValueOut && smallestTValue < *tValueOut)
+	if (tValueOut)
 	{
-		*tValueOut = smallestTValue;
+		if (intersectionOut && smallestTValue < *tValueOut)
+		{
+			*tValueOut = smallestTValue;
 
-		// Construct intersection in world space with t solution
-		Vector3f intersection = rayOrigin + smallestTValue * rayDirection;
-		intersection = GetWorldTransform().TransformPosition(intersection);
+			// Construct intersection in world space with t solution
+			Vector3f intersection = rayOrigin + smallestTValue * rayDirection;
+			intersection = GetWorldTransform().TransformPosition(intersection);
 
-		ConstructIntersection(intersection, *intersectionOut);
+			ConstructIntersection(intersection, *intersectionOut);
+		}
+		// if we didnt intersection within a given t value, return false
+		else if (smallestTValue > *tValueOut)
+		{
+			return false;
+		}
 	}
 
 	return true;

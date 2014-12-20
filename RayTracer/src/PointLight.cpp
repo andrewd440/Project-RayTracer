@@ -14,7 +14,7 @@ FPointLight::FPointLight(FColor LightColor, Vector3f LightPosition, float SizeRa
 
 FRay FPointLight::GetRayToLight(const Vector3f& SurfacePoint) const
 {
-	FRay LightRay(SurfacePoint, mPosition - SurfacePoint);
+	FRay LightRay(SurfacePoint, (mPosition - SurfacePoint).Normalize());
 	LightRay.origin += LightRay.direction * _EPSILON;
 	return LightRay;
 }
@@ -62,7 +62,7 @@ std::vector<FRay> FPointLight::GetRayToLightSamples(const Vector3f& SurfacePoint
 			Vector3f GridPosition(X, 0, Z);
 			GridPosition = LightPlaneFrame.TransformPosition(GridPosition);
 
-			FRay RayToGrid(SurfacePoint, GridPosition - SurfacePoint);
+			FRay RayToGrid(SurfacePoint, (GridPosition - SurfacePoint).Normalize());
 			RayToGrid.origin += RayToGrid.direction * _EPSILON;
 
 			SampleRays.push_back(RayToGrid);
@@ -80,6 +80,11 @@ void FPointLight::SetLightPosition(const Vector3f& LightPosition)
 Vector3f FPointLight::GetLightPosition() const
 {
 	return mPosition;
+}
+
+float FPointLight::GetDistance(const Vector3f Position) const
+{
+	return (mPosition - Position).Length();
 }
 
 FColor FPointLight::GetIntesityAt(Vector3f Position) const

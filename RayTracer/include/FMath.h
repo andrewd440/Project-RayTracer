@@ -27,13 +27,24 @@ inline void UpdateBounds(Vector3f& CurrentMin, Vector3f& CurrentMax, const Vecto
 		{
 			CurrentMax[i] = NewPoint[i];
 		}
-		else if (CurrentMin[i] > NewPoint[i])
+		if (CurrentMin[i] > NewPoint[i])
 		{
 			CurrentMin[i] = NewPoint[i];
 		}
 	}
 }
 
+/**
+* Computes the barycentric coordinates of a point in respect
+* to a triangle. If the point is outside the bounds of the 
+* triangle, negative barycentric values will be given.
+* Vertex order should follow clockwise ordering.
+* @param V0 First vertex of the triangle
+* @param V1 Second vertex of the triangle
+* @param V2 Third vertex of the triangle
+* @param SurfacePoint Point to compute barycentric coordinates for.
+* @param BOut Barycentric values are output through this.
+*/
 inline void ComputeBarycentric(	const Vector3f& V0, 
 								const Vector3f& V1, 
 								const Vector3f& V2, 

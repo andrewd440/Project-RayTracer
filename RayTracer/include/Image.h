@@ -23,25 +23,25 @@ public:
 	* @param Y - y coordinate of the pixel
 	* @param Color - The color of the pixel
 	*/
-	void setPixel(const int32_t& X, const int32_t& Y, const FColor& Color);
+	void SetPixel(const int32_t& X, const int32_t& Y, const FColor& Color);
 
 	/**
 	* Writes a .ppm image file with the rgb values currently stored for
 	* each pixel.
 	*/
-	void writeImage();
+	void WriteImage();
 
 	/**
 	* Sets the filename for the output image file.
 	* @param Filename - Name of the output file
 	*/
-	void setFilename(const std::string& Filename);
+	void SetFilename(const std::string& Filename);
 
 	/**
 	* Retrieves the filename for the output image file.
 	* @return String containing the filename
 	*/
-	std::string getFilename() const;
+	std::string GetFilename() const;
 
 private:
 	/* Color values for each pixel. Indexed by [HorizontalPosition][VerticalPosition] */

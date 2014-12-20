@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Object.h"
+#include <algorithm>
+
+#include "Ray.h"
 #include "FMath.h"
 
 /**
 * Bounding volume used to accelerate intersection tests.
 */
-class AABB : public IObject
+class AABB
 {
 public:
 	Vector3f Min, Max;
@@ -23,9 +25,17 @@ public:
 	*							if the interection returns true
 	* @return True if the ray intersects the Primitive.
 	*/
-	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr) override;
+	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr);
 
+	/**
+	* Get the center point of the box.
+	*/
 	Vector3f GetCenter() const;
+
+	/**
+	* Get the length of each axis of the AABB
+	*/
+	Vector3f GetDeminsions() const { return Max - Min; }
 };
 
 
@@ -35,7 +45,7 @@ inline AABB::AABB(Vector3f MinBounds, Vector3f MaxBounds)
 {
 }
 
-inline bool AABB::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
+inline bool AABB::IsIntersectingRay(FRay Ray, float* tValueOut)
 {
 	/**
 	* Ray-AABB intersection test from Real-Time Collision Detection by Christer Ericson p. 181
@@ -78,9 +88,17 @@ inline bool AABB::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* I
 	}
 
 	// Ray intersects all slabs, return nearest t value if less than tValueOut
-	if (tValueOut && tMin < *tValueOut)
+	if (tValueOut)
 	{
-		*tValueOut = tMin;
+		if (tMin < *tValueOut)
+		{
+			*tValueOut = tMin;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	return true;

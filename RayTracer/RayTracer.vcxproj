@@ -114,7 +114,6 @@
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\Cube.h" />
     <ClInclude Include="include\DirectionalLight.h" />
-    <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\Image.h" />
     <ClInclude Include="include\Intersection.h" />

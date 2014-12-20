@@ -6,8 +6,7 @@ class FCube : public IDrawable
 public:
 	/**
 	* Construct a renderable 3d cube.
-	* @param MinPoint Min bounds of the cube.
-	* @param MaxPoint Max bounds of the cube.
+	* @param Center of the cube.
 	* @LightingMaterial Material of the cube.
 	*/
 	FCube(Vector3f Center, FMaterial LightingMaterial);

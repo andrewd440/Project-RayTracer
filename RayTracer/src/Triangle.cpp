@@ -150,10 +150,15 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	if (!(gamma >= 0.0f))
 		return false;
 
-	if (tValueOut && t < *tValueOut)
+	if (intersectionOut && tValueOut && t < *tValueOut)
 	{
 		*tValueOut = t;
 		ConstructIntersection(ray.origin + t * ray.direction, intersectionOut);
+	}
+	// if we didnt intersection within a given t value, return false
+	else if (t > *tValueOut)
+	{
+		return false;
 	}
 
 	return true;

@@ -11,13 +11,12 @@ struct FRay
 	* Constructs a ray from an origin point that points in a 
 	* given direction.
 	* @param OriginiPoint - The origin of the ray
-	* @param DirectionVector - A direction for the ray (is normalized on construction)
+	* @param DirectionVector - A direction for the ray (not normalized on construction)
 	*/
 	inline FRay(Vector3f OriginPoint = Vector3f(), Vector3f DirectionVector = Vector3f())
 		: origin(OriginPoint)
 		, direction(DirectionVector)
 	{
-		direction.Normalize();
 	}
 
 	/**
@@ -26,7 +25,7 @@ struct FRay
 	* @param t - Value for t in the ray equation
 	* @return Point on the ray at t
 	*/
-	inline Vector3f getPointAtParameter(float t)
+	inline Vector3f GetPointAtParameter(float t)
 	{
 		return origin + direction * t;
 	}

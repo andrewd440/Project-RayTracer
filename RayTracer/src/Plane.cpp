@@ -5,14 +5,11 @@
 
 FPlane::FPlane(const FMaterial& LightingMaterial, Vector3f PlaneNormal, Vector3f PointOnPlane)
 	: IDrawable(LightingMaterial)
-	, mNormal(PlaneNormal)
+	, mNormal(PlaneNormal.Normalize())
 	, mDistanceFromOrigin()
 	, mUAxis(mNormal.y, mNormal.z, -mNormal.x)
 	, mVAxis(Vector3f::Cross(PlaneNormal, mUAxis).Normalize())
 {
-	mUAxis.Normalize();
-	mNormal.Normalize();
-
 	mDistanceFromOrigin = Vector3f::Dot(-PlaneNormal, PointOnPlane);
 	ConstructAABB();
 }
@@ -29,15 +26,22 @@ bool FPlane::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Inters
 		return false;
 
 	// Plane/Ray intersection from Mathmatics for 3D Game Programming and Computer Graphics
-	float tValue = -(Vector3f::Dot(mNormal, Ray.origin) + mDistanceFromOrigin) / (Vector3f::Dot(mNormal, Ray.direction));
+	const float tValue = -(Vector3f::Dot(mNormal, Ray.origin) + mDistanceFromOrigin) / (Vector3f::Dot(mNormal, Ray.direction));
 
 	if (tValue <= _EPSILON)
 		return false;
 
-	if (tValueOut && tValue < *tValueOut)
+	if (tValueOut)
 	{
-		*tValueOut = tValue;
-		ConstructIntersection(Ray.origin + Ray.direction * tValue, *IntersectionOut);
+		if (IntersectionOut && tValue < *tValueOut)
+		{
+			*tValueOut = tValue;
+			ConstructIntersection(Ray.origin + Ray.direction * tValue, *IntersectionOut);
+		}
+		else if (tValue > *tValueOut)
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -74,8 +78,8 @@ void FPlane::ConstructAABB(Vector3f Min, Vector3f Max)
 	Max.x = std::numeric_limits<float>::max();
 	Min.x = -std::numeric_limits<float>::max();
 
-	Max.y = 0;
-	Min.y = 0;
+	Max.y = std::numeric_limits<float>::max();;
+	Min.y = -std::numeric_limits<float>::max();;
 
 	Max.z = std::numeric_limits<float>::max();
 	Min.z = -std::numeric_limits<float>::max();

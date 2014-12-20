@@ -70,10 +70,11 @@ private:
 	/**
 	* Checks if a light ray is blocked by another object.
 	* @param LightRay - A ray from the surface point on the Primitive to the light source
+	* @param MaxDistance of the light ray
 	* @return True if the point is in a shadow
 	*
 	*/
-	bool IsInShadow(const FRay& LightRay);
+	bool IsInShadow(const FRay& LightRay, float MaxDistance);
 
 	/**
 	* Computes the factor of a light that is visible to a surface point.
@@ -82,7 +83,7 @@ private:
 	* @return Value between 0-1 for the factor of light that is visible to the surface 
 	*
 	*/
-	float ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint) const;
+	float ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint);
 
 	/**
 	* Computes a mirror reflection from a light direction and a reflection normal
@@ -104,15 +105,6 @@ private:
 	*/
 	FMaterial ReadMaterial(std::istream& Input);
 
-	/**
-	* Reads in a model from a file of vertices and faces. Applies a translation
-	* if given;
-	* @param Filename - File path for the model.
-	* @param Translation - 3D translation values.
-	* @param MaterialProperties - Model lighting material.
-	*/
-	void ReadModel(std::string Filename, Vector3f Translation, FMaterial MaterialProperties);
-
 private:
 	FImage mOutputImage; /* Output image for the rendered scene */
 	FCamera mCamera; /* FCamera for the scene */
@@ -120,7 +112,7 @@ private:
 	std::vector<LightPtr> mLights; /* All lights in the scene */
 	FColor mBackgroundColor; /* Background color for the scene */
 	FColor mGlobalAmbient; /* Color used for global ambient lighting */
-	KDTree mKDTree;
+	KDTree mKDTree; /* Spatial partition tree */
 
 	uint16_t mNumberOfShadowSamples; /* Number of samples to use when generating shadows */
 	uint8_t mSuperSamplingLevel; /* The number of rays generated per pixel is squared this number */

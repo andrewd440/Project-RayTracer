@@ -29,18 +29,25 @@ public:
 	TVector3<T>& operator*=(const U& Scalar);
 
 	/**
-	* Performs vector addition.
-	* @param rhs - TVector3 to add.
+	* Performs componentwise multiplication.
+	* @param Rhs - Vector to multiply by.
 	* @return Reference to this vector.
 	*/
-	TVector3<T>& operator+=(const TVector3<T>& rhs);
+	TVector3<T>& operator*=(const TVector3<T>& Rhs);
+
+	/**
+	* Performs vector addition.
+	* @param Rhs - TVector3 to add.
+	* @return Reference to this vector.
+	*/
+	TVector3<T>& operator+=(const TVector3<T>& Rhs);
 
 	/**
 	* Performs vector subtraction.
-	* @param rhs - TVector3 to subtract
+	* @param Rhs - TVector3 to subtract
 	* @return Reference to this vector
 	*/
-	TVector3<T>& operator-=(const TVector3<T>& rhs);
+	TVector3<T>& operator-=(const TVector3<T>& Rhs);
 
 	template <typename U>
 	/**
@@ -133,6 +140,16 @@ inline TVector3<T>& TVector3<T>::operator*=(const U& Scalar)
 	x *= Scalar;
 	y *= Scalar;
 	z *= Scalar;
+
+	return *this;
+}
+
+template <typename T>
+TVector3<T>& TVector3<T>::operator*=(const TVector3<T>& Rhs)
+{
+	x *= Rhs.x;
+	y *= Rhs.y;
+	z *= Rhs.z;
 
 	return *this;
 }
@@ -323,6 +340,17 @@ template <typename T, typename U>
 inline TVector3<T> operator*(const U& Scalar, const TVector3<T>& Vector)
 {
 	return Vector * Scalar;
+}
+
+template <typename T>
+/**
+* Performs componentwise multiplication.
+* @return The multiplied vector result.
+*/
+TVector3<T> operator*(TVector3<T> Lhs, const TVector3<T>& Rhs)
+{
+	Lhs *= Rhs;
+	return Lhs;
 }
 
 template <typename T, typename U>

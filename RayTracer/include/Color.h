@@ -14,7 +14,7 @@ public:
 	FColor();
 
 	/**
-	* Constructs a color with given r, g, b values.
+	* Constructs a color with given r, g, B values.
 	* @param R - Red component
 	* @param G - Green component
 	* @param B - Blue component
@@ -22,7 +22,7 @@ public:
 	FColor(float R, float G, float B);
 
 	/**
-	* Constructs a color with given r, g, b values.
+	* Constructs a color with given r, g, B values.
 	* @param R - Red component
 	* @param G - Green component
 	* @param B - Blue component
@@ -90,10 +90,10 @@ public:
 	*/
 	FColor& Clamp();
 
-	float r;
-	float g;
-	float b;
-	float a;
+	float R;
+	float G;
+	float B;
+	float A;
 
 	static const FColor Red;
 	static const FColor Green;
@@ -107,28 +107,28 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 inline FColor::FColor()
-	: r(0.0f), g(0.0f), b(0.0f), a(1.0f)
+	: R(0.0f), G(0.0f), B(0.0f), A(1.0f)
 {
 
 }
 
 inline FColor::FColor(float R, float G, float B)
-	: r(R), g(G), b(B), a(1.0f)
+	: R(R), G(G), B(B), A(1.0f)
 {
 
 }
 
 inline FColor::FColor(float R, float G, float B, float A)
-	: r(R), g(G), b(B), a(A)
+	: R(R), G(G), B(B), A(A)
 {
 
 }
 
 inline FColor& FColor::operator+=(const FColor& rhs)
 {
-	r += rhs.r;
-	g += rhs.g;
-	b += rhs.b;
+	R += rhs.R;
+	G += rhs.G;
+	B += rhs.B;
 
 	return *this;
 }
@@ -136,27 +136,27 @@ inline FColor& FColor::operator+=(const FColor& rhs)
 
 inline FColor& FColor::operator*=(const FColor& rhs)
 {
-	r *= rhs.r;
-	g *= rhs.g;
-	b *= rhs.b;
+	R *= rhs.R;
+	G *= rhs.G;
+	B *= rhs.B;
 
 	return *this;
 }
 
 inline FColor& FColor::operator*=(const float& scalar)
 {
-	r *= scalar;
-	g *= scalar;
-	b *= scalar;
+	R *= scalar;
+	G *= scalar;
+	B *= scalar;
 
 	return *this;
 }
 
 inline FColor& FColor::operator /= (const float& scalar)
 {
-	r /= scalar;
-	g /= scalar;
-	b /= scalar;
+	R /= scalar;
+	G /= scalar;
+	B /= scalar;
 
 	return *this;
 }
@@ -179,11 +179,11 @@ inline float& FColor::operator[](std::size_t idx)
 	switch (idx)
 	{
 	case 0:
-		return r;
+		return R;
 	case 1:
-		return g;
+		return G;
 	case 2:
-		return b;
+		return B;
 	default:
 		throw std::out_of_range("FColor subscript out of range.");
 	}
@@ -194,11 +194,11 @@ inline const float& FColor::operator[](std::size_t idx) const
 	switch (idx)
 	{
 	case 0:
-		return r;
+		return R;
 	case 1:
-		return g;
+		return G;
 	case 2:
-		return b;
+		return B;
 	default:
 		throw std::out_of_range("FColor subscript out of range.");
 	}
@@ -206,9 +206,9 @@ inline const float& FColor::operator[](std::size_t idx) const
 
 inline FColor& FColor::Clamp()
 {
-	r = std::min(r, 1.f);
-	g = std::min(g, 1.f);
-	b = std::min(b, 1.f);
+	R = std::min(R, 1.f);
+	G = std::min(G, 1.f);
+	B = std::min(B, 1.f);
 
 	return *this;
 }

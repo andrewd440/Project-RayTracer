@@ -17,7 +17,7 @@ ILight::~ILight()
 
 }
 
-void ILight::setLightColor(const FColor& LightColor)
+void ILight::SetLightColor(const FColor& LightColor)
 {
 	mLightColor = LightColor;
 }

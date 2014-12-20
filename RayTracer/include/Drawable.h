@@ -1,16 +1,19 @@
 #pragma once
 
-#include "Object.h"
 #include "Material.h"
 #include "AABB.h"
 #include "Matrix4.h"
+#include "Ray.h"
 
 class FTexture;
+struct FIntersection;
 
 /**
-* Abstract class for all Primitives.
+* Abstract class for all renderable objects.
+* Each derived class must construct it's own
+* AABB for use with the Kd-tree.
 */
-class IDrawable : public IObject
+class IDrawable
 {
 public:
 	/**
@@ -52,9 +55,14 @@ public:
 	virtual FMaterial GetMaterial(Vector3f SurfacePoint) = 0;
 
 	/**
-	* Retrieves the bounding box for the Primitive.
+	* Retrieves the bounding box for the Primitive in object space.
 	*/
 	AABB GetBoundingBox() const;
+
+	/**
+	* Retrieves the AABB of the Primitive in world space.
+	*/
+	AABB GetWorldAABB() const;
 
 	/**
 	* Sets the parent transform for this object.
@@ -134,15 +142,16 @@ protected:
 	*/
 	void SetBoundingBox(AABB boundingBox);
 
-protected:
-	FMaterial mMaterial;			/* Lighting material properties for the Primitive */
-	IDrawable* mParentObject;		/* Parent of this object */
-
 private:
 	/**
 	* Each derived class needs to construct their bounding box.
 	*/
 	virtual void ConstructAABB(Vector3f Min = Vector3f(), Vector3f Max = Vector3f()) = 0;
+
+
+protected:
+	FMaterial mMaterial;			/* Lighting material properties for the Primitive */
+	IDrawable* mParentObject;		/* Parent of this object */
 
 private:
 	AABB mBoundingBox;				/* Bounding volume */

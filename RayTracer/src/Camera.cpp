@@ -7,23 +7,25 @@ FCamera::FCamera(const Vector3f& EyePosition, const Vector3f& LookAt, const Vect
 	, mOutputResolution(OutputResolution)
 	, mViewTransform(EyePosition, LookAt, UpDirection)
 {
+	// since we will be transform our pixel rays into world space,
+	// get the inverse of the normal LookAt matrix
 	mViewTransform = mViewTransform.GetInverseAffine();
 }
 
 FRay FCamera::GenerateRay(int32_t X, int32_t Y) const
 {
 	// Calculate coordinates of pixel on screen plane (u, v, d)
-	const float u = -1 + (2 * (X + 0.5f)) / mOutputResolution.x;
-	const float v = mAspectRatio - (2 * mAspectRatio * (Y + 0.5f)) / mOutputResolution.y;
+	const float U = -1 + (2 * (X + 0.5f)) / mOutputResolution.x;
+	const float V = mAspectRatio - (2 * mAspectRatio * (Y + 0.5f)) / mOutputResolution.y;
 
 	// Compute direction of ray in world space
-	Vector3f rayDirection = Vector3f(-u, v, -mDistanceFromScreenPlane);
+	Vector3f rayDirection = Vector3f(-U, V, -mDistanceFromScreenPlane);
 	rayDirection.Normalize();
 
-	FRay pixelRay(Vector3f(), rayDirection);
+	const FRay PixelRay(Vector3f(), rayDirection);
 
 	// send ray in world space
-	return mViewTransform.TransformRay(pixelRay);
+	return mViewTransform.TransformRay(PixelRay);
 }
 
 std::vector<FRay> FCamera::GenerateSampleRays(int32_t X, int32_t Y, uint16_t SamplingLevel) const
@@ -52,10 +54,9 @@ std::vector<FRay> FCamera::GenerateSampleRays(int32_t X, int32_t Y, uint16_t Sam
 
 			// Compute direction of ray in world space
 			Vector3f RayDirection = Vector3f(-U, V, -mDistanceFromScreenPlane);
-			RayDirection.Normalize();
 
 			// Take ray into world space
-			FRay PixelRay(Vector3f(), RayDirection);
+			FRay PixelRay(Vector3f(), RayDirection.Normalize());
 			PixelRay = mViewTransform.TransformRay(PixelRay);
 
 			SampleRays.push_back(PixelRay);

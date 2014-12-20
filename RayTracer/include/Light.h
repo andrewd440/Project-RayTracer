@@ -46,10 +46,15 @@ public:
 	virtual FColor GetIntesityAt(Vector3f Position) const = 0;
 
 	/**
+	* Get the distance from a world point to the light source.
+	*/
+	virtual float GetDistance(const Vector3f Position) const = 0;
+
+	/**
 	* Sets the color of the light.
 	* @param LightColor - Color of the light
 	*/
-	void setLightColor(const FColor& LightColor);
+	void SetLightColor(const FColor& LightColor);
 
 protected:
 	FColor mLightColor; /* Color of the light. */

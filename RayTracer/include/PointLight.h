@@ -49,6 +49,11 @@ public:
 	Vector3f GetLightPosition() const;
 
 	/**
+	* Get the distance from a world point to this light source.
+	*/
+	float GetDistance(const Vector3f Position) const override;
+
+	/**
 	* Retrieves the color intensity of the light at a point.
 	* @param Position Point to check intensity at.
 	* @return The color of the light.

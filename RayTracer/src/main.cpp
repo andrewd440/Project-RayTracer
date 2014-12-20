@@ -12,7 +12,9 @@
 #include "Vector3.h"
 #include "Vector2.h"
 #include "Scene.h"
+#include "Cube.h"
 
+#include "Intersection.h"
 int main()
 {
 	std::srand(time(nullptr));
@@ -30,6 +32,7 @@ int main()
 	t2 = clock();
 	std::cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << std::endl;
 
+	//std::cout << sizeof(FIntersection) << std::endl;
 
 	return 0;
 }

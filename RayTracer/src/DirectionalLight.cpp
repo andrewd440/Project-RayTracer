@@ -2,6 +2,7 @@
 #include "Matrix4.h"
 
 #include <cstdlib>
+#include <limits>
 
 FDirectionalLight::FDirectionalLight()
 	: ILight()
@@ -54,7 +55,7 @@ std::vector<FRay> FDirectionalLight::GetRayToLightSamples(const Vector3f& Surfac
 
 		// turn the ray to the direction of the light and add the normal
 		// to the ray origin so we are sure that we are not under the surface
-		FRay SampleRay(SurfacePoint, -mLightDirection + SampleDirectionOffset);
+		FRay SampleRay(SurfacePoint, (-mLightDirection + SampleDirectionOffset).Normalize());
 		SampleRay.origin += SampleRay.direction * _EPSILON;
 		RaySamples.push_back(SampleRay);
 	}
@@ -71,6 +72,11 @@ void FDirectionalLight::setLightDirection(const Vector3f& LightDirection)
 Vector3f FDirectionalLight::getLightDirection() const
 {
 	return mLightDirection;
+}
+
+float FDirectionalLight::GetDistance(const Vector3f Position) const
+{
+	return std::numeric_limits<float>::max();
 }
 
 FColor FDirectionalLight::GetIntesityAt(Vector3f Position) const
