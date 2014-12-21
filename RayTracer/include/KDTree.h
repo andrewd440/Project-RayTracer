@@ -11,7 +11,7 @@ struct KDNode
 	std::unique_ptr<KDNode> Child[2]; // 0 = near, 1 = far
 	float SplitValue; // value on the splitting axis
 	uint8_t Axis; // x, y, or z splitting axis
-	std::vector<IDrawable*> ObjectList; // list of Primitives within this node
+	std::vector<std::unique_ptr<IDrawable>> ObjectList; // list of Primitives within this node
 };
 
 class KDTree
@@ -26,7 +26,7 @@ public:
 	* @param Depth Max depth of the tree.
 	* @param MinObjectsPerNode Minimum objects for a node before tree construction ends.
 	*/
-	void BuildTree(const std::vector<std::unique_ptr<IDrawable>>& Objects, uint32_t Depth, uint32_t MinObjectsPerNode);
+	void BuildTree(std::vector<std::unique_ptr<IDrawable>>& Objects, uint32_t Depth, uint32_t MinObjectsPerNode);
 
 	/**
 	* Checks if a ray intersects an object in the kdtree.

@@ -23,7 +23,7 @@ public:
 	* @param Y - y coordinate of the pixel
 	* @param Color - The color of the pixel
 	*/
-	void SetPixel(const int32_t& X, const int32_t& Y, const FColor& Color);
+	void SetPixel(const uint32_t& X, const uint32_t& Y, const FColor& Color);
 
 	/**
 	* Writes a .ppm image file with the rgb values currently stored for

@@ -100,7 +100,6 @@ static bool ReadTGAImage(FTexture& Texture, const std::string& Filename)
 		// .tga is little edian, so bitshift
 		Texture.mWidth = (HeaderData[13] << 8) + HeaderData[12];
 		Texture.mHeight = (HeaderData[15] << 8) + HeaderData[14];
-		const uint32_t& ImageSize = ((Texture.mWidth * BitsPerPixel + 31) / 32) * 4 * Texture.mHeight;
 
 		if ((BitsPerPixel != 24) && (BitsPerPixel != 32))
 		{
@@ -165,7 +164,7 @@ static bool ReadTGAImage(FTexture& Texture, const std::string& Filename)
 
 	Texture.mPixels.clear();
 	const float InvColorMax(1.0f / 255.0f);
-	for (int i = 0; i < Texture.mWidth * Texture.mHeight; i++)
+	for (size_t i = 0; i < Texture.mWidth * Texture.mHeight; i++)
 	{
 		const uint32_t& BaseIndex = i * ((BitsPerPixel > 24) ? 4 : 3);
 		const float& R = (float)ImageData[BaseIndex] * InvColorMax;

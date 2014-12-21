@@ -23,7 +23,7 @@ public:
 	/**
 	* Default constructor.
 	*/
-	FScene();
+	FScene(const std::string& OutputName, const Vector2i& OutputResolution, const uint16_t NumShadowSamples, const uint16_t SuperSamplingLevel);
 
 	// Don't allow copies of a scene
 	FScene& operator=(const FScene& Copy) = delete;
@@ -85,27 +85,15 @@ private:
 	*/
 	float ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint);
 
-	/**
-	* Reads in properties and creates a Material from an input stream 
-	* @param Input - A input stream formated in the order of:
-	*					Specular: - - -
-	*					Diffuse: - - -
-	*					Amient:  - - -
-	*					SpecualarExponent: -
-	*					Reflectivity: -
-	* @return A Material with the given properties.
-	*/
-	FMaterial ReadMaterial(std::istream& Input);
-
 private:
 	FImage mOutputImage; /* Output image for the rendered scene */
 	FCamera mCamera; /* FCamera for the scene */
-	std::vector<PrimitivePtr> mPrimitives; /* All Primitives in the scene */
 	std::vector<LightPtr> mLights; /* All lights in the scene */
 	FColor mBackgroundColor; /* Background color for the scene */
 	FColor mGlobalAmbient; /* Color used for global ambient lighting */
 	KDTree mKDTree; /* Spatial partition tree */
 
 	uint16_t mNumberOfShadowSamples; /* Number of samples to use when generating shadows */
-	uint8_t mSuperSamplingLevel; /* The number of rays generated per pixel is squared this number */
+	uint16_t mSuperSamplingLevel; /* The number of rays generated per pixel is squared this number */
+	Vector2i mOutputResolution; /* Resolution of the image to be rendered. */
 };

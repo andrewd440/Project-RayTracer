@@ -10,11 +10,9 @@ KDTree::KDTree()
 }
 
 
-void KDTree::BuildTree(const std::vector<std::unique_ptr<IDrawable>>& Primitives, uint32_t depth, uint32_t MinObjectsPerNode)
+void KDTree::BuildTree(std::vector<std::unique_ptr<IDrawable>>& Primitives, uint32_t depth, uint32_t MinObjectsPerNode)
 {
-	for (const auto& Primitive : Primitives)
-		mRoot.ObjectList.push_back(Primitive.get());
-
+	mRoot.ObjectList = std::move(Primitives);
 	mRoot.Axis = 0;
 
 	BuildTreeHelper(mRoot, depth, MinObjectsPerNode);
@@ -27,17 +25,17 @@ void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth, uint32_t MinOb
 		return;
 
 	const uint32_t& DividingAxis = CurrentNode.Axis;
-	std::vector<IDrawable*>& CurrentObjects = CurrentNode.ObjectList;
+	auto& CurrentObjects = CurrentNode.ObjectList;
 
 	// sort all objects by splitting axis
-	std::sort(CurrentObjects.begin(), CurrentObjects.end(), [DividingAxis](const IDrawable* lhs, const IDrawable* rhs) -> bool
+	std::sort(CurrentObjects.begin(), CurrentObjects.end(), [DividingAxis](const std::unique_ptr<IDrawable>& lhs, const std::unique_ptr<IDrawable>& rhs) -> bool
 	{
 		return lhs->GetWorldAABB().GetCenter()[DividingAxis] < rhs->GetWorldAABB().GetCenter()[DividingAxis];
 	});
 
 	const size_t PrimitiveListSize = CurrentNode.ObjectList.size();
 	size_t DividingObjectIndex = PrimitiveListSize / 2;
-	IDrawable* DividingObject = CurrentObjects[DividingObjectIndex];
+	auto& DividingObject = CurrentObjects[DividingObjectIndex];
 
 	AABB DividingAABB = DividingObject->GetWorldAABB();
 	
@@ -45,7 +43,7 @@ void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth, uint32_t MinOb
 	const float DividingAxisValue = DividingAABB.GetCenter()[DividingAxis] + DividingAABB.GetDeminsions()[DividingAxis] + 0.1f;
 	CurrentNode.SplitValue = DividingAxisValue;
 
-	std::vector<IDrawable*> StraddlingPrimitives;
+	std::vector<std::unique_ptr<IDrawable>> StraddlingPrimitives;
 	CurrentNode.Child[0] = std::unique_ptr<KDNode>(new KDNode());
 	CurrentNode.Child[1] = std::unique_ptr<KDNode>(new KDNode());
 
@@ -56,11 +54,11 @@ void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth, uint32_t MinOb
 		const float AxisRange = CurrentBBox.GetDeminsions()[DividingAxis];
 		const float DividedRange = std::abs(CurrentBBox.Min[DividingAxis] - DividingAxisValue);
 		if (AxisRange > DividedRange)
-			StraddlingPrimitives.push_back(CurrentObjects[i]);
+			StraddlingPrimitives.push_back(std::move(CurrentObjects[i]));
 		else
 		{
 			// add non straddling to near child
-			CurrentNode.Child[0]->ObjectList.push_back(CurrentObjects[i]);
+			CurrentNode.Child[0]->ObjectList.push_back(std::move(CurrentObjects[i]));
 		}
 	}
 
@@ -70,11 +68,11 @@ void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth, uint32_t MinOb
 		float AxisRange = CurrentBBox.GetDeminsions()[DividingAxis];
 		float DividedRange = CurrentBBox.Max[DividingAxis] - DividingAxisValue;
 		if (AxisRange > DividedRange)
-			StraddlingPrimitives.push_back(CurrentObjects[i]);
+			StraddlingPrimitives.push_back(std::move(CurrentObjects[i]));
 		else
 		{
 			// add non straddling to far child
-			CurrentNode.Child[1]->ObjectList.push_back(CurrentObjects[i]);
+			CurrentNode.Child[1]->ObjectList.push_back(std::move(CurrentObjects[i]));
 		}
 	}
 
@@ -86,7 +84,7 @@ void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth, uint32_t MinOb
 
 	// add all straddling objects to this node
 	CurrentNode.ObjectList.clear();
-	CurrentNode.ObjectList = StraddlingPrimitives;
+	CurrentNode.ObjectList = std::move(StraddlingPrimitives);
 
 	BuildTreeHelper(*CurrentNode.Child[0], Depth - 1, MinObjectsPerNode);
 	BuildTreeHelper(*CurrentNode.Child[1], Depth - 1, MinObjectsPerNode);
@@ -104,7 +102,7 @@ bool KDTree::VisitNodesAgainstRay(KDNode* CurrentNode, FRay Ray, float* tValueOu
 
 	bool IsIntersecting = false;
 
-	for (IDrawable* primitive : CurrentNode->ObjectList)
+	for (const auto& primitive : CurrentNode->ObjectList)
 	{
 		IsIntersecting |= primitive->IsIntersectingRay(Ray, tValueOut, IntersectionOut);
 	}

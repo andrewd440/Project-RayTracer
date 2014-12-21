@@ -76,6 +76,9 @@ Vector3f FDirectionalLight::getLightDirection() const
 
 float FDirectionalLight::GetDistance(const Vector3f Position) const
 {
+	// disable compiler warning
+	Position;
+
 	return std::numeric_limits<float>::max();
 }
 

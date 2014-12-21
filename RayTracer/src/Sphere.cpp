@@ -116,5 +116,8 @@ void FSphere::SetRadius(const float& radius)
 
 void FSphere::ConstructAABB(Vector3f Min, Vector3f Max)
 {
+	// disable compiler warnings
+	Min; Max;
+
 	SetBoundingBox(AABB(Vector3f(-mRadius, -mRadius, -mRadius), Vector3f(mRadius, mRadius, mRadius)));
 }

@@ -1,0 +1,5 @@
+ShadowSamples: 1
+SuperSampling: 1
+Resolution: 1000 600
+OutputImage: Testing123
+SceneFile: Scenes/Scene1.scn

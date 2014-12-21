@@ -1,6 +1,7 @@
 #include "Image.h"
 #include "Windows.h"
 #include <sstream>
+#include <cassert>
 #include <limits>
 
 FImage::FImage(const std::string& Filename, const Vector2i& OutputResolution)
@@ -13,8 +14,10 @@ FImage::FImage(const std::string& Filename, const Vector2i& OutputResolution)
 		row.resize(OutputResolution.x);
 }
 
-void FImage::SetPixel(const int32_t& X, const int32_t& Y, const FColor& Color)
+void FImage::SetPixel(const uint32_t& X, const uint32_t& Y, const FColor& Color)
 {
+	assert(Y < mPixelColors.capacity());
+	assert(X < mPixelColors[Y].capacity());
 	mPixelColors[Y][X] = Color;
 }
 

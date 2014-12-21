@@ -188,7 +188,7 @@ void FMesh::ConstructBVH(FBVHNode& Node, const uint8_t Depth)
 	// the split axis will be the axis which the current AABB extends the most
 	uint8_t SplitAxis = 0;
 	const Vector3f& CurrentDeminsions(Node.BoundingVolume.GetDeminsions());
-	for (int i = 1; i < 3; i++)
+	for (uint8_t i = 1; i < 3; i++)
 	{
 		if (CurrentDeminsions[i] > CurrentDeminsions[SplitAxis])
 			SplitAxis = i;
@@ -207,12 +207,12 @@ void FMesh::ConstructBVH(FBVHNode& Node, const uint8_t Depth)
 	Node.Child[0] = std::unique_ptr<FBVHNode>(new FBVHNode());
 	Node.Child[1] = std::unique_ptr<FBVHNode>(new FBVHNode());
 
-	for (int i = 0; i < SplitIndex; i++)
+	for (size_t i = 0; i < SplitIndex; i++)
 	{
 		Node.Child[0]->Objects.push_back(std::move(Node.Objects[i]));
 	}
 
-	for (int i = SplitIndex; i < Node.Objects.size(); i++)
+	for (size_t i = SplitIndex; i < Node.Objects.size(); i++)
 	{
 		Node.Child[1]->Objects.push_back(std::move(Node.Objects[i]));
 	}
