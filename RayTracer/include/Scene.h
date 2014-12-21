@@ -86,14 +86,6 @@ private:
 	float ComputeShadeFactor(const ILight& Light, const Vector3f& SurfacePoint);
 
 	/**
-	* Computes a mirror reflection from a light direction and a reflection normal
-	* @param ViewerDirection - Direction of the viewer
-	* @param SurfaceNormal - Normal to be reflected across
-	* @return A direction vector for the mirror reflection
-	*/
-	Vector3f ComputeMirriorReflection(const Vector3f& ViewerDirection, const Vector3f& SurfaceNormal) const;
-
-	/**
 	* Reads in properties and creates a Material from an input stream 
 	* @param Input - A input stream formated in the order of:
 	*					Specular: - - -

@@ -1,6 +1,74 @@
-BackgroundColor: 0 0 0
-GlobalAmbientColor: .2 .2 .2
+Scene
+
+Background: 0 0 0
+GlobalAmbient: .2 .2 .2
+
+Model
+	ModelFile:
+	Material:
+	Position:
+	Rotation:
+	Scale:
+
+Triangle
+	V0:
+	V1:
+	V2:
+	Material:
+
+Sphere
+	Position:
+	Radius:
+	Rotation:
+	Material:
+
+Cube
+	Position:
+	Rotation:
+	Scale:
+	Material:
+
+Plane
+	Normal:
+	PointOnPlane:
+	Material:
+
+DirectionalLight
+	Color:
+	Direction:
+
+PointLight
+	Color:
+	Position:
+	SurfaceRadius:
+	MinFalloff:
+	MaxFalloff:
+
+Texture
+	Name:
+	File:
+
+Material
+	Name:
+	Specular:
+	Diffuse:
+	Ambient:
+	Glossiness:
+	Reflectivity:
+	RefractiveIndex:
+	DiffuseTextureName:
+	UVScale:
 
 Camera
-	Position: 10 0 0
-	FOV: 75
+	Position:
+	LookAt:
+	UpDirection:
+	FOV:
+
+Image Config
+
+ShadowSamples: 
+SuperSampling:
+Resolution:
+OutputImage:
+SceneFile:

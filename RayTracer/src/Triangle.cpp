@@ -46,7 +46,7 @@ FTriangle::FTriangle(Vector3f V0, Vector3f V1, Vector3f V2, Vector3f Normal, con
 
 }
 
-bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* intersectionOut)
+bool FTriangle::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
 	if (!IsEnabled())
 		return false;
@@ -54,7 +54,7 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	// Ray/Triangle intersection test from 3D Math Primier for Graphics and Game Development
 
 	// Compute gradient, how steep is the ray against the triangle
-	float gradient = Vector3f::Dot(mNormal, ray.direction);
+	float gradient = Vector3f::Dot(mNormal, Ray.direction);
 
 	// Check if ray is pointing towards the triangle
 	if (!(gradient < 0.0f))
@@ -64,7 +64,7 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	float d = Vector3f::Dot(mNormal, mV0);
 
 	// Compute parametric point of intersection with plane.
-	float t = d - Vector3f::Dot(mNormal, ray.origin);
+	float t = d - Vector3f::Dot(mNormal, Ray.origin);
 
 	// Bail if ray is on backside of plane
 	if (!(t <= 0.0f))
@@ -77,7 +77,7 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	// The ray intersects the plane, now find the point
 	t /= gradient;
 	assert(t >= 0.0f);
-	Vector3f p = ray.origin + ray.direction * t;
+	Vector3f p = Ray.origin + Ray.direction * t;
 
 	// Find dominant axis to select which plane to 
 	// project onto, and compute u's and v's
@@ -150,10 +150,10 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 	if (!(gamma >= 0.0f))
 		return false;
 
-	if (intersectionOut && tValueOut && t < *tValueOut)
+	if (IntersectionOut && tValueOut && t < *tValueOut)
 	{
 		*tValueOut = t;
-		ConstructIntersection(ray.origin + t * ray.direction, intersectionOut);
+		ConstructIntersection(Ray.origin + t * Ray.direction, IntersectionOut);
 	}
 	// if we didnt intersection within a given t value, return false
 	else if (t > *tValueOut)
@@ -166,13 +166,14 @@ bool FTriangle::IsIntersectingRay(FRay ray, float* tValueOut, FIntersection* int
 
 FMaterial FTriangle::GetMaterial(Vector3f SurfacePoint)
 {
-	// bring the point into object space
-	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint);
 	const FTextureInfo& DiffuseInfo = mMaterial.GetDiffuseTexture();
 
 	// if no texture, return default material
 	if (!DiffuseInfo.Texture)
 		return mMaterial;
+
+	// bring the point into object space
+	SurfacePoint = GetWorldInvTransform().TransformPosition(SurfacePoint);
 
 	float B[3];
 	ComputeBarycentric(mV0, mV1, mV2, SurfacePoint, B);
@@ -196,8 +197,8 @@ void FTriangle::SetUVCoordinates(const Vector2f& UV0, const Vector2f& UV1, const
 void FTriangle::ConstructIntersection(Vector3f intersectionPoint, FIntersection* intersectionOut)
 {
 	intersectionOut->object = this;
-	intersectionOut->point = intersectionPoint + intersectionOut->normal * _EPSILON;
 	intersectionOut->normal = mNormal;
+	intersectionOut->point = intersectionPoint + mNormal * _EPSILON;
 }
 
 void FTriangle::ConstructAABB(Vector3f Min, Vector3f Max)

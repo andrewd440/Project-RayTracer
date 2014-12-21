@@ -2,19 +2,17 @@
 
 #include <fstream>
 #include <iostream>
-#include <cmath>S
+#include <cmath>
 
 FTexture::FTexture(const std::string& Filename)
 {
 	if (Filename.substr(Filename.length() - 4) == ".tga")
 	{
-		if (!ReadTGAImage(*this, Filename))
-			return;
+		ReadTGAImage(*this, Filename);
 	}
 	else
 	{
 		std::cout << Filename << " file format not supported." << std::endl;
-		return;
 	}
 }
 

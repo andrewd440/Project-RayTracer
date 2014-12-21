@@ -5,19 +5,20 @@
 #include <fstream>
 #include <limits>
 
+#define _BVH_MIN_OBJECTS 5
+
 FMesh::FMesh(const FMaterial& Material)
 	: IDrawable(Material)
-	, mTriangles()
 	, mBVHRoot()
 {
 }
 
 FMesh::FMesh(const std::string& ModelFilepath, const FMaterial& Material)
 	: IDrawable(Material)
-	, mTriangles()
 	, mBVHRoot()
 {
 	ReadModel(ModelFilepath);
+	ConstructBVH(mBVHRoot, 8);
 }
 
 bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
@@ -25,56 +26,22 @@ bool FMesh::IsIntersectingRay(FRay Ray, float* tValueOut, FIntersection* Interse
 	if (!IsEnabled())
 		return false;
 
-	// check against bounding volume first
-	float NewTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
-
 	// bring ray into object space for intersection tests
 	Ray = GetWorldInvTransform().TransformRay(Ray);
 
-	bool Flag = TraverseBVH(mBVHRoot, Ray, &NewTValue, IntersectionOut);
+	const bool Flag = TraverseBVHAgainstRay(mBVHRoot, Ray, tValueOut, IntersectionOut);
 
-	//if (GetBoundingBox().IsIntersectingRay(Ray, &NewTValue, IntersectionOut))
-	//{
-	//	// if we have a tValueOut then we are looking for the closest intersection
-	//	// so we need to find the closest triangle
-	//	if (tValueOut && NewTValue < *tValueOut)
-	//	{
-	//		NewTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
-	//		bool Flag = false;
-	//		for (const auto& Triangle : mTriangles)
-	//		{
-	//			Flag |= Triangle->IsIntersectingRay(Ray, &NewTValue, IntersectionOut);
-	//		}
-
-			if (tValueOut && Flag && NewTValue < *tValueOut)
-			{
-				*tValueOut = NewTValue;
-				IntersectionOut->point = GetWorldTransform().TransformPosition(IntersectionOut->point);
-				IntersectionOut->normal = GetWorldTransform().TransformDirection(IntersectionOut->normal);
-			}
-			// if we didnt intersection within a given t value, return false
-			else if (NewTValue > *tValueOut)
-			{
-				return false;
-			}
-
-	//		return Flag;
-	//	}
-	//	// if no tValueOut, then we are just checking for a single intersection
-	//	else
-	//	{
-	//		for (const auto& Triangle : mTriangles)
-	//		{
-	//			if (Triangle->IsIntersectingRay(Ray))
-	//				return true;
-	//		}
-	//	}
-	//}
+	if (Flag && tValueOut && IntersectionOut)
+	{
+		const FMatrix4& WorldTransform = GetWorldTransform();
+		IntersectionOut->point = WorldTransform.TransformPosition(IntersectionOut->point);
+		IntersectionOut->normal = WorldTransform.TransformDirection(IntersectionOut->normal);
+	}
 
 	return Flag;
 }
 
-bool FMesh::TraverseBVH(FBVHNode& Node, FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
+bool FMesh::TraverseBVHAgainstRay(FBVHNode& Node, FRay Ray, float* tValueOut, FIntersection* IntersectionOut)
 {
 	float TempTValue = (tValueOut) ? *tValueOut : std::numeric_limits<float>::max();
 	if (!Node.BoundingVolume.IsIntersectingRay(Ray, &TempTValue))
@@ -91,33 +58,11 @@ bool FMesh::TraverseBVH(FBVHNode& Node, FRay Ray, float* tValueOut, FIntersectio
 		return IsIntersecting;
 	}
 
-	const int SplitAxis = Node.SplitAxis;
+	bool IsIntersecting = false;
+	IsIntersecting |= TraverseBVHAgainstRay(*Node.Child[1], Ray, tValueOut, IntersectionOut);
+	IsIntersecting |= TraverseBVHAgainstRay(*Node.Child[0], Ray, tValueOut, IntersectionOut);
 
-	// check for the nearest child based on the direction of the ray,
-	// traverse that child first, then only traverse the other child
-	// if no intersections occur
-	//if (Ray.direction[SplitAxis] < 0)
-	//{
-		bool IsIntersecting = false;
-		IsIntersecting |= TraverseBVH(*Node.Child[1], Ray, tValueOut, IntersectionOut);
-
-	//	if (!IsIntersecting)
-		IsIntersecting |= TraverseBVH(*Node.Child[0], Ray, tValueOut, IntersectionOut);
-
-		return IsIntersecting;
-	//}
-	//else if (Ray.direction[SplitAxis] > 0)
-	/*{
-		bool IsIntersecting = false;
-		IsIntersecting = TraverseBVH(*Node.Child[0], Ray, tValueOut, IntersectionOut);
-
-		if (!IsIntersecting)
-			IsIntersecting = TraverseBVH(*Node.Child[1], Ray, tValueOut, IntersectionOut);
-
-		return IsIntersecting;
-	}
-	else
-		return false;*/
+	return IsIntersecting;
 
 }
 
@@ -126,12 +71,6 @@ FMaterial FMesh::GetMaterial(Vector3f SurfacePoint)
 	// remove compiler warning
 	SurfacePoint;
 	return mMaterial;
-}
-
-void FMesh::SetMaterial(const FMaterial& Material)
-{
-	for (auto& Triangle : mTriangles)
-		Triangle->SetMaterial(Material);
 }
 
 void FMesh::ConstructAABB(Vector3f Min, Vector3f Max)
@@ -157,6 +96,7 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 	std::string FileLine;
 	std::vector<Vector3f> Vertices;
 	std::vector<Vector2f> UVs;
+	std::vector<std::unique_ptr<FTriangle>> Triangles;
 
 	while (getline(ModelFile, FileLine))
 	{
@@ -218,7 +158,7 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 			if (HasUVs)
 				Triangle->SetUVCoordinates(FaceUVs[2], FaceUVs[1], FaceUVs[0]);
 
-			mTriangles.push_back(std::move(Triangle));
+			Triangles.push_back(std::move(Triangle));
 		}
 		// line contains a UV
 		else if (FileLine[0] == 'v' && FileLine[1] == 't' && FileLine[2] == ' ')
@@ -234,14 +174,15 @@ void FMesh::ReadModel(const std::string& ModelFilepath)
 	ModelFile.close();
 
 	ConstructAABB(MinBounds, MaxBounds);
+
+	// setup root of BVH
 	mBVHRoot.BoundingVolume = GetBoundingBox();
-	mBVHRoot.Objects = std::move(mTriangles);
-	ConstructBVH(mBVHRoot, 10);
+	mBVHRoot.Objects = std::move(Triangles);
 }
 
 void FMesh::ConstructBVH(FBVHNode& Node, const uint8_t Depth)
 {
-	if (Depth <= 0 || Node.Objects.size() <= 3)
+	if (Depth <= 0 || Node.Objects.size() <= _BVH_MIN_OBJECTS)
 		return;
 
 	// the split axis will be the axis which the current AABB extends the most
@@ -253,7 +194,6 @@ void FMesh::ConstructBVH(FBVHNode& Node, const uint8_t Depth)
 			SplitAxis = i;
 	}
 
-	Node.SplitAxis = SplitAxis;
 	// sort objects in respect to the split axis
 	std::sort(Node.Objects.begin(), Node.Objects.end(), [&SplitAxis](const std::unique_ptr<FTriangle>& Lhs, const std::unique_ptr<FTriangle>& Rhs)
 	{

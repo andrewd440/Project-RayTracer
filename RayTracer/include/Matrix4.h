@@ -133,6 +133,12 @@ struct FMatrix4
 	void Rotate(EAxis Axis, float Degrees);
 
 	/**
+	* Rotate, in degrees, each asix.
+	* @param Degrees to rotate by on each axis.
+	*/
+	void Rotate(Vector3f Degrees);
+
+	/**
 	* Sets a uniform scale from origin.
 	* @param Scale Value to scale by.
 	*/
@@ -441,6 +447,13 @@ inline void FMatrix4::Rotate(EAxis Axis, float Degrees)
 
 	*this = rotationMat * (*this);
 	SetOrigin(translation);
+}
+
+inline void FMatrix4::Rotate(Vector3f Degrees)
+{
+	Rotate(EAxis::X, Degrees.x);
+	Rotate(EAxis::Y, Degrees.y);
+	Rotate(EAxis::Z, Degrees.z);
 }
 
 inline void FMatrix4::Scale(float Scale)

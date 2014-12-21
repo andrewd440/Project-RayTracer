@@ -32,7 +32,7 @@ int main()
 	t2 = clock();
 	std::cout << ((float)t2 - (float)t1) / CLOCKS_PER_SEC << std::endl;
 
-	//std::cout << sizeof(FIntersection) << std::endl;
+	//std::cout << sizeof(std::vector<IDrawable*>) << std::endl;
 
 	return 0;
 }

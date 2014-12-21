@@ -10,8 +10,8 @@ struct KDNode
 {
 	std::unique_ptr<KDNode> Child[2]; // 0 = near, 1 = far
 	float SplitValue; // value on the splitting axis
-	std::vector<IDrawable*> ObjectList; // list of Primitives within this node
 	uint8_t Axis; // x, y, or z splitting axis
+	std::vector<IDrawable*> ObjectList; // list of Primitives within this node
 };
 
 class KDTree
@@ -43,10 +43,9 @@ public:
 	bool IsIntersectingRay(FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr);
 
 private:
-	void BuildTreeHelper(KDNode& currentNode, uint32_t depth);
+	void BuildTreeHelper(KDNode& currentNode, uint32_t depth, uint32_t MinObjectsPerNode);
 	bool VisitNodesAgainstRay(KDNode* currentNode, FRay Ray, float* tValueOut = nullptr, FIntersection* IntersectionOut = nullptr);
 
 private:
 	KDNode mRoot;
-	uint32_t mMinObjectsPerNode;
 };
