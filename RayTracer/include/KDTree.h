@@ -9,8 +9,8 @@
 struct KDNode
 {
 	std::unique_ptr<KDNode> Child[2]; // 0 = near, 1 = far
-	float SplitValue; // value on the splitting axis
-	uint8_t Axis; // x, y, or z splitting axis
+	float SplitValue{ 0.0f }; // value on the splitting axis
+	uint8_t Axis{ 0 }; // x, y, or z splitting axis
 	std::vector<std::unique_ptr<IDrawable>> ObjectList; // list of Primitives within this node
 };
 

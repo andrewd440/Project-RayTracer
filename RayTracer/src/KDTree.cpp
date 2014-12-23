@@ -26,15 +26,16 @@ void KDTree::BuildTreeHelper(KDNode& CurrentNode, uint32_t Depth, uint32_t MinOb
 
 	const uint32_t& DividingAxis = CurrentNode.Axis;
 	auto& CurrentObjects = CurrentNode.ObjectList;
+	
+	const size_t PrimitiveListSize = CurrentNode.ObjectList.size();
+	const size_t DividingObjectIndex = PrimitiveListSize / 2;
 
 	// sort all objects by splitting axis
-	std::sort(CurrentObjects.begin(), CurrentObjects.end(), [DividingAxis](const std::unique_ptr<IDrawable>& lhs, const std::unique_ptr<IDrawable>& rhs) -> bool
+	std::partial_sort(CurrentObjects.begin(), CurrentObjects.begin() + DividingObjectIndex, CurrentObjects.end(), [DividingAxis](const std::unique_ptr<IDrawable>& lhs, const std::unique_ptr<IDrawable>& rhs) -> bool
 	{
 		return lhs->GetWorldAABB().GetCenter()[DividingAxis] < rhs->GetWorldAABB().GetCenter()[DividingAxis];
 	});
 
-	const size_t PrimitiveListSize = CurrentNode.ObjectList.size();
-	size_t DividingObjectIndex = PrimitiveListSize / 2;
 	auto& DividingObject = CurrentObjects[DividingObjectIndex];
 
 	AABB DividingAABB = DividingObject->GetWorldAABB();

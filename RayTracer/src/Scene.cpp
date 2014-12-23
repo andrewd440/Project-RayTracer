@@ -372,7 +372,7 @@ void FScene::BuildScene(std::istream& in)
 		in >> string;
 	}
 
-	mKDTree.BuildTree(std::move(Objects), KdDepth, KdMinObjects);
+	mKDTree.BuildTree(Objects, KdDepth, KdMinObjects);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -498,21 +498,21 @@ void FScene::RenderScene()
 				FColor PixelColor;
 				for (const FRay& PixelRay : mCamera.GenerateSampleRays(x, y, mSuperSamplingLevel))
 				{
-					PixelColor += TraceRay(PixelRay, 5);
+					PixelColor += TraceRay(PixelRay, 4);
 				}
 
 				// average the result of all samples
 				PixelColor /= (float)(mSuperSamplingLevel * mSuperSamplingLevel);
 				mOutputImage.SetPixel(x, y, PixelColor.Clamp());
 			}
-
+			std::cout << "Pixel Row: " << y << std::endl;
 			// Display progress to console
-			UpdateInterval++;
-			if (UpdateInterval >= PercentUpdateRate)
-			{
-				UpdateInterval = 0;
-				std::cout << (y * mOutputResolution.x) * InvTotalPixels << "% Complete" << std::endl;
-			}
+			//UpdateInterval++;
+			//if (UpdateInterval >= PercentUpdateRate)
+			//{
+			//	UpdateInterval = 0;
+			//	std::cout << (y * mOutputResolution.x) * InvTotalPixels << "% Complete" << std::endl;
+			//}
 		}
 	}
 	// Without supersampling
@@ -524,7 +524,7 @@ void FScene::RenderScene()
 			{
 				FColor PixelColor;
 				const FRay& PixelRay = mCamera.GenerateRay(x, y);
-				PixelColor = TraceRay(PixelRay, 5);
+				PixelColor = TraceRay(PixelRay, 4);
 				mOutputImage.SetPixel(x, y, PixelColor.Clamp());
 			}
 
