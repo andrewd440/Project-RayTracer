@@ -505,14 +505,13 @@ void FScene::RenderScene()
 				PixelColor /= (float)(mSuperSamplingLevel * mSuperSamplingLevel);
 				mOutputImage.SetPixel(x, y, PixelColor.Clamp());
 			}
-			std::cout << "Pixel Row: " << y << std::endl;
 			// Display progress to console
-			//UpdateInterval++;
-			//if (UpdateInterval >= PercentUpdateRate)
-			//{
-			//	UpdateInterval = 0;
-			//	std::cout << (y * mOutputResolution.x) * InvTotalPixels << "% Complete" << std::endl;
-			//}
+			UpdateInterval++;
+			if (UpdateInterval >= PercentUpdateRate)
+			{
+				UpdateInterval = 0;
+				std::cout << (y * mOutputResolution.x) * InvTotalPixels << "% Complete" << std::endl;
+			}
 		}
 	}
 	// Without supersampling

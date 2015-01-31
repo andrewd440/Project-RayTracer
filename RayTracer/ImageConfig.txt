@@ -2,4 +2,4 @@ ShadowSamples: 32
 SuperSampling: 2
 Resolution: 500 300
 OutputImage: Testing123
-SceneFile: Scenes/BoxManPeak.scn
+SceneFile: Scenes/Scene1.scn

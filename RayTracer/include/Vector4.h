@@ -10,6 +10,7 @@ template <typename T>
 /**
 * Class of manipulating a 4 component vector.
 */
+
 class TVector4
 {
 public:
@@ -202,25 +203,6 @@ inline TVector4<T>& TVector4<T>::operator/=(const U& scalar)
 	return *this;
 }
 
-template <typename T>
-inline bool TVector4<T>::operator==(const TVector4<T>& Rhs) const
-{
-	for (size_t i = 0; i < 4; i++)
-		if (*this[i] != Rhs[i])
-			return false;
-
-	return true;
-}
-
-template <typename T>
-inline bool TVector4<T>::operator!=(const TVector4<T>& Rhs) const
-{
-	for (size_t i = 0; i < 4; i++)
-		if ((*this)[i] != Rhs[i])
-			return true;
-
-	return false;
-}
 
 template <typename T>
 inline T& TVector4<T>::operator[](std::size_t idx)
@@ -256,6 +238,26 @@ inline const T& TVector4<T>::operator[](std::size_t idx) const
 	default:
 		throw std::out_of_range("TVector4 subscript out of range.");
 	};
+}
+
+template <typename T>
+inline bool TVector4<T>::operator==(const TVector4<T>& Rhs) const
+{
+	for (size_t i = 0; i < 4; i++)
+		if ((*this)[i] != Rhs[i])
+			return false;
+
+	return true;
+}
+
+template <typename T>
+inline bool TVector4<T>::operator!=(const TVector4<T>& Rhs) const
+{
+	for (size_t i = 0; i < 4; i++)
+		if ((*this)[i] != Rhs[i])
+			return true;
+
+	return false;
 }
 
 template <typename T>
