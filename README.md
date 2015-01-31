@@ -1,4 +1,4 @@
-RayTracer
+Project-RayTracer
 =========
 This was a side project that I used to further improve my knowledge on the subject of computer graphics and ray tracing. Some rendering features of this c++ ray-tracer include:
 <ul>
